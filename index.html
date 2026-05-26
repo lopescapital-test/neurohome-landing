@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeuroHome — Functional Neurology for Kids on the Spectrum, From Home</title>
+<meta name="description" content="Functional neurology for children on the autism spectrum, delivered to your home. Clinician-guided, drug-free, science-backed. Led by Dr. Kyle Daigle of NeuroSage Centers.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="neurohome.css">
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <a class="nav-brand" href="#">
+    <span class="nav-brand-name">Neuro<span>Home</span></span>
+    <span class="nav-brand-tag">by NeuroSage Centers</span>
+  </a>
+  <div class="nav-links" id="navLinks">
+    <a class="nav-link" href="#dr-kyle">Dr. Kyle</a>
+    <a class="nav-link" href="#testimonials">Stories</a>
+    <a class="nav-link" href="#method">The Method</a>
+    <a class="nav-link" href="#faq">FAQ</a>
+    <a class="nav-cta" href="#book">Book a Free Call</a>
+  </div>
+  <button class="nav-mobile-toggle" onclick="toggleMobileNav()" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ============ 1. HERO ============ -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="hero-orb o1"></div>
+    <div class="hero-orb o2"></div>
+    <div class="hero-orb o3"></div>
+    <!-- Dotted-circle decorations (neurosolutionlc.com signature element) -->
+    <svg class="hero-dots hero-dots-tr" viewBox="0 0 320 320" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="dotPatternTR" x="0" y="0" width="14" height="14" patternUnits="userSpaceOnUse">
+          <circle cx="2" cy="2" r="1.4" fill="currentColor"/>
+        </pattern>
+      </defs>
+      <circle cx="160" cy="160" r="156" fill="url(#dotPatternTR)"/>
+    </svg>
+    <svg class="hero-dots hero-dots-bl" viewBox="0 0 260 260" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="dotPatternBL" x="0" y="0" width="12" height="12" patternUnits="userSpaceOnUse">
+          <circle cx="2" cy="2" r="1.2" fill="currentColor"/>
+        </pattern>
+      </defs>
+      <circle cx="130" cy="130" r="126" fill="url(#dotPatternBL)"/>
+    </svg>
+  </div>
+  <div class="hero-inner">
+    <div class="hero-grid">
+      <div class="hero-text">
+        <div class="hero-badge reveal"><span class="pulse"></span> Now Accepting Georgia Families</div>
+        <h1 class="hero-title reveal reveal-d1">Functional neurology for kids on the spectrum &mdash; <em>from home.</em></h1>
+        <p class="hero-sub reveal reveal-d2">For over a decade, Dr. Kyle Daigle has helped families across 6 continents in his NeuroSage Centers. Now the same protocol comes home &mdash; clinician-guided, drug-free, science-backed.</p>
+        <div class="hero-actions reveal reveal-d3">
+          <a class="btn-primary" href="#book">Book a Free Consult <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+          <a class="btn-secondary" href="#testimonials">See family stories</a>
+        </div>
+        <div class="hero-proof reveal reveal-d4">
+          <div class="hero-proof-icons">
+            <div class="hero-proof-icon">&#127942;</div>
+            <div class="hero-proof-icon">&#129504;</div>
+            <div class="hero-proof-icon">&#127760;</div>
+          </div>
+          <div class="hero-proof-text"><strong>Led by Dr. Kyle Daigle, DC, FIBFN-CND</strong> &mdash; 3 clinics on 3 continents &middot; Families from 56+ countries</div>
+        </div>
+      </div>
+      <!-- Image collage placeholders. Swap in real .webp/.jpg later. -->
+      <div class="hero-collage reveal reveal-d2" aria-hidden="true">
+        <div class="hero-collage-tile t1">
+          <svg viewBox="0 0 200 240" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#E6F8FE"/><stop offset="100%" stop-color="#B3E8F7"/></linearGradient></defs>
+            <rect width="200" height="240" fill="url(#g1)"/>
+            <circle cx="100" cy="100" r="36" fill="#FFFFFF" opacity="0.5"/>
+            <text x="100" y="220" text-anchor="middle" font-family="Inter" font-size="11" fill="#31312E" opacity="0.5">photo placeholder</text>
+          </svg>
+        </div>
+        <div class="hero-collage-tile t2">
+          <svg viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs><linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#F2F2F2"/><stop offset="100%" stop-color="#D9D9D9"/></linearGradient></defs>
+            <rect width="200" height="200" fill="url(#g2)"/>
+            <circle cx="100" cy="90" r="30" fill="#FFFFFF" opacity="0.7"/>
+            <text x="100" y="180" text-anchor="middle" font-family="Inter" font-size="11" fill="#31312E" opacity="0.5">photo placeholder</text>
+          </svg>
+        </div>
+        <div class="hero-collage-tile t3">
+          <svg viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs><linearGradient id="g3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#FAFAFA"/><stop offset="100%" stop-color="#E0E0E0"/></linearGradient></defs>
+            <rect width="200" height="200" fill="url(#g3)"/>
+            <circle cx="100" cy="90" r="28" fill="#00CEFD" opacity="0.18"/>
+            <text x="100" y="180" text-anchor="middle" font-family="Inter" font-size="11" fill="#31312E" opacity="0.5">photo placeholder</text>
+          </svg>
+        </div>
+        <div class="hero-collage-tile t4">
+          <svg viewBox="0 0 200 240" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs><linearGradient id="g4" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0E0E0E"/><stop offset="100%" stop-color="#31312E"/></linearGradient></defs>
+            <rect width="200" height="240" fill="url(#g4)"/>
+            <circle cx="100" cy="110" r="34" fill="#00CEFD" opacity="0.25"/>
+            <text x="100" y="220" text-anchor="middle" font-family="Inter" font-size="11" fill="#FAFAFA" opacity="0.5">photo placeholder</text>
+          </svg>
+        </div>
+        <!-- Floating chip badges on the collage -->
+        <div class="hero-collage-chip chip-1">Find Hope Again</div>
+        <div class="hero-collage-chip chip-2">Recover Faster</div>
+        <div class="hero-collage-chip chip-3">Better Results</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2. STATS ============ -->
+<div class="stats-bar reveal">
+  <div class="stats-inner">
+    <div class="stat"><div class="stat-value">12 Weeks</div><div class="stat-label">Structured Program</div></div>
+    <div class="stat-divider"></div>
+    <div class="stat"><div class="stat-value">1:1</div><div class="stat-label">Same Clinician Throughout</div></div>
+    <div class="stat-divider"></div>
+    <div class="stat"><div class="stat-value">100%</div><div class="stat-label">Delivered From Home</div></div>
+    <div class="stat-divider"></div>
+    <div class="stat"><div class="stat-value">Drug-Free</div><div class="stat-label">Non-Invasive Protocol</div></div>
+  </div>
+</div>
+
+<!-- ============ 3. TRUST BADGES ============ -->
+<div class="trust-bar reveal">
+  <div class="trust-inner">
+    <div class="trust-badge"><div class="trust-badge-icon tb-hipaa">&#128274;</div><div class="trust-badge-text">HIPAA Compliant</div></div>
+    <div class="trust-badge"><div class="trust-badge-icon tb-tele">&#128225;</div><div class="trust-badge-text">Telehealth Delivered</div></div>
+    <div class="trust-badge"><div class="trust-badge-icon tb-lic">&#10004;</div><div class="trust-badge-text">Licensed Clinicians</div></div>
+    <div class="trust-badge"><div class="trust-badge-icon tb-safe">&#128737;</div><div class="trust-badge-text">Non-Invasive &amp; Drug-Free</div></div>
+  </div>
+</div>
+
+<!-- ============ 4A. DR. KYLE INTRO (SHORT) ============ -->
+<section class="kyle-intro-section" id="dr-kyle">
+  <div class="kyle-intro-inner">
+    <div class="kyle-photo-wrap reveal">
+      <div class="kyle-photo">
+        <img src="dr-kyle.png" alt="Dr. Kyle Daigle" loading="lazy" width="480" height="600">
+      </div>
+      <div class="kyle-photo-badge">102K+ Followers <span>&middot; @drkyledaigle</span></div>
+    </div>
+    <div class="kyle-content reveal reveal-d2">
+      <div class="section-eyebrow">Meet Your Clinical Director</div>
+      <div>
+        <h2 class="kyle-name">Dr. Kyle Daigle</h2>
+        <div class="kyle-name-suffix">DC &middot; FIBFN-CND</div>
+      </div>
+      <p class="kyle-bio">Dr. Kyle Daigle is a <strong>functional neurologist and chiropractor</strong> from Lake Charles, Louisiana &mdash; founder of NeuroSage Centers and co-developer of the NeuroSage platform. For over a decade he has worked with families navigating autism, developmental delays, and complex neurological conditions, with patients traveling from <strong>56+ countries</strong> to be seen at his clinics.</p>
+      <div class="kyle-credentials">
+        <div class="kyle-cred">
+          <div class="kyle-cred-icon">&#127942;</div>
+          <div class="kyle-cred-text"><strong>IAFNR Lifetime Achievement</strong><small>2019 &middot; Functional neurology</small></div>
+        </div>
+        <div class="kyle-cred">
+          <div class="kyle-cred-icon">&#10084;&#65039;</div>
+          <div class="kyle-cred-text"><strong>Humanitarian Award</strong><small>2018 &middot; IAFNR</small></div>
+        </div>
+        <div class="kyle-cred">
+          <div class="kyle-cred-icon">&#128218;</div>
+          <div class="kyle-cred-text"><strong>Author &times; 2</strong><small>"Out Speaking Autism," "What if You Knew"</small></div>
+        </div>
+        <div class="kyle-cred">
+          <div class="kyle-cred-icon">&#129504;</div>
+          <div class="kyle-cred-text"><strong>Co-Founder, SNA Technologies</strong><small>Developer of the NeuroSage platform</small></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4B. LEGACY: 3 CLINICS / 6 CONTINENTS ============ -->
+<section class="legacy-section" id="practice">
+  <div class="legacy-inner">
+    <div class="legacy-grid">
+      <div class="legacy-content reveal">
+        <div class="section-eyebrow">A Decade of Clinical Practice</div>
+        <h2 class="legacy-title">Built in three clinics. <em>Proven on six continents.</em></h2>
+        <p class="legacy-lead">Families have traveled across the world to work with <strong>Dr. Kyle</strong> in person at his NeuroSage Centers in Lake Charles, Atlanta, and Dubai.</p>
+        <p class="legacy-lead">NeuroHome is the next step: the same clinical protocol, delivered to families who can't travel &mdash; or who simply want their child treated in the place they're most comfortable.</p>
+        <div class="legacy-pivot">Now expanding access &mdash; one family at a time</div>
+      </div>
+      <div class="clinics-card reveal reveal-d2">
+        <div class="clinics-card-eyebrow">NeuroSage Centers</div>
+        <div class="clinics-list">
+          <div class="clinic-row">
+            <div class="clinic-pin">&#128205;</div>
+            <div class="clinic-info">
+              <div class="clinic-name">NeuroSage Center of Lake Charles</div>
+              <div class="clinic-region">Lake Charles, Louisiana &middot; USA</div>
+            </div>
+            <div class="clinic-flag">&#127482;&#127480;</div>
+          </div>
+          <div class="clinic-row">
+            <div class="clinic-pin">&#128205;</div>
+            <div class="clinic-info">
+              <div class="clinic-name">NeuroSage Center of Atlanta</div>
+              <div class="clinic-region">Atlanta, Georgia &middot; USA</div>
+            </div>
+            <div class="clinic-flag">&#127482;&#127480;</div>
+          </div>
+          <div class="clinic-row">
+            <div class="clinic-pin">&#128205;</div>
+            <div class="clinic-info">
+              <div class="clinic-name">NeuroSage Center of Dubai</div>
+              <div class="clinic-region">Dubai &middot; United Arab Emirates</div>
+            </div>
+            <div class="clinic-flag">&#127462;&#127466;</div>
+          </div>
+        </div>
+        <div class="legacy-reach">
+          <div class="legacy-reach-num">6</div>
+          <div class="legacy-reach-label">
+            <strong>Continents reached</strong>
+            Families have come to Dr. Kyle's clinics from across the globe.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5. PATIENT STORIES ============ -->
+<section class="testimonials-section" id="testimonials">
+  <div class="testimonials-inner">
+    <div class="section-eyebrow reveal">Real Patient Outcomes</div>
+    <h2 class="conditions-decorative reveal reveal-d1">Real Families. Real Words.</h2>
+    <h3 class="conditions-headline reveal reveal-d2">Defying Limits and <em>Embracing Hope</em></h3>
+    <p class="section-sub reveal reveal-d3">We achieve results where others fall short. If your doctor has ever said, "We're not saying no, but it probably won't ever happen," you don't have to accept that. What parents tell us &mdash; in their own words &mdash; after working with Dr. Kyle and the NeuroSage team.</p>
+
+    <div class="testimonials-grid">
+      <div class="testimonial-card featured reveal">
+        <div class="testimonial-stars">&#9733; &#9733; &#9733; &#9733; &#9733;</div>
+        <div class="testimonial-quote">"Within three weeks, our son started making eye contact again. The clinician noticed shifts in his nervous system before we even saw them at home. This program changed our family."</div>
+        <div class="testimonial-attr"><strong>Sarah M.</strong> &mdash; Pilot Family, Atlanta GA</div>
+      </div>
+      <div class="testimonial-card reveal reveal-d1">
+        <div class="testimonial-stars">&#9733; &#9733; &#9733; &#9733; &#9733;</div>
+        <div class="testimonial-quote">"Living rural, we never had access to this kind of care. The weekly check-ins keep us on track and our son is finally meeting milestones we'd been told to give up on."</div>
+        <div class="testimonial-attr"><strong>Rachel K.</strong> &mdash; Home Program Family, GA</div>
+      </div>
+      <div class="testimonial-card reveal reveal-d2">
+        <div class="testimonial-stars">&#9733; &#9733; &#9733; &#9733; &#9733;</div>
+        <div class="testimonial-quote">"We had given up on traditional therapy. The daily home protocol, the laser work, the team &mdash; it was unlike anything we'd experienced. Our daughter is a different child."</div>
+        <div class="testimonial-attr"><strong>Michael T.</strong> &mdash; NeuroSage Family</div>
+      </div>
+      <div class="testimonial-card reveal reveal-d3">
+        <div class="testimonial-stars">&#9733; &#9733; &#9733; &#9733; &#9733;</div>
+        <div class="testimonial-quote">"What I love most is that I understand what's happening. Every week the clinician explains the why. I'm not just doing exercises &mdash; I'm building my child's brain."</div>
+        <div class="testimonial-attr"><strong>Amanda L.</strong> &mdash; Home Program Family</div>
+      </div>
+    </div>
+
+    <h3 class="video-section-title reveal" hidden>Patient Stories</h3>
+    <div class="video-testimonials" hidden>
+      <!-- Hidden until real patient story videos are produced. Restore by removing 'hidden' attributes above. -->
+      <div class="video-card reveal reveal-d1">
+        <div class="video-thumb"><div class="video-placeholder"><div class="vp-icon">&#127909;</div><div>Family video<br>Coming soon</div></div></div>
+        <div class="video-info"><div class="video-name">Pilot family story</div><div class="video-condition">Autism spectrum &middot; age 6</div></div>
+      </div>
+      <div class="video-card reveal reveal-d2">
+        <div class="video-thumb"><div class="video-placeholder"><div class="vp-icon">&#127909;</div><div>Family video<br>Coming soon</div></div></div>
+        <div class="video-info"><div class="video-name">Pilot family story</div><div class="video-condition">Autism spectrum &middot; age 4</div></div>
+      </div>
+      <div class="video-card reveal reveal-d3">
+        <div class="video-thumb"><div class="video-placeholder"><div class="vp-icon">&#127909;</div><div>Family video<br>Coming soon</div></div></div>
+        <div class="video-info"><div class="video-name">Pilot family story</div><div class="video-condition">Autism spectrum &middot; age 9</div></div>
+      </div>
+    </div>
+
+    <div class="testimonials-footer reveal">
+      <a class="btn-primary" href="#book">Book a free 15-min call <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6. WHAT WE ADDRESS ============ -->
+<section class="conditions-section" id="conditions">
+  <div class="conditions-inner">
+    <div class="section-eyebrow reveal">What We Address</div>
+    <h2 class="conditions-decorative reveal reveal-d1">Navigating Beyond Limitations</h2>
+    <h3 class="conditions-headline reveal reveal-d2">Healing Across a <em>Spectrum</em> of Conditions</h3>
+    <p class="section-sub reveal reveal-d3">Every body system harmonizes with the symphony of the brain and nervous system. Autism shows up differently in every child &mdash; our protocol targets the underlying neurology, not just the surface symptoms.</p>
+    <div class="conditions-grid">
+      <article class="condition-card reveal">
+        <h4 class="condition-card-title">Speech Delays</h4>
+        <p class="condition-card-desc">Targeted protocols help children find their voice, building the neural foundation for expressive language.</p>
+      </article>
+      <article class="condition-card reveal reveal-d1">
+        <h4 class="condition-card-title">Social Engagement</h4>
+        <p class="condition-card-desc">Eye contact, joint attention, and back-and-forth communication develop as the social brain reorganizes.</p>
+      </article>
+      <article class="condition-card reveal reveal-d2">
+        <h4 class="condition-card-title">Sensory Processing</h4>
+        <p class="condition-card-desc">For children overwhelmed by sounds, lights, textures, or crowds &mdash; we calm the nervous system at the brainstem.</p>
+      </article>
+      <article class="condition-card reveal reveal-d3">
+        <h4 class="condition-card-title">Meltdowns &amp; Anxiety</h4>
+        <p class="condition-card-desc">Severe emotional dysregulation responds to vagal-tone work and primitive reflex integration.</p>
+      </article>
+      <article class="condition-card reveal">
+        <h4 class="condition-card-title">Repetitive Behaviors</h4>
+        <p class="condition-card-desc">Stims, scripting, and rigid patterns soften as the underlying sensory and regulation needs are addressed.</p>
+      </article>
+      <article class="condition-card reveal reveal-d1">
+        <h4 class="condition-card-title">Sleep Dysregulation</h4>
+        <p class="condition-card-desc">When sleep breaks down, everything does. We restore the circadian and brainstem inputs that govern it.</p>
+      </article>
+      <article class="condition-card reveal reveal-d2">
+        <h4 class="condition-card-title">Feeding &amp; Texture Aversion</h4>
+        <p class="condition-card-desc">Texture aversion and limited food repertoire are sensory-motor problems &mdash; addressable, not permanent.</p>
+      </article>
+      <article class="condition-card reveal reveal-d3">
+        <h4 class="condition-card-title">Motor &amp; Coordination</h4>
+        <p class="condition-card-desc">Toe-walking, clumsiness, and balance issues respond to vestibular and cerebellar input.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 7. DISCOVERY QUIZ ============ -->
+<section class="quiz-section" id="discover">
+  <div class="quiz-inner">
+    <div class="section-eyebrow reveal" style="display:inline-block">Quick Discovery</div>
+    <h2 class="quiz-title reveal reveal-d1">Recognize your child in any of these?</h2>
+    <p class="quiz-sub reveal reveal-d2">Five questions. Two minutes. We'll show you the areas of brain development driving your child's behavior &mdash; and the exact patterns our protocol targets.</p>
+    <div class="quiz-card reveal reveal-d3" id="quizCard"></div>
+  </div>
+</section>
+
+<!-- ============ 8. THE METHOD ============ -->
+<section class="method-process-section" id="method">
+  <div class="method-process-inner">
+    <div class="method-process-header">
+      <div class="section-eyebrow reveal">The Method</div>
+      <h2 class="conditions-decorative reveal reveal-d1">Redefining Results Through</h2>
+      <h3 class="conditions-headline reveal reveal-d2">Progressive <em>Methods</em></h3>
+      <p class="section-sub reveal reveal-d3">Most families come to Dr. Kyle after years of being told what their child has. His process starts with a different question:</p>
+      <div class="method-question reveal reveal-d3">What is driving your child's nervous system right now &mdash; and what input does it need every day to <strong>reorganize</strong>?</div>
+    </div>
+
+    <div class="method-steps-grid">
+      <div class="method-step-card reveal reveal-d1">
+        <div class="method-step-num">Step 01</div>
+        <div class="method-step-title">Find the child's primary pattern</div>
+        <div class="method-step-body">Dr. Kyle doesn't treat every child as the same diagnosis. The first step is identifying the dominant clinical pattern driving the nervous system &mdash; foundational delay, sensory-motor, birth trauma, environmental, hyperimmune, regression, or severe dysregulation. <strong>Two children with the same label may receive very different plans.</strong></div>
+      </div>
+
+      <div class="method-step-card reveal reveal-d2">
+        <div class="method-step-num">Step 02</div>
+        <div class="method-step-title">Start with regulation, not performance</div>
+        <div class="method-step-body">The process is <strong>bottom-up</strong>. We begin with the systems that determine whether your child can even receive therapy: brainstem regulation, vagal tone, sensory safety, sleep, primitive reflexes, balance, coordination, and timing.</div>
+      </div>
+
+      <div class="method-step-card reveal reveal-d3">
+        <div class="method-step-num">Step 03</div>
+        <div class="method-step-title">Turn the plan into a daily home rhythm</div>
+        <div class="method-step-body">A predictable daily structure &mdash; a morning block, a main therapy session, midday touch-ups, and an evening wind-down. <strong>The plan tells parents what to do, when, and how much.</strong> No guessing.</div>
+      </div>
+
+      <div class="method-step-card reveal reveal-d4">
+        <div class="method-step-num">Step 04</div>
+        <div class="method-step-title">Adjust intensity to real capacity</div>
+        <div class="method-step-body">Some days are LIGHT, some MID, some HIGH. The plan flexes to your child's nervous system &mdash; not the other way around. <strong>The plan respects biology.</strong> It meets the nervous system where it is, then gradually builds capacity.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 9. GETTING STARTED ============ -->
+<section class="section" id="how">
+  <div class="section-eyebrow reveal">Getting Started</div>
+  <h2 class="conditions-decorative reveal reveal-d1">Unraveling the Path Ahead</h2>
+  <h3 class="conditions-headline reveal reveal-d2">Start Your <em>Healing Transformation</em></h3>
+  <p class="section-sub reveal reveal-d3">No clinics, no waitlists. We ship everything to your door and pair your child with a specialist trained on Dr. Kyle's methodology. Three steps, twelve weeks, one dedicated clinician.</p>
+  <div class="steps-grid">
+    <div class="step-card reveal reveal-d1">
+      <div class="step-num">01</div>
+      <div class="step-icon i1">&#128222;</div>
+      <div class="step-title">Free 15-Min Consult</div>
+      <div class="step-desc">A short video call with our concierge team. We learn about your child, explain how the program works, and decide together if it's a fit.</div>
+    </div>
+    <div class="step-card reveal reveal-d2">
+      <div class="step-num">02</div>
+      <div class="step-icon i2">&#128230;</div>
+      <div class="step-title">Device + Clinician Match</div>
+      <div class="step-desc">We ship a clinical-grade kit to your home and match your child with a specialist who works with you every week of the program.</div>
+    </div>
+    <div class="step-card reveal reveal-d3">
+      <div class="step-num">03</div>
+      <div class="step-icon i3">&#129504;</div>
+      <div class="step-title">Weekly Sessions Begin</div>
+      <div class="step-desc">Guided 1:1 telehealth sessions with your clinician, daily home protocol in the NeuroSage app, and a concierge who's a message away.</div>
+    </div>
+  </div>
+
+  <!-- 12-week mini timeline (absorbs killed Program section) -->
+  <div class="mini-timeline reveal">
+    <div class="mini-timeline-header">
+      <div class="mini-timeline-title">Your 12-Week Journey</div>
+      <div class="mini-timeline-sub">Same clinician throughout &middot; ATEC tracking at baseline, mid, and final</div>
+    </div>
+    <div class="mini-timeline-track">
+      <div class="mini-phase">
+        <div class="mini-phase-dot"></div>
+        <div class="mini-phase-label">Weeks 1&ndash;2</div>
+        <div class="mini-phase-desc">Foundation</div>
+      </div>
+      <div class="mini-phase-line"></div>
+      <div class="mini-phase">
+        <div class="mini-phase-dot"></div>
+        <div class="mini-phase-label">Weeks 3&ndash;6</div>
+        <div class="mini-phase-desc">Building</div>
+      </div>
+      <div class="mini-phase-line"></div>
+      <div class="mini-phase">
+        <div class="mini-phase-dot"></div>
+        <div class="mini-phase-label">Weeks 7&ndash;10</div>
+        <div class="mini-phase-desc">Accelerating</div>
+      </div>
+      <div class="mini-phase-line"></div>
+      <div class="mini-phase">
+        <div class="mini-phase-dot last"></div>
+        <div class="mini-phase-label">Weeks 11&ndash;12</div>
+        <div class="mini-phase-desc">Results</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 10. FAQ ============ -->
+<section class="section" id="faq">
+  <div class="section-eyebrow reveal">Questions</div>
+  <h2 class="conditions-decorative reveal reveal-d1">Everything Families Ask</h2>
+  <h3 class="conditions-headline reveal reveal-d2">Frequently <em>Asked</em></h3>
+  <p class="section-sub reveal reveal-d3">The questions parents bring to every Discovery call &mdash; answered up front.</p>
+  <div class="faq-list">
+    <div class="faq-item reveal">
+      <button class="faq-q" type="button" aria-expanded="false" onclick="toggleFaq(this)">Do I need any technical setup at home?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="faq-a"><p>Just a stable internet connection and a quiet space. We ship the device kit pre-configured with instructions, and your concierge walks you through setup on Day 1. Most families are running their first session within 15 minutes.</p></div>
+    </div>
+    <div class="faq-item reveal reveal-d1">
+      <button class="faq-q" type="button" aria-expanded="false" onclick="toggleFaq(this)">How does pricing work?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="faq-a"><p>We discuss pricing on the free Discovery call so we can match the right program tier to your child's needs.</p></div>
+    </div>
+    <div class="faq-item reveal reveal-d2">
+      <button class="faq-q" type="button" aria-expanded="false" onclick="toggleFaq(this)">Is this available outside of Georgia?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="faq-a"><p>We're launching the pilot with Georgia families first. Expansion to additional states is planned as the program matures. Book a Discovery call and we'll let you know when your state opens.</p></div>
+    </div>
+    <div class="faq-item reveal reveal-d3">
+      <button class="faq-q" type="button" aria-expanded="false" onclick="toggleFaq(this)">Who are the clinicians?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="faq-a"><p>Every clinician is trained on Dr. Kyle Daigle's exact methodology through the NeuroSage Hub certification program. They are licensed professionals working under Dr. Kyle's clinical direction.</p></div>
+    </div>
+    <div class="faq-item reveal reveal-d4">
+      <button class="faq-q" type="button" aria-expanded="false" onclick="toggleFaq(this)">How do you track progress?
+        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="faq-a"><p>We use the Autism Treatment Evaluation Checklist (ATEC) at baseline, mid-program (Week 6), and final (Week 12). It measures speech, sociability, sensory/cognitive awareness, and health/behavior &mdash; giving you and your clinician objective data on what's changing.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 11. BOOK A CALL ============ -->
+<section class="cta-section" id="book">
+  <div class="cta-banner reveal">
+    <h2>Ready to see what's possible?</h2>
+    <p>Book a free 15-minute consultation. No commitment, no waitlist.</p>
+    <div class="booking-embed">
+      <!--
+        ============================================================
+        GHL CALENDAR EMBED — PASTE EMBED CODE HERE
+        ============================================================
+        How to get it:
+          1. Log into GoHighLevel
+          2. Calendars → pick the booking calendar
+          3. Settings → Share → copy the "Embed Code"
+          4. Replace the placeholder div below with the GHL <iframe> or <script> + <div>
+
+        Notes:
+          - Set width="100%"
+          - Set height around 660px (or whatever GHL recommends)
+          - Add loading="lazy" if iframe-based
+          - Add a meaningful title attribute (e.g. title="Book a free Discovery consultation")
+        ============================================================
+      -->
+      <div class="ghl-calendar-placeholder">
+        <div class="ghl-cal-icon">&#128197;</div>
+        <div class="ghl-cal-title">GHL Calendar embed goes here</div>
+        <div class="ghl-cal-sub">Paste the embed code from GoHighLevel into this section. See the HTML comment above for the exact swap point.</div>
+        <a class="btn-primary ghl-cal-fallback" href="tel:+14704814320">Or call us &middot; (470) 481-4320 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-brand">NeuroHome &middot; A NeuroSage program</div>
+  <div class="footer-links">
+    <a class="footer-link" href="#dr-kyle">Dr. Kyle</a>
+    <a class="footer-link" href="#method">The Method</a>
+    <a class="footer-link" href="#testimonials">Stories</a>
+    <a class="footer-link" href="#">Privacy</a>
+    <a class="footer-link" href="mailto:hello@neurosagehub.com">Contact</a>
+  </div>
+</footer>
+
+<div class="sticky-cta" id="stickyCta">
+  <div class="sticky-cta-inner">
+    <a class="btn-primary" href="#book">Book a Free Consult</a>
+    <a class="btn-phone" href="tel:+14704814320" aria-label="Call us">&#128222;</a>
+  </div>
+</div>
+
+<script src="neurohome.js"></script>
+</body>
+</html>
