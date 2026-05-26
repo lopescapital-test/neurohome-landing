@@ -114,7 +114,7 @@ const quizQuestions = [
     ]},
 ];
 
-const quizState = { current: 0, answers: {}, email: '', childName: '', parentName: '', honeypot: '', startedAt: Date.now(), done: false };
+const quizState = { current: 0, answers: {}, email: '', honeypot: '', startedAt: Date.now(), done: false };
 const quizCard = document.getElementById('quizCard');
 
 // GHL Inbound Webhook for Quiz → Create Contact workflow
@@ -136,15 +136,7 @@ function renderQuiz() {
         <span>Almost done</span>
       </div>
       <div class="quiz-question">Where should we send your results?</div>
-      <div class="quiz-hint">We'll send a personalized summary plus a link to book a free Discovery call if you'd like to talk it through with us.</div>
-      <div class="quiz-input-group">
-        <label class="quiz-input-label" for="quizParentName">Your first name</label>
-        <input class="quiz-input" id="quizParentName" type="text" autocomplete="given-name" placeholder="e.g. Sarah" value="${quizState.parentName || ''}">
-      </div>
-      <div class="quiz-input-group">
-        <label class="quiz-input-label" for="quizChildName">Child's first name</label>
-        <input class="quiz-input" id="quizChildName" type="text" autocomplete="off" placeholder="e.g. Alex" value="${quizState.childName || ''}">
-      </div>
+      <div class="quiz-hint">Just your email. We'll send a personalized summary plus a link to book a free Discovery call if you'd like to talk it through with us.</div>
       <div class="quiz-input-group">
         <label class="quiz-input-label" for="quizEmail">Your email</label>
         <input class="quiz-input" id="quizEmail" type="email" autocomplete="email" inputmode="email" placeholder="you@email.com" value="${quizState.email || ''}" aria-describedby="quizEmailError">
@@ -162,22 +154,16 @@ function renderQuiz() {
     const emailInput = document.getElementById('quizEmail');
     const emailError = document.getElementById('quizEmailError');
     const nextBtn = document.getElementById('quizNext');
-    const childInput = document.getElementById('quizChildName');
-    const parentInput = document.getElementById('quizParentName');
     const honeypotInput = document.getElementById('quizCompany');
 
     const isEmailValid = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 
     function validateAll() {
-      const emailOk = isEmailValid(emailInput.value);
-      const parentOk = parentInput.value.trim().length > 0;
-      const childOk = childInput.value.trim().length > 0;
-      nextBtn.disabled = !(emailOk && parentOk && childOk);
+      nextBtn.disabled = !isEmailValid(emailInput.value);
     }
 
     emailInput.addEventListener('input', () => {
       quizState.email = emailInput.value;
-      // clear error while typing; only show error on blur
       if (emailError.textContent) emailError.textContent = '';
       validateAll();
     });
@@ -186,8 +172,6 @@ function renderQuiz() {
         emailError.textContent = 'Please enter a valid email address.';
       }
     });
-    parentInput.addEventListener('input', () => { quizState.parentName = parentInput.value; validateAll(); });
-    childInput.addEventListener('input', () => { quizState.childName = childInput.value; validateAll(); });
     honeypotInput.addEventListener('input', () => { quizState.honeypot = honeypotInput.value; });
     validateAll();
     return;
@@ -284,8 +268,6 @@ function quizSubmit() {
 
   const payload = {
     email: quizState.email,
-    quiz_parent_first_name: quizState.parentName || '',
-    quiz_child_first_name: quizState.childName || '',
     quiz_score_speech: quizState.answers.speech,
     quiz_score_social: quizState.answers.social,
     quiz_score_sensory: quizState.answers.sensory,
@@ -311,7 +293,7 @@ function renderResult() {
     .map(([k, v]) => ({ key: k, label: labelMap[k], score: v }))
     .sort((a, b) => b.score - a.score);
   const topAreas = scored.filter(s => s.score >= 2).slice(0, 3);
-  const greeting = quizState.childName ? `Based on your answers about ${quizState.childName}` : 'Based on your answers';
+  const greeting = 'Based on your answers';
 
   let body;
   if (topAreas.length === 0) {
@@ -332,3 +314,46 @@ function renderResult() {
 }
 
 if (quizCard) renderQuiz();
+
+// ========== INSTAGRAM EMBED LAZY-LOADER ==========
+// Loads Instagram's embed.js only when a testimonial scrolls into view.
+// This keeps ~200KB of Meta tracking JS off the initial page load
+// for visitors who never scroll to the testimonials section.
+(function () {
+  const cards = document.querySelectorAll('.testimonial-ig-wrap');
+  if (!cards.length) return;
+
+  let scriptLoaded = false;
+
+  function loadInstagramScript() {
+    if (scriptLoaded) return;
+    scriptLoaded = true;
+
+    const s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.instagram.com/embed.js';
+    s.onload = () => {
+      // Once script loads, ask IG to process the blockquotes on the page
+      if (window.instgrm && window.instgrm.Embeds) {
+        window.instgrm.Embeds.process();
+      }
+    };
+    s.onerror = () => {
+      console.warn('Instagram embed script failed to load. Falling back to permalink links inside each blockquote.');
+    };
+    document.body.appendChild(s);
+  }
+
+  // Trigger on first scroll-into-view of any testimonial card
+  const io = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (entry.isIntersecting) {
+        loadInstagramScript();
+        io.disconnect();
+        break;
+      }
+    }
+  }, { rootMargin: '300px 0px' }); // 300px early so embeds are ready by the time they're visible
+
+  cards.forEach((c) => io.observe(c));
+})();
