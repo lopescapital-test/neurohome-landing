@@ -114,7 +114,7 @@ const quizQuestions = [
     ]},
 ];
 
-const quizState = { current: 0, answers: {}, email: '', honeypot: '', startedAt: Date.now(), done: false };
+const quizState = { current: 0, answers: {}, parentName: '', childName: '', email: '', honeypot: '', startedAt: Date.now(), done: false };
 const quizCard = document.getElementById('quizCard');
 
 // GHL Inbound Webhook for Quiz → Create Contact workflow
@@ -136,7 +136,15 @@ function renderQuiz() {
         <span>Almost done</span>
       </div>
       <div class="quiz-question">Where should we send your results?</div>
-      <div class="quiz-hint">Just your email. We'll send a personalized summary plus a link to book a free Discovery call if you'd like to talk it through with us.</div>
+      <div class="quiz-hint">A personalized summary, plus a link to book a free Discovery call if you'd like to talk it through with us.</div>
+      <div class="quiz-input-group">
+        <label class="quiz-input-label" for="quizParentName">Your first name</label>
+        <input class="quiz-input" id="quizParentName" type="text" autocomplete="given-name" placeholder="Parent / guardian first name" value="${quizState.parentName || ''}">
+      </div>
+      <div class="quiz-input-group">
+        <label class="quiz-input-label" for="quizChildName">Child's first name</label>
+        <input class="quiz-input" id="quizChildName" type="text" autocomplete="off" placeholder="So we can personalize your summary" value="${quizState.childName || ''}">
+      </div>
       <div class="quiz-input-group">
         <label class="quiz-input-label" for="quizEmail">Your email</label>
         <input class="quiz-input" id="quizEmail" type="email" autocomplete="email" inputmode="email" placeholder="you@email.com" value="${quizState.email || ''}" aria-describedby="quizEmailError">
@@ -151,6 +159,8 @@ function renderQuiz() {
         <button class="quiz-next" id="quizNext" type="button" onclick="quizSubmit()" disabled>See my results <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
       </div>`;
 
+    const parentInput = document.getElementById('quizParentName');
+    const childInput = document.getElementById('quizChildName');
     const emailInput = document.getElementById('quizEmail');
     const emailError = document.getElementById('quizEmailError');
     const nextBtn = document.getElementById('quizNext');
@@ -159,9 +169,20 @@ function renderQuiz() {
     const isEmailValid = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 
     function validateAll() {
-      nextBtn.disabled = !isEmailValid(emailInput.value);
+      const hasParent = parentInput.value.trim().length > 0;
+      const hasChild = childInput.value.trim().length > 0;
+      const hasEmail = isEmailValid(emailInput.value);
+      nextBtn.disabled = !(hasParent && hasChild && hasEmail);
     }
 
+    parentInput.addEventListener('input', () => {
+      quizState.parentName = parentInput.value;
+      validateAll();
+    });
+    childInput.addEventListener('input', () => {
+      quizState.childName = childInput.value;
+      validateAll();
+    });
     emailInput.addEventListener('input', () => {
       quizState.email = emailInput.value;
       if (emailError.textContent) emailError.textContent = '';
@@ -268,6 +289,8 @@ function quizSubmit() {
 
   const payload = {
     email: quizState.email,
+    quiz_parent_first_name: quizState.parentName.trim(),
+    quiz_child_first_name: quizState.childName.trim(),
     quiz_score_speech: quizState.answers.speech,
     quiz_score_social: quizState.answers.social,
     quiz_score_sensory: quizState.answers.sensory,
@@ -293,13 +316,16 @@ function renderResult() {
     .map(([k, v]) => ({ key: k, label: labelMap[k], score: v }))
     .sort((a, b) => b.score - a.score);
   const topAreas = scored.filter(s => s.score >= 2).slice(0, 3);
-  const greeting = 'Based on your answers';
+  // Sanitize child name for safe interpolation into HTML
+  const childName = (quizState.childName || '').trim().replace(/[<>&"']/g, '');
+  const childRef = childName || 'your child';
+  const greeting = childName ? `Based on your answers about ${childName}` : 'Based on your answers';
 
   let body;
   if (topAreas.length === 0) {
-    body = `${greeting}, your child is in a relatively well-regulated range across these five areas. If you're noticing specific concerns we haven't covered, the best next step is a quick conversation with our team.`;
+    body = `${greeting}, ${childRef} is in a relatively well-regulated range across these five areas. If you're noticing specific concerns we haven't covered, the best next step is a quick conversation with our team.`;
   } else {
-    body = `${greeting}, the areas where your child may benefit most are below. NeuroHome's protocol works on these together &mdash; building the underlying neurology from the brainstem up, not just managing symptoms.`;
+    body = `${greeting}, the areas where ${childRef} may benefit most are below. NeuroHome's protocol works on these together &mdash; building the underlying neurology from the brainstem up, not just managing symptoms.`;
   }
 
   quizCard.innerHTML = `
