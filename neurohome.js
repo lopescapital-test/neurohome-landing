@@ -312,6 +312,15 @@ function quizSubmit() {
 
 function renderResult() {
   const labelMap = { speech: 'Speech & language', social: 'Social engagement', sensory: 'Sensory regulation', motor: 'Motor & coordination', behavior: 'Emotional regulation' };
+
+  const interpretations = {
+    speech: `Speech isn't just talking &mdash; it's sensory integration, motor planning, and cranial-nerve coordination working together. When speech lags, the underlying issue is usually that the tongue and face aren't fully mapped neurologically yet. The child often understands far more than they can express.`,
+    social: `Eye contact, joint attention, and back-and-forth social interaction depend on a nervous system that feels safe enough to engage. When social engagement is limited, it usually points to a brain that's stuck in "guard mode" &mdash; and the social systems can't come online until the brainstem signals it's safe.`,
+    sensory: `Sensory overwhelm happens when the brainstem can't filter input properly. Sounds, lights, and textures the rest of us tune out come through the door at full volume. This is one of the most common foundations our protocol addresses, because no other progress holds while a child is sensory-overloaded.`,
+    motor: `Motor patterns are built bottom-up &mdash; balance, timing, primitive reflexes, and cerebellar coordination form the foundation other skills rest on. When motor lags, it's usually a brainstem-and-cerebellum signal, and it often means other systems (speech, focus, regulation) are waiting on this one to mature.`,
+    behavior: `Frequent meltdowns and anxiety usually trace back to a nervous system in chronic sympathetic dominance &mdash; fight-or-flight that can't quite turn off. Calming the brainstem and supporting vagal tone tends to move the needle faster than behavior-only approaches. Behavior is an output of the underlying circuitry.`,
+  };
+
   const scored = Object.entries(quizState.answers)
     .map(([k, v]) => ({ key: k, label: labelMap[k], score: v }))
     .sort((a, b) => b.score - a.score);
@@ -329,12 +338,25 @@ function renderResult() {
     body = `${greeting}, the areas where ${childRef} may benefit most are below. NeuroHome's protocol works on these together &mdash; building the underlying neurology from the brainstem up, not just managing symptoms.`;
   }
 
+  const areasHtml = topAreas.length > 0
+    ? `<div class="quiz-result-areas-detail">
+         ${topAreas.map(a => `
+           <div class="quiz-result-area-block">
+             <div class="quiz-result-area-header">
+               <span class="quiz-result-pill">${a.label}</span>
+             </div>
+             <p class="quiz-result-area-text">${interpretations[a.key]}</p>
+           </div>
+         `).join('')}
+       </div>`
+    : '';
+
   quizCard.innerHTML = `
     <div class="quiz-result">
       <div class="quiz-result-icon">&#129504;</div>
       <div class="quiz-result-title">${childPossessive} profile</div>
       <div class="quiz-result-body">${body}</div>
-      ${topAreas.length > 0 ? `<div class="quiz-result-areas">${topAreas.map(a => `<span class="quiz-result-pill">${a.label}</span>`).join('')}</div>` : ''}
+      ${areasHtml}
       <a class="btn-primary" href="#book" style="margin-top:8px;">Talk through ${childPossessive} results with us <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
       <div class="quiz-disclaimer">This is an informational summary, not a clinical diagnosis. A licensed clinician will review your child's full profile during the Discovery call.</div>
     </div>`;
