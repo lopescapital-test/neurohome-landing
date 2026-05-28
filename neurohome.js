@@ -72,19 +72,19 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 
 // ========== DISCOVERY QUIZ ==========
 const quizQuestions = [
-  { id: 'speech', q: 'Speech', hint: 'How does your child communicate verbally for their age?',
+  { id: 'speech', q: 'Speech', hint: 'How does your child talk with you?',
     options: [
       { v: 0, label: 'Speaks in full age-appropriate sentences' },
       { v: 1, label: 'Speaks but limited vocabulary or grammar' },
       { v: 2, label: 'Uses words but not full sentences' },
-      { v: 3, label: 'Minimally verbal — single words or sounds' },
+      { v: 3, label: 'Minimally verbal: single words or sounds' },
       { v: 4, label: 'Nonverbal' },
     ]},
-  { id: 'social', q: 'Social engagement', hint: 'Eye contact, social back-and-forth, interest in others.',
+  { id: 'social', q: 'Social engagement', hint: 'How does your child connect with you and other people?',
     options: [
       { v: 0, label: 'Engages socially and makes consistent eye contact' },
       { v: 1, label: 'Engages with effort, eye contact is inconsistent' },
-      { v: 2, label: 'Limited engagement — prefers solo activity' },
+      { v: 2, label: 'Limited engagement, prefers solo activity' },
       { v: 3, label: 'Avoids social interaction most of the time' },
       { v: 4, label: 'No social engagement / no eye contact' },
     ]},
@@ -93,10 +93,10 @@ const quizQuestions = [
       { v: 0, label: 'Handles sensory input well' },
       { v: 1, label: 'Mildly sensitive to certain inputs' },
       { v: 2, label: 'Moderately overwhelmed by sensory input' },
-      { v: 3, label: 'Frequently overwhelmed — covers ears, melts down' },
+      { v: 3, label: 'Frequently overwhelmed, covers ears, melts down' },
       { v: 4, label: 'Severely dysregulated by most sensory input' },
     ]},
-  { id: 'motor', q: 'Motor & coordination', hint: 'Balance, coordination, gross/fine motor skills.',
+  { id: 'motor', q: 'Motor & coordination', hint: 'How does your child move and coordinate their body?',
     options: [
       { v: 0, label: 'Age-appropriate motor skills' },
       { v: 1, label: 'Mildly clumsy or behind on milestones' },
@@ -104,7 +104,7 @@ const quizQuestions = [
       { v: 3, label: 'Significant motor delays or toe-walking' },
       { v: 4, label: 'Severe motor or balance impairment' },
     ]},
-  { id: 'behavior', q: 'Emotional regulation', hint: 'Meltdowns, anxiety, rigid patterns, repetitive behaviors.',
+  { id: 'behavior', q: 'Emotional regulation', hint: 'How does your child handle big feelings and frustration?',
     options: [
       { v: 0, label: 'Emotionally regulated for their age' },
       { v: 1, label: 'Mild meltdowns or rigidity' },
@@ -270,7 +270,7 @@ function quizNext() { if (quizState.current < quizQuestions.length) { quizState.
 function quizBack() { if (quizState.current > 0) { quizState.current--; renderQuiz(); } }
 
 function quizSubmit() {
-  // Render result immediately — never block parent on network
+  // Render result immediately. Never block parent on network.
   quizState.done = true;
   renderResult();
 
@@ -314,11 +314,11 @@ function renderResult() {
   const labelMap = { speech: 'Speech & language', social: 'Social engagement', sensory: 'Sensory regulation', motor: 'Motor & coordination', behavior: 'Emotional regulation' };
 
   const interpretations = {
-    speech: `Speech isn't just talking &mdash; it's sensory integration, motor planning, and cranial-nerve coordination working together. When speech lags, the underlying issue is usually that the tongue and face aren't fully mapped neurologically yet. The child often understands far more than they can express.`,
-    social: `Eye contact, joint attention, and back-and-forth social interaction depend on a nervous system that feels safe enough to engage. When social engagement is limited, it usually points to a brain that's stuck in "guard mode" &mdash; and the social systems can't come online until the brainstem signals it's safe.`,
+    speech: `Speech isn't just talking. It's sensory integration, motor planning, and cranial-nerve coordination working together. When speech lags, the underlying issue is usually that the tongue and face aren't fully mapped neurologically yet. The child often understands far more than they can express.`,
+    social: `Eye contact, joint attention, and back-and-forth social interaction depend on a nervous system that feels safe enough to engage. When social engagement is limited, it usually points to a brain that's stuck in "guard mode," and the social systems can't come online until the brainstem signals it's safe.`,
     sensory: `Sensory overwhelm happens when the brainstem can't filter input properly. Sounds, lights, and textures the rest of us tune out come through the door at full volume. This is one of the most common foundations our protocol addresses, because no other progress holds while a child is sensory-overloaded.`,
-    motor: `Motor patterns are built bottom-up &mdash; balance, timing, primitive reflexes, and cerebellar coordination form the foundation other skills rest on. When motor lags, it's usually a brainstem-and-cerebellum signal, and it often means other systems (speech, focus, regulation) are waiting on this one to mature.`,
-    behavior: `Frequent meltdowns and anxiety usually trace back to a nervous system in chronic sympathetic dominance &mdash; fight-or-flight that can't quite turn off. Calming the brainstem and supporting vagal tone tends to move the needle faster than behavior-only approaches. Behavior is an output of the underlying circuitry.`,
+    motor: `Motor patterns are built bottom-up: balance, timing, primitive reflexes, and cerebellar coordination form the foundation other skills rest on. When motor lags, it's usually a brainstem-and-cerebellum signal, and it often means other systems (speech, focus, regulation) are waiting on this one to mature.`,
+    behavior: `Frequent meltdowns and anxiety usually trace back to a nervous system in chronic sympathetic dominance: fight-or-flight that can't quite turn off. Calming the brainstem and supporting vagal tone tends to move the needle faster than behavior-only approaches. Behavior is an output of the underlying circuitry.`,
   };
 
   const scored = Object.entries(quizState.answers)
@@ -335,7 +335,7 @@ function renderResult() {
   if (topAreas.length === 0) {
     body = `${greeting}, ${childRef} is in a relatively well-regulated range across these five areas. If you're noticing specific concerns we haven't covered, the best next step is a quick conversation with our team.`;
   } else {
-    body = `${greeting}, the areas where ${childRef} may benefit most are below. NeuroHome's protocol works on these together &mdash; building the underlying neurology from the brainstem up, not just managing symptoms.`;
+    body = `${greeting}, the areas where ${childRef} may benefit most are below. NeuroHome's protocol works on these together, building the underlying neurology from the brainstem up, not just managing symptoms.`;
   }
 
   const areasHtml = topAreas.length > 0
