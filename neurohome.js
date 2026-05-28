@@ -136,7 +136,7 @@ function renderQuiz() {
         <span>Almost done</span>
       </div>
       <div class="quiz-question">Where should we send your results?</div>
-      <div class="quiz-hint">A personalized summary, plus a link to book a free Discovery call if you'd like to talk it through with us.</div>
+      <div class="quiz-hint">You'll see your child's profile on the next screen. We'll also email you the booking link.</div>
       <div class="quiz-input-group">
         <label class="quiz-input-label" for="quizParentName">Your first name</label>
         <input class="quiz-input" id="quizParentName" type="text" autocomplete="given-name" placeholder="Parent / guardian first name" value="${quizState.parentName || ''}">
@@ -319,6 +319,7 @@ function renderResult() {
   // Sanitize child name for safe interpolation into HTML
   const childName = (quizState.childName || '').trim().replace(/[<>&"']/g, '');
   const childRef = childName || 'your child';
+  const childPossessive = childName ? `${childName}'s` : `your child's`;
   const greeting = childName ? `Based on your answers about ${childName}` : 'Based on your answers';
 
   let body;
@@ -331,10 +332,10 @@ function renderResult() {
   quizCard.innerHTML = `
     <div class="quiz-result">
       <div class="quiz-result-icon">&#129504;</div>
-      <div class="quiz-result-title">Your child's profile</div>
+      <div class="quiz-result-title">${childPossessive} profile</div>
       <div class="quiz-result-body">${body}</div>
       ${topAreas.length > 0 ? `<div class="quiz-result-areas">${topAreas.map(a => `<span class="quiz-result-pill">${a.label}</span>`).join('')}</div>` : ''}
-      <a class="btn-primary" href="#book" style="margin-top:8px;">Book your free Discovery call <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      <a class="btn-primary" href="#book" style="margin-top:8px;">Talk through ${childPossessive} results with us <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
       <div class="quiz-disclaimer">This is an informational summary, not a clinical diagnosis. A licensed clinician will review your child's full profile during the Discovery call.</div>
     </div>`;
 }
