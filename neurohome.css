@@ -692,6 +692,34 @@ body {
 .quiz-result-body { font-size: 15px; color: var(--text-2); line-height: 1.7; max-width: 480px; margin: 0 auto 24px; }
 .quiz-result-areas { display: inline-flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 28px; }
 .quiz-result-pill { display: inline-flex; align-items: center; gap: 6px; background: var(--teal-light); color: #0099C2; padding: 6px 14px; border-radius: var(--radius-pill); font-size: 13px; font-weight: 600; }
+.quiz-result-areas-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-bottom: 28px;
+  text-align: left;
+  max-width: 540px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.quiz-result-area-block {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px 18px;
+}
+.quiz-result-area-header {
+  margin-bottom: 10px;
+}
+.quiz-result-area-header .quiz-result-pill {
+  margin: 0;
+}
+.quiz-result-area-text {
+  font-size: 14px;
+  color: var(--text-2);
+  line-height: 1.65;
+  margin: 0;
+}
 .quiz-disclaimer { font-size: 11px; color: var(--text-3); font-style: italic; margin-top: 18px; max-width: 460px; margin-left: auto; margin-right: auto; line-height: 1.5; }
 
 /* =====================================================
