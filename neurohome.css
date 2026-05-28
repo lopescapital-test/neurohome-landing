@@ -727,6 +727,9 @@ body {
 .cta-banner p { font-size: 16px; color: rgba(240,240,248,0.55); margin-bottom: 36px; position: relative; z-index: 2; }
 .booking-embed { max-width: 900px; margin: 24px auto 0; position: relative; z-index: 2; background: #fff; border-radius: var(--radius); overflow: hidden; box-shadow: 0 12px 48px rgba(0,0,0,0.30); }
 .ghl-calendar-iframe { display: block; width: 100%; min-height: 780px; height: 780px; border: 0; background: #fff; }
+.intake-link-note { max-width: 900px; margin: 20px auto 0; text-align: center; font-size: 14px; color: rgba(240,240,248,0.65); line-height: 1.5; position: relative; z-index: 2; }
+.intake-link-note a { color: var(--brand); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; transition: color 0.2s; }
+.intake-link-note a:hover { color: #fff; }
 
 /* =====================================================
    Sub-page content
