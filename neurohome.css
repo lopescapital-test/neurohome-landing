@@ -1,5 +1,5 @@
 /* =====================================================
-   NeuroHome shared design system — NeuroSolution brand match
+   NeuroHome shared design system — NeuroSage brand match
    Palette + typography sourced from neurosolutionlc.com
    ===================================================== */
 
@@ -141,7 +141,7 @@ body {
   color: var(--text-inv);
 }
 
-/* Section primitives — NeuroSolution rhythm:
+/* Section primitives — NeuroSage rhythm:
    small eyebrow → big bold headline → comfortable sub */
 .section { max-width: 1320px; margin: 0 auto; padding: clamp(64px,8vw,110px) clamp(20px,4vw,56px); }
 .section-eyebrow {
