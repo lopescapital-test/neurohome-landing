@@ -79,9 +79,15 @@ body{
 .plan-head.accel .price-stack{border-top-color:rgba(255,255,255,0.18)}
 .price-total{font-family:'Outfit',sans-serif;font-size:30px;font-weight:800;letter-spacing:-1px;color:var(--ink)}
 .plan-head.accel .price-total{color:#fff}
-.price-meta{font-size:12px;margin-top:5px}
+.price-meta{font-size:11.5px;margin-top:5px;line-height:1.45}
 .plan-head.intro .price-meta{color:var(--ink-3)}
 .plan-head.accel .price-meta{color:#9FB0C4}
+.price-weekly{font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;color:var(--cyan-ink)}
+.plan-head.accel .price-weekly{color:var(--cyan)}
+.price-weekly .amt{font-family:'Outfit',sans-serif;font-size:30px;font-weight:800;letter-spacing:-1px;color:var(--ink);display:inline-block;margin-right:2px}
+.plan-head.accel .price-weekly .amt{color:#fff}
+.price-meta strong{color:var(--ink);font-weight:700}
+.plan-head.accel .price-meta strong{color:#fff}
 
 /* body rows */
 .m-section td{background:var(--bg);font-family:'Outfit',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--ink-3);padding:11px 22px;border-bottom:1px solid var(--line);border-top:1px solid var(--line)}
@@ -106,6 +112,26 @@ body{
 .plan-cta.accel{background:var(--navy);color:#fff;border:1.5px solid var(--navy)}
 .plan-cta.accel:hover{background:var(--navy-2);transform:translateY(-2px);box-shadow:0 8px 26px rgba(0,194,255,0.32)}
 .plan-cta:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+
+
+/* ---------- financing ---------- */
+.financing{max-width:920px;margin:28px auto 0;padding:0 24px}
+.fin-inner{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm)}
+.fin-head{background:var(--navy);padding:22px 26px;color:#fff}
+.fin-head .eyebrow{font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--cyan);margin-bottom:7px}
+.fin-head h2{font-family:'Outfit',sans-serif;font-size:21px;font-weight:800;letter-spacing:-0.5px;margin-bottom:6px}
+.fin-head p{font-size:13.5px;color:#C9D6E5;line-height:1.6;max-width:640px}
+.fin-body{padding:22px 26px 24px}
+.rep-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+@media(max-width:600px){.rep-grid{grid-template-columns:1fr}}
+.rep-card{background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-sm);padding:16px 18px}
+.rep-name{font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;color:var(--ink-2);margin-bottom:8px}
+.rep-week{font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;color:var(--cyan-ink);margin-bottom:8px}
+.rep-week .ramt{font-size:26px;font-weight:800;letter-spacing:-0.8px;color:var(--ink)}
+.rep-line{font-size:12px;color:var(--ink-3);line-height:1.5}
+.rep-line strong{color:var(--ink);font-weight:700}
+.fin-disclosure{font-size:11px;color:var(--ink-3);line-height:1.6;margin:0}
+.fin-disclosure strong{color:var(--ink-2)}
 
 /* ---------- why full (delta strip) ---------- */
 .why{max-width:920px;margin:30px auto 0;padding:0 24px}
@@ -188,8 +214,8 @@ footer a{color:var(--ink-2);text-decoration:underline;text-underline-offset:2px}
             <div class="plan-name">Home Intensive</div>
             <div class="plan-tagline">Your introduction to Dr. Kyle's method: the full home program, parent-led with our team coaching you along the way.</div>
             <div class="price-stack">
-              <div class="price-total">$6,500</div>
-              <div class="price-meta">One-time · 8-week program</div>
+              <div class="price-weekly"><span class="amt">$125</span>/week*</div>
+              <div class="price-meta"><strong>$6,500</strong> total &middot; 12 months at 0% APR*</div>
             </div>
           </div>
         </td>
@@ -200,8 +226,8 @@ footer a{color:var(--ink-2);text-decoration:underline;text-underline-offset:2px}
             <div class="plan-name">Full Intensive</div>
             <div class="plan-tagline">Our highest-touch program for accelerated results: far more team time, complete kit, full labs, and live MD care.</div>
             <div class="price-stack">
-              <div class="price-total">$11,500</div>
-              <div class="price-meta">One-time · 8-week program</div>
+              <div class="price-weekly"><span class="amt">$221</span>/week*</div>
+              <div class="price-meta"><strong>$11,500</strong> total &middot; 12 months at 0% APR*</div>
             </div>
           </div>
         </td>
@@ -263,6 +289,32 @@ footer a{color:var(--ink-2);text-decoration:underline;text-underline-offset:2px}
       </tr>
 
     </table>
+  </div>
+
+  <!-- financing -->
+  <div class="financing">
+    <div class="fin-inner">
+      <div class="fin-head">
+        <div class="eyebrow">Financing available</div>
+        <h2>Pay over 12 months at 0% APR.</h2>
+        <p>Qualified families can split either program into 52 weekly payments at 0% APR: no interest, and no added cost over the sticker price. Subject to approval.</p>
+      </div>
+      <div class="fin-body">
+        <div class="rep-grid">
+          <div class="rep-card">
+            <div class="rep-name">Home Intensive</div>
+            <div class="rep-week"><span class="ramt">$125</span>/week</div>
+            <div class="rep-line">52 weekly payments &middot; 12 months &middot; 0% APR &middot; total of payments <strong>$6,500</strong></div>
+          </div>
+          <div class="rep-card">
+            <div class="rep-name">Full Intensive</div>
+            <div class="rep-week"><span class="ramt">$221</span>/week</div>
+            <div class="rep-line">52 weekly payments &middot; 12 months &middot; 0% APR &middot; total of payments <strong>$11,500</strong></div>
+          </div>
+        </div>
+        <p class="fin-disclosure">*Representative example. 0% APR financing over 12 months (52 weekly payments); total of payments equals the program price with no interest or finance charge. Financing is subject to credit approval and provided by <strong>Cherry</strong>; advertised terms are representative and actual terms may vary by applicant. [COUNSEL: confirm final disclosure wording and lender terms before launch.]</p>
+      </div>
+    </div>
   </div>
 
   <!-- why full is the bigger step -->
