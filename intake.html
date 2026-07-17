@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NeuroHome — Pre-call Intake</title>
+<title>NeuroHome Pre-call Intake</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 52 52'%3E%3Crect x='8' y='22' width='36' height='27' rx='3' stroke='%231D2939' stroke-width='2.5' fill='white'/%3E%3Cpath d='M 4 24 L 26 5 L 48 24' stroke='%231D2939' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='8' cy='22' r='3.5' fill='%2300CEFD'/%3E%3Ccircle cx='44' cy='22' r='3.5' fill='%2300CEFD'/%3E%3Ccircle cx='8' cy='49' r='3.5' fill='%2300CEFD'/%3E%3Ccircle cx='44' cy='49' r='3.5' fill='%2300CEFD'/%3E%3Ccircle cx='26' cy='5' r='3.5' fill='%2300CEFD'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 /* =====================================================
-   NeuroHome intake — re-skinned from v1.3.9
+   NeuroHome intake, re-skinned from v1.3.9
    Content + engine: identical to source (121 questions, engine v1.3.2)
    Visual language: matches NeuroHome landing page
      - Outfit (display) + Inter (body)
@@ -339,6 +339,22 @@ em { font-style: normal; color: var(--brand); }
   .likert-btn .likert-val { font-size: 14px; }
   .likert-btn.likert-unsure { margin-left: 0; flex-basis: 100%; }
 }
+/* Read-only / locked state (after successful submit) */
+.readonly-note {
+  background: var(--brand-soft);
+  border-left: 3px solid var(--brand);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  color: var(--ink-2);
+  font-weight: 500;
+  line-height: 1.5;
+}
+.likert-btn:disabled { cursor: not-allowed; }
+.likert-btn:disabled:not(.selected) { opacity: 0.45; }
+.toggle:has(input:disabled) { cursor: not-allowed; opacity: 0.7; }
+.toggle:has(input:disabled):hover { border-color: var(--border); color: var(--ink-2); }
 /* History toggles */
 .toggle-group { margin-bottom: 22px; }
 .toggle-group:last-child { margin-bottom: 0; }
@@ -463,6 +479,7 @@ em { font-style: normal; color: var(--brand); }
   margin-bottom: 24px;
   box-shadow: 0 8px 24px rgba(11, 218, 81, 0.25);
 }
+.thanks-check.error { background: var(--warm); box-shadow: 0 8px 24px rgba(245, 166, 35, 0.25); }
 .thanks-hero h1 { margin-bottom: 14px; }
 .thanks-hero p.thanks-message {
   color: var(--ink-2);
@@ -476,39 +493,6 @@ em { font-style: normal; color: var(--brand); }
   font-size: 13px;
   color: var(--ink-3);
 }
-.eligibility-banner {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  padding: 22px 24px;
-  border-radius: 14px;
-  margin: 32px auto;
-  max-width: 560px;
-  text-align: left;
-  border-left: 4px solid;
-}
-.eligibility-banner.eligible { background: var(--brand-soft); border-left-color: var(--brand); }
-.eligibility-banner.consult  { background: var(--warm-soft); border-left-color: var(--warm); }
-.eligibility-icon {
-  font-family: 'Outfit', sans-serif;
-  font-size: 22px;
-  line-height: 1;
-  min-width: 28px;
-  text-align: center;
-  padding-top: 2px;
-  font-weight: 700;
-}
-.eligibility-banner.eligible .eligibility-icon { color: var(--brand-deep); }
-.eligibility-banner.consult .eligibility-icon { color: var(--warn); }
-.eligibility-title {
-  font-family: 'Outfit', sans-serif;
-  font-size: 18px;
-  color: var(--ink);
-  margin-bottom: 6px;
-  letter-spacing: -0.3px;
-  font-weight: 700;
-}
-.eligibility-sub { font-size: 14px; line-height: 1.55; color: var(--ink-2); }
 .thanks-actions {
   display: flex;
   gap: 12px;
@@ -516,20 +500,6 @@ em { font-style: normal; color: var(--brand); }
   margin-top: 28px;
   flex-wrap: wrap;
 }
-.submit-inline-note {
-  margin: 16px auto;
-  padding: 14px 18px;
-  background: var(--danger-soft);
-  border-left: 3px solid var(--danger);
-  border-radius: 8px;
-  font-size: 13px;
-  color: var(--ink-2);
-  line-height: 1.55;
-  max-width: 560px;
-  text-align: left;
-  display: none;
-}
-.submit-inline-note.show { display: block; }
 footer.foot {
   margin: 80px auto 0;
   padding: 28px 24px;
@@ -573,10 +543,10 @@ footer.foot code { font-family: ui-monospace, monospace; color: var(--brand-deep
     <span class="tag">Pre-call Intake · 121 questions · ~20 min</span>
     <h1 class="display-xl">Tell us about <em>your child.</em></h1>
     <p class="lede">
-      Thanks for booking a call with us. This intake gives Dr. Kyle's team a complete picture of your child &mdash; nervous system, behavior, history, what's going well, what's been hard, what you've noticed change over time. Filling it out before your call means we walk in already knowing your child, so the conversation can focus on the specifics rather than starting from scratch.
+      Thanks for booking a call with us. This intake gives Dr. Kyle's team a complete picture of your child: nervous system, behavior, history, what's going well, what's been hard, what you've noticed change over time. Filling it out before your call means we walk in already knowing your child, so the conversation can focus on the specifics rather than starting from scratch.
     </p>
     <p class="lede">
-      <strong>Score each item from 0 to 4</strong>, based on how often or how severely it applies. The form saves automatically &mdash; you can close it and return later.
+      <strong>Score each item from 0 to 4</strong>, based on how often or how severely it applies. The form saves automatically. You can close it and return later.
     </p>
     <div class="welcome-fields">
       <div class="field-block">
@@ -626,7 +596,7 @@ footer.foot code { font-family: ui-monospace, monospace; color: var(--brand-deep
     </div>
     <button class="button-primary" id="welcome-begin">Begin <span>&rarr;</span></button>
     <div class="welcome-meta">
-      <strong>Scoring scale.</strong> 0 &mdash; Never / doesn't apply. 1 &mdash; Rarely (once or twice ever). 2 &mdash; Sometimes (monthly or mild). 3 &mdash; Often (weekly or moderate). 4 &mdash; Always (daily or severe). If you genuinely don't know, pick <em>Unsure</em> and we'll skip it in scoring.
+      <strong>Scoring scale.</strong> 0: Never / doesn't apply. 1: Rarely (once or twice ever). 2: Sometimes (monthly or mild). 3: Often (weekly or moderate). 4: Always (daily or severe). If you genuinely don't know, pick <em>Unsure</em> and we'll skip it in scoring.
     </div>
   </div>
 </section>
@@ -663,20 +633,12 @@ footer.foot code { font-family: ui-monospace, monospace; color: var(--brand-deep
 <!-- ============ THANKS ============ -->
 <section class="screen" id="screen-thanks">
   <div class="thanks-hero">
-    <div class="thanks-check">&#10003;</div>
-    <h1 class="display-l">Thank you.</h1>
-    <p class="thanks-message" id="thanks-message">Your intake has been saved. Dr. Kyle's team will review your answers before your call so they can come in already knowing your child.</p>
-    <div class="eligibility-banner" id="eligibility-banner" style="display:none;">
-      <div class="eligibility-icon" id="eligibility-icon"></div>
-      <div class="eligibility-body">
-        <div class="eligibility-title" id="eligibility-title"></div>
-        <div class="eligibility-sub" id="eligibility-sub"></div>
-      </div>
-    </div>
-    <div class="submit-inline-note" id="submit-inline-note"></div>
-    <p class="thanks-note">You can close this page. Your answers are saved on this device if you need to come back and make changes.</p>
+    <div class="thanks-check" id="thanks-check">&#10003;</div>
+    <h1 class="display-l" id="thanks-title">Thank you.</h1>
+    <p class="thanks-message" id="thanks-message">Your intake has been submitted.</p>
+    <p class="thanks-note" id="thanks-note">You can close this page. Your intake has been submitted. If you need to change anything, contact Dr. Kyle's team.</p>
     <div class="thanks-actions">
-      <button class="button-secondary" id="thanks-review">Review my answers</button>
+      <button class="button-secondary" id="thanks-review">Review my answers (read-only)</button>
     </div>
   </div>
 </section>
@@ -685,7 +647,7 @@ footer.foot code { font-family: ui-monospace, monospace; color: var(--brand-deep
 </footer>
 <script>
 // =====================================================
-// CONTENT — 121 questions, identical to v1.3.9
+// CONTENT: 121 questions, identical to v1.3.9
 // =====================================================
 const PHENOTYPE_QUESTIONS = [
   { code: "P01", id: "sensory_autonomic_overload", name: "Sensory-Autonomic Overload", descriptor: "How your child's nervous system responds to the world around them.",
@@ -925,6 +887,14 @@ const GHL_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/OzXiG0YQaeEK
 const INTAKE_FORM_VERSION = 'v1.3.9';
 const INTAKE_ENGINE_VERSION = 'v1.3.2';
 const SUBMISSION_TIMEOUT_MS = 30000;
+// --- Scoring / draft-lifecycle tuning (edit these in one place) ---
+// Item 4a: a phenotype must have at least this fraction of its questions answered
+// with a numeric 0–4 rating before it can be banded above LOW. Below this, the band
+// is capped at LOW regardless of the computed percentage, and the phenotype is
+// treated as low-confidence (Item 4b). Placeholder pending Dr. Kyle's sign-off.
+const MIN_ANSWERED_FRACTION = 0.5;
+// Item 3: abandoned (never-submitted) drafts are discarded on load after this long.
+const DRAFT_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 let submitPhase = 'idle';
 let submitGeneration = 0;
 const state = {
@@ -946,19 +916,25 @@ function loadFromStorage() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      Object.assign(state.scores, parsed.scores || {});
-      Object.assign(state.history, parsed.history || {});
-      Object.assign(state.cc, parsed.cc || {});
-      state.parentFirstName = parsed.parentFirstName || '';
-      state.parentLastName = parsed.parentLastName || '';
-      state.parentState = parsed.parentState || '';
-      state.childName = parsed.childName || '';
-      state.age = parsed.age || 5;
-      state.email = parsed.email || '';
-      state.phone = parsed.phone || '';
-      state.contactId = parsed.contactId || '';
+      const savedAt = parsed.savedAt || 0;
+      if (savedAt && (Date.now() - savedAt) > DRAFT_TTL_MS) {
+        // Item 3: abandoned draft is stale. Discard it and start fresh.
+        localStorage.removeItem(STORAGE_KEY);
+      } else {
+        Object.assign(state.scores, parsed.scores || {});
+        Object.assign(state.history, parsed.history || {});
+        Object.assign(state.cc, parsed.cc || {});
+        state.parentFirstName = parsed.parentFirstName || '';
+        state.parentLastName = parsed.parentLastName || '';
+        state.parentState = parsed.parentState || '';
+        state.childName = parsed.childName || '';
+        state.age = parsed.age || 5;
+        state.email = parsed.email || '';
+        state.phone = parsed.phone || '';
+        state.contactId = parsed.contactId || '';
+      }
     }
-  } catch (e) { /* corrupt/absent — ignore */ }
+  } catch (e) { /* corrupt/absent, ignore */ }
   if (typeof window !== 'undefined' && window.location && window.location.search) {
     const params = new URLSearchParams(window.location.search);
     const urlEmail = params.get('email');
@@ -978,10 +954,11 @@ function saveToStorage() {
     try {
       const persistable = { ...state };
       delete persistable.currentSection;
+      persistable.savedAt = Date.now(); // item 3: timestamp for abandoned-draft expiry
       localStorage.setItem(STORAGE_KEY, JSON.stringify(persistable));
       if (note) { note.textContent = 'Saved'; note.className = 'autosave-note saved'; }
     } catch (e) {
-      if (note) { note.textContent = 'Could not save — storage unavailable'; note.className = 'autosave-note'; }
+      if (note) { note.textContent = 'Could not save: storage unavailable'; note.className = 'autosave-note'; }
     }
   }, 250);
 }
@@ -1090,6 +1067,9 @@ function renderIntakeSection() {
   window.scrollTo(0, 0);
   const section = SECTIONS[state.currentSection];
   const isHistory = section.code === 'HX';
+  // Item 1: once the intake has been submitted, "Review my answers" re-enters this
+  // view read-only: no edits, no re-submit (edits could not be re-sent anyway).
+  const locked = submitPhase === 'submitted_success';
   const sectionNum = state.currentSection + 1;
   const total = SECTIONS.length;
   document.getElementById('intake-section-tag').textContent = `Section ${sectionNum} of ${total} · ${section.code}`;
@@ -1103,6 +1083,7 @@ function renderIntakeSection() {
   }).join('');
   const body = document.getElementById('intake-body');
   let html = `<div class="section-card">`;
+  if (locked) html += `<div class="readonly-note">Submitted. Your answers are read-only. To change anything, contact Dr. Kyle's team.</div>`;
   if (section.descriptor) html += `<div class="section-card-sub">${section.descriptor}</div>`;
   if (isHistory) {
     section.groups.forEach(g => {
@@ -1113,7 +1094,7 @@ function renderIntakeSection() {
         const checked = item.cc ? !!state.cc[item.key] : !!state.history[item.key];
         html += `
           <label class="toggle ${isSafety}">
-            <input type="checkbox" ${dataAttr} ${checked ? 'checked' : ''}>
+            <input type="checkbox" ${dataAttr} ${checked ? 'checked' : ''} ${locked ? 'disabled' : ''}>
             <span class="toggle-dot"></span>${item.label}
           </label>`;
       });
@@ -1132,11 +1113,11 @@ function renderIntakeSection() {
           <div class="question-text">${q.text}<small>${q.qid}</small></div>
           <div class="likert">
             ${[0,1,2,3,4].map(v => `
-              <button type="button" class="likert-btn ${val === v ? 'selected' : ''}" data-qid="${q.qid}" data-val="${v}" aria-label="${q.text}: score ${v} (${LIKERT_LABELS[v]})">
+              <button type="button" class="likert-btn ${val === v ? 'selected' : ''}" data-qid="${q.qid}" data-val="${v}" aria-label="${q.text}: score ${v} (${LIKERT_LABELS[v]})" ${locked ? 'disabled' : ''}>
                 <span class="likert-val">${v}</span>
                 <span>${LIKERT_LABELS[v]}</span>
               </button>`).join('')}
-            <button type="button" class="likert-btn likert-unsure ${val === UNSURE ? 'selected' : ''}" data-qid="${q.qid}" data-val="unsure" aria-label="${q.text}: unsure / skip">
+            <button type="button" class="likert-btn likert-unsure ${val === UNSURE ? 'selected' : ''}" data-qid="${q.qid}" data-val="unsure" aria-label="${q.text}: unsure / skip" ${locked ? 'disabled' : ''}>
               <span class="likert-val">?</span>
               <span>Unsure</span>
             </button>
@@ -1148,6 +1129,7 @@ function renderIntakeSection() {
   body.innerHTML = html;
   body.querySelectorAll('.likert-btn').forEach(btn => {
     btn.addEventListener('click', () => {
+      if (submitPhase === 'submitted_success') return; // item 1: read-only after submit
       const qid = btn.dataset.qid;
       const rawVal = btn.dataset.val;
       const val = rawVal === 'unsure' ? UNSURE : parseInt(rawVal);
@@ -1176,7 +1158,16 @@ function renderIntakeSection() {
   document.getElementById('intake-back').style.visibility = state.currentSection === 0 ? 'hidden' : 'visible';
   const nextBtn = document.getElementById('intake-next');
   const isLast = state.currentSection === SECTIONS.length - 1;
-  nextBtn.innerHTML = isLast ? 'Submit intake <span>&rarr;</span>' : 'Continue <span>&rarr;</span>';
+  if (locked) {
+    // Item 1: on the last section the intake is already submitted, show a disabled
+    // "Submitted" state so nothing implies a re-click will re-send. Earlier sections
+    // stay navigable for read-only review.
+    nextBtn.innerHTML = isLast ? 'Submitted <span>&#10003;</span>' : 'Continue <span>&rarr;</span>';
+    nextBtn.disabled = isLast;
+  } else {
+    nextBtn.innerHTML = isLast ? 'Submit intake <span>&rarr;</span>' : 'Continue <span>&rarr;</span>';
+    nextBtn.disabled = false;
+  }
   refreshAnsweredCount();
 }
 function refreshQuestionRow(qid) {
@@ -1239,9 +1230,22 @@ function getPhenoUnsureCounts() {
   });
   return out;
 }
+function phenotypeAnsweredFraction(p) {
+  // Fraction of a phenotype's questions with a numeric 0–4 rating (blanks and
+  // explicit "unsure" do not count as answered).
+  let answered = 0;
+  p.questions.forEach(q => { if (typeof state.scores[q.qid] === 'number') answered++; });
+  return p.questions.length ? answered / p.questions.length : 0;
+}
 function getPhenoPercents() {
   const out = {};
-  PHENOTYPE_QUESTIONS.forEach(p => { out[p.id] = phenotypePct(p); });
+  PHENOTYPE_QUESTIONS.forEach(p => {
+    const raw = phenotypePct(p);
+    // Item 4a: below the minimum-answered floor the score isn't trustworthy, so we
+    // cap the band at LOW (report 0) regardless of the raw percentage. This prevents
+    // e.g. one answered "4" + fifteen blanks reading as 100% / VERY_HIGH.
+    out[p.id] = phenotypeAnsweredFraction(p) >= MIN_ANSWERED_FRACTION ? raw : 0;
+  });
   return out;
 }
 function isHighOrAbove(pid, pcts)  { return bandAtLeast(bandOf(pcts[pid] || 0), 'HIGH'); }
@@ -1464,9 +1468,13 @@ function classify() {
     const flags = assembleFlags(arch, overrides.flags, pcts, historyFlags);
     const nbss = computeNBSS(historyFlags, pcts);
     const unsureCounts = getPhenoUnsureCounts();
-    const lowConfidencePhenotypes = Object.entries(unsureCounts)
-      .filter(([_, c]) => c.unsureFraction > 0.5)
-      .map(([pid]) => pid);
+    // Item 4b: blanks count toward low-confidence exactly like an explicit "unsure".
+    // A phenotype is low-confidence when fewer than MIN_ANSWERED_FRACTION of its
+    // questions have a numeric answer, so skipping questions triggers the guard
+    // instead of evading it (the old check only looked at explicit "unsure").
+    const lowConfidencePhenotypes = PHENOTYPE_QUESTIONS
+      .filter(p => phenotypeAnsweredFraction(p) < MIN_ANSWERED_FRACTION)
+      .map(p => p.id);
     if (lowConfidencePhenotypes.length > 0 && !flags.includes('low_confidence_intake')) {
       flags.push('low_confidence_intake');
       flags.sort();
@@ -1483,8 +1491,7 @@ function classify() {
   } catch (e) {
     console.error('Routing engine error in classify():', e);
     submitPhase = 'submitted_failed';
-    showInlineSubmitNote('Something went wrong computing your results. Please try again, or reach out to Dr. Kyle\'s team if this keeps happening.');
-    showScreen('thanks');
+    renderThanks(null, false);
     return;
   }
   const submitPromise = submitIntake(result);
@@ -1493,20 +1500,16 @@ function classify() {
     .then(() => {
       if (myGen !== submitGeneration) return;
       submitPhase = 'submitted_success';
+      // Item 2: the draft only exists to allow resume until submission succeeds.
+      // Once it's in, don't leave PHI sitting in localStorage on a shared device.
+      try { localStorage.removeItem(STORAGE_KEY); } catch (e) { /* ignore */ }
       setTimeout(() => renderThanks(result, true), 1200);
     })
     .catch(err => {
       console.error('Intake submission failed:', err);
       if (myGen !== submitGeneration) return;
       submitPhase = 'submitted_failed';
-      const isTimeout = err && err.message === 'SUBMISSION_TIMEOUT';
-      setTimeout(() => {
-        renderThanks(result, false);
-        showInlineSubmitNote(isTimeout
-          ? 'The submission is taking longer than expected. Your answers are saved on this device. Please try again — if it keeps happening, reach out to Dr. Kyle\'s team.'
-          : 'We saved your answers locally but the submission to our system didn\'t go through. Please try again — if it keeps happening, reach out to Dr. Kyle\'s team.'
-        );
-      }, 800);
+      setTimeout(() => renderThanks(result, false), 800);
     });
 }
 function animateProcessing() {
@@ -1597,30 +1600,34 @@ async function submitIntake(r) {
   if (!response.ok) throw new Error('Webhook responded ' + response.status + ' ' + response.statusText);
   return response;
 }
+// Parent-facing result screen. NO fit/no-fit verdict is ever shown. Every
+// successful submit gets one neutral next-step message (former strong-fit,
+// consult, safety-gated, and low-confidence cases alike). The fit/safety signals
+// still go to the CRM unchanged; only this rendering is neutral. Success and
+// failure are mutually exclusive: each branch fully sets every element, so a
+// failure can never leave success chrome on screen (and vice-versa).
 function renderThanks(r, succeeded) {
-  const banner = document.getElementById('eligibility-banner');
-  const icon = document.getElementById('eligibility-icon');
-  const title = document.getElementById('eligibility-title');
-  const sub = document.getElementById('eligibility-sub');
-  if (r.home_intensive_candidate) {
-    banner.className = 'eligibility-banner eligible';
-    icon.textContent = '\u2713';
-    title.textContent = 'Your child looks like a strong fit for our 8-week home intensive';
-    sub.textContent = "Based on your answers, our home intensive program looks like a good match. Dr. Kyle's team will dig into the details on your call \u2014 bring any questions you'd like to talk through.";
+  const check = document.getElementById('thanks-check');
+  const title = document.getElementById('thanks-title');
+  const message = document.getElementById('thanks-message');
+  const note = document.getElementById('thanks-note');
+  const reviewBtn = document.getElementById('thanks-review');
+  if (succeeded) {
+    check.textContent = '\u2713';
+    check.classList.remove('error');
+    title.textContent = 'Thank you.';
+    message.textContent = "Your intake has been submitted. Dr. Kyle's team will review everything you shared before your call so they can come in already understanding your child, and talk through the right path forward together.";
+    note.style.display = '';
+    reviewBtn.textContent = 'Review my answers (read-only)';
   } else {
-    banner.className = 'eligibility-banner consult';
-    icon.textContent = '\u2192';
-    title.textContent = "There's a lot to dig into on your call";
-    sub.textContent = "Your answers gave Dr. Kyle's team a clear starting picture of your child. They'll have specific things to talk through with you \u2014 bring any questions you'd like to ask, and they'll walk you through what they're seeing.";
+    check.textContent = '!';
+    check.classList.add('error');
+    title.textContent = "We couldn't submit your intake";
+    message.textContent = "We weren't able to submit your intake just now. Please try again, and if it keeps happening, contact Dr. Kyle's team at jrichardson@neurosagehub.com and we'll help you directly.";
+    note.style.display = 'none';
+    reviewBtn.textContent = 'Return to my intake';
   }
-  banner.style.display = 'flex';
   showScreen('thanks');
-}
-function showInlineSubmitNote(text) {
-  const note = document.getElementById('submit-inline-note');
-  if (!note) return;
-  if (text) { note.textContent = text; note.classList.add('show'); }
-  else { note.classList.remove('show'); }
 }
 function formatPhoneNANP(digits) {
   if (digits.length === 0) return '';
