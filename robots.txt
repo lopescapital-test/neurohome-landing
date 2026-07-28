@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Dev/mock artifacts - keep out of the index (also exclude from deploy if possible)
+Disallow: /prototype.html
+Disallow: /app-preview.html
+Disallow: /app-prototype/
+Disallow: /compare/
+
+Sitemap: https://neurohome.com/sitemap.xml
