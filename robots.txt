@@ -7,4 +7,4 @@ Disallow: /app-preview.html
 Disallow: /app-prototype/
 Disallow: /compare/
 
-Sitemap: https://neurohome.com/sitemap.xml
+Sitemap: https://neurohome-landing.vercel.app/sitemap.xml
