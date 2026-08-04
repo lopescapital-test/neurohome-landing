@@ -10,8 +10,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 /* =====================================================
-   NeuroHome intake, re-skinned from v1.3.9
-   Content + engine: identical to source (121 questions, engine v1.3.2)
+   NeuroHome intake — form v1.4.0 (re-skinned from source v1.3.9)
+   Engine v1.3.2 (unchanged). v1.4.0 adds one advisory history item
+   (cannot_sit_still) as a home-care-readiness flag; the 121 phenotype
+   questions across 12 phenotypes are unchanged.
    Visual language: matches NeuroHome landing page
      - Outfit (display) + Inter (body)
      - Cyan #00CEFD accent
@@ -643,7 +645,7 @@ footer.foot code { font-family: ui-monospace, monospace; color: var(--brand-deep
   </div>
 </section>
 <footer class="foot">
-  <p>NeuroHome &middot; Pre-call Intake &middot; Form <code>v1.3.9</code> &middot; Engine <code>v1.3.2</code> &middot; 121 questions across 12 phenotypes</p>
+  <p>NeuroHome &middot; Pre-call Intake &middot; Form <code>v1.4.0</code> &middot; Engine <code>v1.3.2</code> &middot; 121 questions across 12 phenotypes</p>
 </footer>
 <script>
 // =====================================================
@@ -865,6 +867,7 @@ const HISTORY_SECTION = {
     ]},
     { title: "Other", items: [
       { key: "developmental_delay", label: "General developmental delay" },
+      { key: "cannot_sit_still", label: "Cannot sit still or stay seated for activities" },
       { key: "adhd", label: "Attention / ADHD is the only complaint", cc: true },
     ]},
   ]
@@ -884,7 +887,7 @@ function bandOf(pct) {
 function bandAtLeast(band, target) { return BANDS.indexOf(band) >= BANDS.indexOf(target); }
 const STORAGE_KEY = 'neurosage_intake_v1_0';
 const GHL_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/OzXiG0YQaeEKh2w5XeyU/webhook-trigger/4c769438-be07-4700-835b-48961cc6885a';
-const INTAKE_FORM_VERSION = 'v1.3.9';
+const INTAKE_FORM_VERSION = 'v1.4.0';
 const INTAKE_ENGINE_VERSION = 'v1.3.2';
 const SUBMISSION_TIMEOUT_MS = 30000;
 // --- Scoring / draft-lifecycle tuning (edit these in one place) ---
@@ -1280,6 +1283,9 @@ function evaluateHistoryFlags() {
     }
   }
   if (h.recurrent_strep || h.recurrent_ear_sinus) out.push('h_recurrent_infection_pattern');
+  // Advisory home-care-readiness tell (v1.4.0). Non-scoring, non-gating: it rides in
+  // history_flags for the care team to weigh when judging at-home fit — never routes.
+  if (h.cannot_sit_still) out.push('h_cannot_sit_still');
   return out;
 }
 function scanCriticalOverrides(critical) {
