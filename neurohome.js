@@ -91,45 +91,107 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
   });
 });
 
-// ========== INSTAGRAM EMBED LAZY-LOADER ==========
-// Loads Instagram's embed.js only when a testimonial scrolls into view.
-// This keeps ~200KB of Meta tracking JS off the initial page load
-// for visitors who never scroll to the testimonials section.
+// ========== TESTIMONIAL REEL LIGHTBOX ==========
+// Each reel card opens an on-site player that embeds the Instagram
+// reel in an iframe (played inline, no redirect), with prev/next,
+// keyboard control, backdrop/Esc close and body scroll-lock. The
+// iframe src is only set on open and cleared on close, so no
+// Instagram content (or its tracking) loads until a visitor clicks.
 (function () {
-  const cards = document.querySelectorAll('.testimonial-ig-wrap');
+  const grid = document.getElementById('reelGrid');
+  const lb = document.getElementById('reelLightbox');
+  if (!grid || !lb) return;
+
+  const cards = Array.from(grid.querySelectorAll('.reel-card[data-embed]'));
   if (!cards.length) return;
 
-  let scriptLoaded = false;
+  const frame = lb.querySelector('.reel-lb-frame');
+  const labelEl = lb.querySelector('.reel-lb-label');
+  const linkEl = lb.querySelector('.reel-lb-link');
+  const btnPrev = lb.querySelector('.reel-lb-prev');
+  const btnNext = lb.querySelector('.reel-lb-next');
+  const btnClose = lb.querySelector('.reel-lb-close');
+  const single = cards.length < 2;
+  if (single) { btnPrev.style.display = 'none'; btnNext.style.display = 'none'; }
 
-  function loadInstagramScript() {
-    if (scriptLoaded) return;
-    scriptLoaded = true;
+  let current = -1;
+  let lastFocus = null;
 
-    const s = document.createElement('script');
-    s.async = true;
-    s.src = 'https://www.instagram.com/embed.js';
-    s.onload = () => {
-      // Once script loads, ask IG to process the blockquotes on the page
-      if (window.instgrm && window.instgrm.Embeds) {
-        window.instgrm.Embeds.process();
-      }
-    };
-    s.onerror = () => {
-      console.warn('Instagram embed script failed to load. Falling back to permalink links inside each blockquote.');
-    };
-    document.body.appendChild(s);
+  function show(i) {
+    current = (i + cards.length) % cards.length;
+    const c = cards[current];
+    const label = c.getAttribute('data-label') || 'Family story';
+    const iframe = document.createElement('iframe');
+    iframe.src = c.getAttribute('data-embed');
+    iframe.title = label + ' on Instagram';
+    iframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture; clipboard-write');
+    iframe.setAttribute('allowfullscreen', '');
+    iframe.setAttribute('scrolling', 'no');
+    frame.replaceChildren(iframe);
+    labelEl.textContent = label;
+    linkEl.href = c.getAttribute('data-link') || c.getAttribute('href') || '#';
   }
 
-  // Trigger on first scroll-into-view of any testimonial card
-  const io = new IntersectionObserver((entries) => {
-    for (const entry of entries) {
-      if (entry.isIntersecting) {
-        loadInstagramScript();
-        io.disconnect();
-        break;
-      }
-    }
-  }, { rootMargin: '300px 0px' }); // 300px early so embeds are ready by the time they're visible
+  function open(i) {
+    lastFocus = document.activeElement;
+    lb.classList.add('open');
+    lb.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('reel-lock');
+    show(i);
+    btnClose.focus();
+  }
 
-  cards.forEach((c) => io.observe(c));
+  function close() {
+    lb.classList.remove('open');
+    lb.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('reel-lock');
+    frame.replaceChildren(); // stop playback
+    current = -1;
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  cards.forEach((c, i) => {
+    c.addEventListener('click', (e) => { e.preventDefault(); open(i); });
+  });
+  btnPrev.addEventListener('click', () => show(current - 1));
+  btnNext.addEventListener('click', () => show(current + 1));
+  btnClose.addEventListener('click', close);
+  lb.addEventListener('click', (e) => { if (e.target === lb) close(); });
+  document.addEventListener('keydown', (e) => {
+    if (!lb.classList.contains('open')) return;
+    if (e.key === 'Escape') close();
+    else if (!single && e.key === 'ArrowLeft') show(current - 1);
+    else if (!single && e.key === 'ArrowRight') show(current + 1);
+  });
+})();
+
+// ========== TESTIMONIAL CAROUSEL (3-up, arrow paging) ==========
+// The reel grid is a horizontal snap-scroll track showing 3 cards at a
+// time; the arrows page it by one viewport (3 on desktop, 2 on tablet,
+// 1 on mobile) and hide themselves at each end. Touch/trackpad swipe
+// works natively.
+(function () {
+  const track = document.getElementById('reelGrid');
+  if (!track) return;
+  const prev = document.querySelector('.reel-arrow-prev');
+  const next = document.querySelector('.reel-arrow-next');
+  if (!prev || !next) return;
+
+  function step() {
+    const card = track.querySelector('.reel-card');
+    const gap = parseFloat(getComputedStyle(track).gap) || 20;
+    const cw = card ? card.getBoundingClientRect().width + gap : track.clientWidth;
+    const perView = Math.max(1, Math.round((track.clientWidth + gap) / cw));
+    return cw * perView;
+  }
+  function update() {
+    const max = track.scrollWidth - track.clientWidth - 1;
+    prev.toggleAttribute('disabled', track.scrollLeft <= 0);
+    next.toggleAttribute('disabled', track.scrollLeft >= max);
+  }
+  prev.addEventListener('click', () => track.scrollBy({ left: -step(), behavior: 'smooth' }));
+  next.addEventListener('click', () => track.scrollBy({ left: step(), behavior: 'smooth' }));
+  track.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  update();
 })();
