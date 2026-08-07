@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thank You | NeuroHome</title>
+<meta name="description" content="Thank you for reaching out to NeuroHome. Keep an eye on your inbox for next steps.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 52 52'%3E%3Crect x='8' y='22' width='36' height='27' rx='3' stroke='%231D2939' stroke-width='2.5' fill='white'/%3E%3Cpath d='M 4 24 L 26 5 L 48 24' stroke='%231D2939' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='8' cy='22' r='3.5' fill='%2300CEFD'/%3E%3Ccircle cx='44' cy='22' r='3.5' fill='%2300CEFD'/%3E%3Ccircle cx='8' cy='49' r='3.5' fill='%2300CEFD'/%3E%3Ccircle cx='44' cy='49' r='3.5' fill='%2300CEFD'/%3E%3Ccircle cx='26' cy='5' r='3.5' fill='%2300CEFD'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="neurohome.css">
+<style>
+  /* Reuses the legal-page shell; adds a narrow, comfortably placed confirmation block. */
+  .legal-page { max-width: 760px; margin: 0 auto; padding: clamp(120px, 14vw, 160px) clamp(20px, 4vw, 40px) clamp(64px, 8vw, 100px); }
+  .legal-page h1 { font-family: 'Outfit', sans-serif; font-size: clamp(32px, 4.5vw, 52px); font-weight: 800; letter-spacing: -1.5px; line-height: 1.05; color: var(--text); margin-bottom: 20px; }
+  .legal-page p { font-size: 16px; color: var(--text-2); line-height: 1.75; margin-bottom: 16px; }
+  .legal-page a { color: var(--brand-deep); text-decoration: underline; text-underline-offset: 3px; }
+  .legal-page a:hover { color: var(--text); }
+  .legal-back { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: var(--text-3); text-decoration: none; margin-bottom: 32px; transition: color 0.2s; }
+  .legal-back:hover { color: var(--text); }
+  .legal-back svg { width: 14px; height: 14px; transition: transform 0.2s; }
+  .legal-back:hover svg { transform: translateX(-3px); }
+
+  /* Thank-you specifics */
+  .thanks-page { min-height: 62vh; }
+  .thanks-body { max-width: 32rem; }            /* holds the copy to ~55-60 chars/line */
+  .thanks-cta { margin-top: 28px; font-weight: 500; }
+</style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <a class="nav-brand" href="index.html" aria-label="NeuroHome by NeuroSage Centers">
+    <svg class="nav-brand-mark" width="44" height="44" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="8" y="22" width="36" height="27" rx="3" stroke="#1D2939" stroke-width="2.2" fill="none"/>
+      <path d="M 4 24 L 26 5 L 48 24" stroke="#1D2939" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="20" y="34" width="12" height="15" rx="1.5" stroke="#1D2939" stroke-width="1.5" fill="rgba(0,206,253,0.06)"/>
+      <circle cx="8" cy="22" r="3" fill="#00CEFD"/>
+      <circle cx="44" cy="22" r="3" fill="#00CEFD"/>
+      <circle cx="8" cy="49" r="3" fill="#00CEFD"/>
+      <circle cx="44" cy="49" r="3" fill="#00CEFD"/>
+      <circle cx="26" cy="5" r="3" fill="#00CEFD"/>
+    </svg>
+    <span class="nav-brand-wordmark">
+      <span class="nav-brand-name">Neuro<span>Home</span></span>
+      <span class="nav-brand-tag">by NeuroSage Centers</span>
+    </span>
+  </a>
+  <div class="nav-links" id="navLinks">
+    <a class="nav-link" href="index.html#dr-kyle">Dr. Kyle</a>
+    <a class="nav-link" href="index.html#method">The Method</a>
+    <a class="nav-link" href="index.html#faq">FAQ</a>
+    <a class="nav-cta" href="index.html#book">Book a Discovery Call</a>
+  </div>
+  <button class="nav-mobile-toggle" onclick="toggleMobileNav()" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<main class="legal-page thanks-page">
+  <a class="legal-back" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Back to NeuroHome</a>
+  <div class="thanks-body">
+    <h1>Thank you for reaching out.</h1>
+    <p>We've got your details. Keep an eye on your inbox. You'll hear from us shortly with a short message about how NeuroHome works and what we've seen with families like yours.</p>
+    <p class="thanks-cta">Already sure this is right for your family? <a href="intake.html">Start your intake</a></p>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-col footer-col-brand">
+      <div class="footer-brand-name">Neuro<span>Home</span></div>
+      <div class="footer-brand-tag">A NeuroSage Centers program</div>
+      <p class="footer-clinical">
+        Clinical direction by <strong>Dr. Kyle Daigle, DC, FIBFN-CND</strong>. NeuroHome services are delivered by licensed clinicians under Dr. Kyle's clinical supervision.
+      </p>
+      <p class="footer-disclaimer">
+        NeuroHome does not provide medical diagnosis or treatment of disease. Our protocols support nervous-system regulation and functional development; they are not a substitute for medical care. Consult your child's physician for medical concerns.
+      </p>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">Program</div>
+      <a class="footer-link" href="index.html#dr-kyle">Dr. Kyle</a>
+      <a class="footer-link" href="index.html#method">The Method</a>
+      <a class="footer-link" href="index.html#how">Getting Started</a>
+      <a class="footer-link" href="index.html#faq">FAQ</a>
+      <a class="footer-link" href="index.html#book">Book a Discovery Call</a>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">Contact</div>
+      <a class="footer-link" href="mailto:hello@neurosagehub.com">hello@neurosagehub.com</a>
+      <div class="footer-link footer-link-static">Serving Georgia &amp; Louisiana families</div>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-title">Legal</div>
+      <a class="footer-link" href="privacy.html">Privacy Policy</a>
+      <a class="footer-link" href="terms.html">Terms of Service</a>
+      <a class="footer-link" href="hipaa-notice.html">HIPAA Notice</a>
+      <a class="footer-link" href="refund-policy.html">Refund Policy</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">&copy; 2026 NeuroSage Centers. All rights reserved.</div>
+    <div class="footer-meta">NeuroHome is a pilot program of NeuroSage Centers.</div>
+  </div>
+</footer>
+
+<script src="neurohome.js"></script>
+</body>
+</html>
