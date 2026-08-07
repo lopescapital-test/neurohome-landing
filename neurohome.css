@@ -862,7 +862,7 @@ body.reel-lock { overflow: hidden; }
 /* =====================================================
    Getting Started (3 steps)
    ===================================================== */
-.steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.steps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
 .step-card { position: relative; }
 .step-num { font-family: 'Outfit', sans-serif; font-size: 46px; font-weight: 800; line-height: 1; letter-spacing: -1px; color: #16294a; margin-bottom: 14px; }
 .step-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 22px; font-size: 24px; }
