@@ -860,7 +860,7 @@ body.reel-lock { overflow: hidden; }
 .method-desc { font-size: 14px; color: var(--text-2); line-height: 1.7; }
 
 /* =====================================================
-   Getting Started (3 steps)
+   Getting Started (4 steps)
    ===================================================== */
 .steps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
 .step-card { position: relative; }
@@ -958,6 +958,7 @@ body.reel-lock { overflow: hidden; }
   .cta-book-copy > p:first-of-type { max-width: none; }
   .cta-eyebrow { justify-content: center; }
   .cta-checks { max-width: 420px; margin: 0 auto 28px; }
+  .steps-grid { grid-template-columns: repeat(2, 1fr); } /* 2-up on tablet/small-laptop; 4-up only above 1120px */
 }
 
 /* =====================================================
