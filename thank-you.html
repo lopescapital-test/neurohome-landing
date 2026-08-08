@@ -17,9 +17,6 @@
      page-specific hero + "what happens next", ported 1:1 from the design
      so layout is easy to tune. Colors match the design as delivered. */
   body { background: #fff; }
-  /* Nav: constrain contents to the hero/steps container (1120 + matching padding) so the logo aligns with the hero and the CTA with the steps grid. */
-  .nav { padding-left: 0; padding-right: 0; }
-  .ty-nav-inner { width: 100%; max-width: 1120px; margin: 0 auto; padding: 0 clamp(20px, 4vw, 40px); display: flex; align-items: center; justify-content: space-between; gap: 24px; }
   .ty-main { position: relative; overflow: hidden; font-family: 'Inter', sans-serif; color: #1D2939; }
   .ty-glow { position: absolute; top: -340px; left: 50%; transform: translateX(-50%); width: 1100px; height: 640px; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,206,253,0.16), rgba(0,206,253,0) 70%); pointer-events: none; }
 
@@ -49,15 +46,14 @@
   .ty-next-inner { max-width: 1120px; margin: 0 auto; padding: clamp(28px, 4vw, 44px) clamp(20px, 4vw, 40px) clamp(48px, 6vw, 76px); }
   .ty-next-head { margin-bottom: 44px; }
   .ty-h2 { font-family: 'Outfit', sans-serif; font-size: clamp(22px, 2.4vw, 28px); font-weight: 700; letter-spacing: -0.8px; margin: 0; color: #1D2939; }
-  .ty-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: clamp(24px, 3vw, 44px); }
-  .ty-step-line { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+  .ty-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); grid-template-rows: auto auto auto auto; gap: 0 clamp(16px, 1.8vw, 22px); }
+  .ty-step { display: grid; grid-template-rows: subgrid; grid-row: span 4; align-content: start; margin-bottom: 24px; padding: 26px 24px 28px; background: #fff; border: 1px solid #E1EDF3; border-radius: 18px; box-shadow: 0 1px 2px rgba(16,27,45,0.04); }
+  .ty-step-line { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
   .ty-dot-node { width: 11px; height: 11px; border-radius: 50%; background: #00CEFD; flex: none; box-shadow: 0 0 0 5px rgba(0,206,253,0.16); }
-  .ty-line { flex: 1; height: 1px; background: #D6E7EE; }
-  .ty-step:last-child .ty-line { background: transparent; }
   .ty-step-num { font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 1.4px; color: #98A2B3; margin-bottom: 8px; }
   .ty-step-title { font-family: 'Outfit', sans-serif; font-size: 19px; font-weight: 700; letter-spacing: -0.4px; margin: 0 0 10px; color: #1D2939; }
   .ty-step-desc { font-size: 15.5px; line-height: 1.65; color: #475467; margin: 0; text-wrap: pretty; }
-  .ty-followup { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: clamp(40px, 5vw, 60px); padding-top: 26px; border-top: 1px solid #E4EEF3; font-size: 15.5px; color: #475467; }
+  .ty-followup { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 6px; padding-top: 26px; border-top: 1px solid #E4EEF3; font-size: 15.5px; color: #475467; }
   .ty-followup a { font-weight: 600; color: #0787AE; text-decoration: underline; text-underline-offset: 3px; }
   .ty-followup a:hover { color: #1D2939; }
 </style>
@@ -65,7 +61,6 @@
 <body>
 
 <nav class="nav" id="nav">
-  <div class="ty-nav-inner">
   <a class="nav-brand" href="index.html" aria-label="NeuroHome by NeuroSage Centers">
     <svg class="nav-brand-mark" width="44" height="44" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <rect x="8" y="22" width="36" height="27" rx="3" stroke="#1D2939" stroke-width="2.2" fill="none"/>
@@ -93,7 +88,6 @@
   <button class="nav-mobile-toggle" onclick="toggleMobileNav()" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">
     <span></span><span></span><span></span>
   </button>
-  </div>
 </nav>
 
 <main class="ty-main">
@@ -127,22 +121,28 @@
       </div>
       <div class="ty-steps">
         <div class="ty-step">
-          <div class="ty-step-line"><span class="ty-dot-node"></span><span class="ty-line"></span></div>
+          <div class="ty-step-line"><span class="ty-dot-node"></span></div>
           <div class="ty-step-num">01</div>
           <h3 class="ty-step-title">A story from another parent</h3>
           <p class="ty-step-desc">A short video from a family who has walked this road and worked with Dr. Kyle.</p>
         </div>
         <div class="ty-step">
-          <div class="ty-step-line"><span class="ty-dot-node"></span><span class="ty-line"></span></div>
+          <div class="ty-step-line"><span class="ty-dot-node"></span></div>
           <div class="ty-step-num">02</div>
           <h3 class="ty-step-title">Your intake</h3>
           <p class="ty-step-desc">About twenty minutes. The questions that let us see your child's picture properly.</p>
         </div>
         <div class="ty-step">
-          <div class="ty-step-line"><span class="ty-dot-node"></span><span class="ty-line"></span></div>
+          <div class="ty-step-line"><span class="ty-dot-node"></span></div>
           <div class="ty-step-num">03</div>
           <h3 class="ty-step-title">Your plan</h3>
           <p class="ty-step-desc">A personalized roadmap with what we would do, who you would work with, and what it costs. Talk it through with us if you want to.</p>
+        </div>
+        <div class="ty-step">
+          <div class="ty-step-line"><span class="ty-dot-node"></span></div>
+          <div class="ty-step-num">04</div>
+          <h3 class="ty-step-title">Starting at home</h3>
+          <p class="ty-step-desc">A personalized kit arrives at your house with the equipment you need, and therapy begins.</p>
         </div>
       </div>
       <div class="ty-followup">
