@@ -17,6 +17,9 @@
      page-specific hero + "what happens next", ported 1:1 from the design
      so layout is easy to tune. Colors match the design as delivered. */
   body { background: #fff; }
+  /* Nav: constrain contents to the hero/steps container (1120 + matching padding) so the logo aligns with the hero and the CTA with the steps grid. */
+  .nav { padding-left: 0; padding-right: 0; }
+  .ty-nav-inner { width: 100%; max-width: 1120px; margin: 0 auto; padding: 0 clamp(20px, 4vw, 40px); display: flex; align-items: center; justify-content: space-between; gap: 24px; }
   .ty-main { position: relative; overflow: hidden; font-family: 'Inter', sans-serif; color: #1D2939; }
   .ty-glow { position: absolute; top: -340px; left: 50%; transform: translateX(-50%); width: 1100px; height: 640px; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,206,253,0.16), rgba(0,206,253,0) 70%); pointer-events: none; }
 
@@ -39,7 +42,7 @@
   .ty-btn-primary:hover { background: #1D2939; }
   .ty-btn-secondary { display: inline-flex; align-items: center; gap: 8px; padding: 15px 22px; border-radius: 999px; border: 1px solid #D0D5DD; color: #344054; font-size: 15.5px; font-weight: 600; text-decoration: none; transition: border-color 0.2s, color 0.2s; }
   .ty-btn-secondary:hover { border-color: #1D2939; color: #1D2939; }
-  .ty-note { font-size: 14.5px; color: #667085; padding-left: 4px; }
+  .ty-note { font-size: 14.5px; color: #667085; margin: 14px 0 0; }
 
   /* What happens next */
   .ty-next { border-top: 1px solid #EAECF0; background: #F8FCFE; }
@@ -62,6 +65,7 @@
 <body>
 
 <nav class="nav" id="nav">
+  <div class="ty-nav-inner">
   <a class="nav-brand" href="index.html" aria-label="NeuroHome by NeuroSage Centers">
     <svg class="nav-brand-mark" width="44" height="44" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <rect x="8" y="22" width="36" height="27" rx="3" stroke="#1D2939" stroke-width="2.2" fill="none"/>
@@ -89,6 +93,7 @@
   <button class="nav-mobile-toggle" onclick="toggleMobileNav()" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">
     <span></span><span></span><span></span>
   </button>
+  </div>
 </nav>
 
 <main class="ty-main">
@@ -110,8 +115,8 @@
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
         <a class="ty-btn-secondary" href="index.html">Back to NeuroHome</a>
-        <span class="ty-note">No need to do this now. It's ready when you are.</span>
       </div>
+      <p class="ty-note">No need to do this now. It's ready when you are.</p>
     </div>
   </section>
 
