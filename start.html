@@ -507,6 +507,11 @@ form.addEventListener('submit', function (event) {
 
   Promise.race([postLead(payload), timeoutPromise])
     .then(() => {
+      // Hand the address to thank-you.html so it can confirm what we captured.
+      // sessionStorage rather than a query string: an email in the URL would
+      // leak into history, referrers and analytics. Failure here is harmless,
+      // the next page just omits the address.
+      try { sessionStorage.setItem('nh_lead_email', payload.email); } catch (e) { /* ignore */ }
       // Deliberately stays disabled through the redirect so a slow navigation
       // cannot be double-submitted.
       window.location.href = REDIRECT_URL;

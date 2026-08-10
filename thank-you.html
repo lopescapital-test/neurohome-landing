@@ -12,56 +12,82 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="neurohome.css">
 <style>
-  /* ── Thank-you page (static rebuild of the standalone design) ──────────
-     Shared nav/footer come from neurohome.css. This block is only the
-     page-specific hero + "what happens next", ported 1:1 from the design
-     so layout is easy to tune. Colors match the design as delivered. */
+  /* Thank-you page, built on the approved confirmation design: dark navy
+     confirmation band, then a single card that overlaps it carrying the whole
+     path as a vertical timeline. Shared nav/footer come from neurohome.css;
+     this block is the page-specific part only.
+     Type is Inter/Outfit rather than the design's Figtree/Plus Jakarta so the
+     page stays on the site's own faces. The small cyan labels use a darker
+     cyan than the design specified, which fails contrast at that size. */
   body { background: #fff; }
-  .ty-main { position: relative; overflow: hidden; font-family: 'Inter', sans-serif; color: #1D2939; }
-  .ty-glow { position: absolute; top: -340px; left: 50%; transform: translateX(-50%); width: 1100px; height: 640px; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,206,253,0.16), rgba(0,206,253,0) 70%); pointer-events: none; }
+  .ty-main { font-family: 'Inter', sans-serif; color: #1D2939; }
 
-  /* Hero. Top padding = 72px fixed-nav clearance + the design's own padding. */
-  .ty-hero { position: relative; max-width: 1120px; margin: 0 auto; padding: calc(72px + clamp(16px, 2vw, 32px)) clamp(20px, 4vw, 40px) clamp(28px, 3.5vw, 44px); }
-  .ty-hero-inner { max-width: none; animation: nhRise 0.6s cubic-bezier(0.2,0.7,0.3,1) both; }
+  /* Confirmation band. Top padding = 72px fixed-nav clearance + its own. */
+  .ty-hero { background: #0f1b33; padding: calc(72px + clamp(30px,4vw,56px)) clamp(20px,4vw,56px) clamp(46px,5.5vw,68px); text-align: center; }
+  .ty-hero-inner { max-width: 760px; margin: 0 auto; animation: nhRise 0.6s cubic-bezier(0.2,0.7,0.3,1) both; }
   @keyframes nhRise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
   @media (prefers-reduced-motion: reduce) { .ty-hero-inner { animation: none; } }
 
-  .ty-badge { display: inline-flex; align-items: center; gap: 9px; padding: 7px 15px 7px 9px; border-radius: 999px; background: rgba(0,206,253,0.1); border: 1px solid rgba(0,206,253,0.28); margin-bottom: 26px; }
-  .ty-badge-check { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: #00CEFD; }
-  .ty-badge-label { font-size: 12.5px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: #06627E; }
+  .ty-badge { display: inline-flex; align-items: center; gap: 9px; padding: 7px 16px 7px 11px; border-radius: 999px; background: rgba(0,206,253,0.16); margin-bottom: 22px; }
+  .ty-badge svg { width: 18px; height: 18px; flex: none; }
+  .ty-badge-label { font-size: 11.5px; font-weight: 800; letter-spacing: 1.4px; text-transform: uppercase; color: #8FD9F2; }
 
-  .ty-h1 { font-family: 'Outfit', sans-serif; font-size: clamp(34px, 6vw, 70px); font-weight: 800; letter-spacing: -2.6px; line-height: 1.0; margin: 0 0 22px; text-wrap: balance; color: #1D2939; }
+  .ty-h1 { font-family: 'Outfit', sans-serif; font-size: clamp(32px,5.4vw,54px); font-weight: 800; letter-spacing: -1.8px; line-height: 1.03; margin: 0 0 16px; text-wrap: balance; color: #fff; }
   .ty-dot { color: #00CEFD; }
-  .ty-lead { max-width: none; font-size: clamp(17px, 1.3vw, 19px); line-height: 1.65; color: #475467; margin: 0; text-wrap: pretty; }
-  /* Optional fast path to the intake. Set a step below the lead so it reads as
-     an aside rather than competing with the confirmation. */
-  .ty-lead-alt { max-width: none; font-size: clamp(16px, 1.2vw, 17.5px); line-height: 1.65; color: #475467; margin: 14px 0 0; text-wrap: pretty; }
+  .ty-lead { max-width: 640px; margin: 0 auto; font-size: clamp(16.5px,1.4vw,18px); line-height: 1.55; color: #C9D6E4; text-wrap: pretty; }
+  .ty-lead-email { color: #fff; font-weight: 600; }
 
-  .ty-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 34px; }
-  .ty-btn-primary { display: inline-flex; align-items: center; gap: 10px; padding: 15px 26px; border-radius: 999px; background: #101B2D; color: #fff; font-size: 15.5px; font-weight: 700; text-decoration: none; transition: background 0.2s; }
-  .ty-btn-primary:hover { background: #1D2939; }
-  .ty-btn-secondary { display: inline-flex; align-items: center; gap: 8px; padding: 15px 22px; border-radius: 999px; border: 1px solid #D0D5DD; color: #344054; font-size: 15.5px; font-weight: 600; text-decoration: none; transition: border-color 0.2s, color 0.2s; }
-  .ty-btn-secondary:hover { border-color: #1D2939; color: #1D2939; }
-  .ty-note { font-size: 14.5px; color: #667085; margin: 14px 0 0; }
+  /* Path card. Pulled up so it sits across the seam between the two bands. */
+  .ty-path { background: #F6F8FB; padding: 0 clamp(20px,4vw,56px) clamp(44px,6vw,64px); }
+  .ty-card { max-width: 1000px; margin: clamp(-24px,-2.5vw,-40px) auto 0; background: #fff; border: 1px solid #E7EBF1; border-radius: 22px; box-shadow: 0 18px 44px rgba(13,27,51,0.10); overflow: hidden; }
 
-  /* What happens next */
-  .ty-next { border-top: 1px solid #EAECF0; background: #F8FCFE; }
-  .ty-next-inner { max-width: 1120px; margin: 0 auto; padding: clamp(28px, 4vw, 44px) clamp(20px, 4vw, 40px) clamp(48px, 6vw, 76px); }
-  .ty-next-head { margin-bottom: 44px; }
-  .ty-h2 { font-family: 'Outfit', sans-serif; font-size: clamp(22px, 2.4vw, 28px); font-weight: 700; letter-spacing: -0.8px; margin: 0; color: #1D2939; }
-  .ty-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); grid-template-rows: auto auto auto auto; gap: 0 clamp(16px, 1.8vw, 22px); }
-  /* Navy cards. Same #0f1b33 as the promise strip on /start.html, so the two
-     pages in the funnel share one dark tone. Text colors below are all set for
-     contrast against it rather than against white. */
-  .ty-step { display: grid; grid-template-rows: subgrid; grid-row: span 4; align-content: start; margin-bottom: 24px; padding: 26px 24px 28px; background: #0f1b33; border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; box-shadow: 0 6px 20px rgba(16,27,45,0.16); }
-  .ty-step-line { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
-  .ty-dot-node { width: 11px; height: 11px; border-radius: 50%; background: #00CEFD; flex: none; box-shadow: 0 0 0 5px rgba(0,206,253,0.22); }
-  .ty-step-num { font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 1.4px; color: #93A3B8; margin-bottom: 8px; }
-  .ty-step-title { font-family: 'Outfit', sans-serif; font-size: 19px; font-weight: 700; letter-spacing: -0.4px; margin: 0 0 10px; color: #fff; }
-  .ty-step-desc { font-size: 15.5px; line-height: 1.65; color: #C9D6E4; margin: 0; text-wrap: pretty; }
-  .ty-followup { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 6px; padding-top: 26px; border-top: 1px solid #E4EEF3; font-size: 15.5px; color: #475467; }
-  .ty-followup a { font-weight: 600; color: #0787AE; text-decoration: underline; text-underline-offset: 3px; }
-  .ty-followup a:hover { color: #1D2939; }
+  .ty-card-head { padding: 30px clamp(22px,3vw,40px) 26px; border-bottom: 1px solid #EDF0F5; }
+  .ty-card-head-row { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 18px; }
+  .ty-card-label { font-size: 11.5px; font-weight: 800; letter-spacing: 1.4px; text-transform: uppercase; color: #667085; }
+  .ty-card-count { font-size: 13.5px; font-weight: 600; color: #0A7A99; }
+  .ty-progress { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
+  .ty-seg { height: 7px; border-radius: 4px; background: #E5EAF1; }
+  .ty-seg-done { background: #00CEFD; }
+  .ty-seg-next { background: #CFE9F4; }
+
+  /* Timeline rows. Status column is fixed so every title starts on one axis. */
+  .ty-row { display: grid; grid-template-columns: 170px 1fr; gap: clamp(14px,2vw,28px); padding: 26px clamp(22px,3vw,40px); border-bottom: 1px solid #EDF0F5; }
+  .ty-row:last-child { border-bottom: none; }
+  .ty-row-done { background: #FAFCFD; }
+  .ty-row-now { background: #F0F7FA; }
+
+  .ty-marker { display: flex; align-items: flex-start; gap: 12px; }
+  .ty-mark { flex: none; width: 22px; height: 22px; border-radius: 50%; }
+  .ty-mark-todo { border: 2px solid #CBD5E1; background: #fff; }
+  .ty-mark-now { border: 2px solid #00CEFD; background: #fff; box-shadow: 0 0 0 4px rgba(0,206,253,0.18); }
+  .ty-mark svg { width: 22px; height: 22px; display: block; }
+  .ty-status { font-size: 11.5px; font-weight: 800; letter-spacing: 1.1px; text-transform: uppercase; color: #667085; margin-top: 5px; }
+  .ty-status-on { color: #0A7A99; }
+
+  .ty-row-title { font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: -0.3px; margin: 0 0 5px; color: #0E1626; }
+  .ty-row-desc { font-size: 14.5px; line-height: 1.5; color: #5C6675; margin: 0; text-wrap: pretty; }
+  .ty-row-split { display: flex; justify-content: space-between; align-items: center; gap: clamp(18px,3vw,32px); flex-wrap: wrap; }
+  .ty-row-split > div { max-width: 400px; }
+
+  .ty-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 10px; height: 54px; padding: 0 28px; border-radius: 999px; background: linear-gradient(180deg,#1B2F52,#0f1b33); color: #fff; font-family: 'Outfit', sans-serif; font-size: 15.5px; font-weight: 800; text-decoration: none; white-space: nowrap; flex: none; box-shadow: 0 12px 26px rgba(13,27,51,0.22); transition: box-shadow 0.2s, transform 0.2s; }
+  .ty-btn-primary:hover { box-shadow: 0 16px 32px rgba(13,27,51,0.3); transform: translateY(-1px); color: #fff; }
+  .ty-btn-primary svg { width: 17px; height: 14px; flex: none; }
+
+  .ty-footrow { max-width: 1000px; margin: 26px auto 0; display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .ty-footrow p { margin: 0; font-size: 14.5px; line-height: 1.55; color: #5C6675; }
+  .ty-footrow a { font-weight: 700; color: #0A7A99; text-underline-offset: 3px; }
+  .ty-footrow a:hover { color: #0E1626; }
+  .ty-back { text-decoration: none; font-size: 14.5px; font-weight: 700; color: #0E1626; white-space: nowrap; }
+  .ty-back:hover { color: #0A7A99; }
+
+  /* Stack the status column above the content once 170px + text stops fitting. */
+  @media (max-width: 760px) {
+    .ty-row { grid-template-columns: 1fr; gap: 12px; }
+    .ty-marker { align-items: center; }
+    .ty-status { margin-top: 0; }
+    .ty-row-split > div { max-width: none; }
+    .ty-btn-primary { width: 100%; }
+  }
 </style>
 </head>
 <body>
@@ -97,66 +123,98 @@
 </nav>
 
 <main class="ty-main">
-  <div class="ty-glow" aria-hidden="true"></div>
 
   <section class="ty-hero">
     <div class="ty-hero-inner">
       <div class="ty-badge">
-        <span class="ty-badge-check">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#08303D" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
-        </span>
+        <svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><circle cx="9" cy="9" r="9" fill="#00CEFD"/><path d="m5 9.3 2.6 2.6L13 6.6" stroke="#08303D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <span class="ty-badge-label">Request received</span>
       </div>
       <h1 class="ty-h1">Thank you for reaching out<span class="ty-dot">.</span></h1>
-      <p class="ty-lead">We've got your details. Keep an eye on your inbox. A parent who has been where you are will reach out personally.</p>
-      <p class="ty-lead-alt">If you are ready to get started right now, start your intake below.</p>
-      <div class="ty-actions">
-        <a class="ty-btn-primary" href="intake.html">
-          Start your intake
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </a>
-        <a class="ty-btn-secondary" href="index.html">Back to NeuroHome</a>
-      </div>
-      <p class="ty-note">No need to do this now. It's ready when you are.</p>
+      <p class="ty-lead">We've got your details. Keep an eye on your inbox<span id="ty-email-wrap" hidden> at <span class="ty-lead-email" id="ty-email"></span></span>. A parent who has been where you are will reach out personally.</p>
     </div>
   </section>
 
-  <section class="ty-next">
-    <div class="ty-next-inner">
-      <div class="ty-next-head">
-        <h2 class="ty-h2">What happens next</h2>
-      </div>
-      <div class="ty-steps">
-        <div class="ty-step">
-          <div class="ty-step-line"><span class="ty-dot-node"></span></div>
-          <div class="ty-step-num">01</div>
-          <h3 class="ty-step-title">A parent's story</h3>
-          <p class="ty-step-desc">What they tried, what finally worked, and where their child is today.</p>
+  <section class="ty-path">
+    <div class="ty-card">
+      <div class="ty-card-head">
+        <div class="ty-card-head-row">
+          <span class="ty-card-label">Your path</span>
+          <span class="ty-card-count">Step 1 of 4 complete</span>
         </div>
-        <div class="ty-step">
-          <div class="ty-step-line"><span class="ty-dot-node"></span></div>
-          <div class="ty-step-num">02</div>
-          <h3 class="ty-step-title">Your intake</h3>
-          <p class="ty-step-desc">About twenty minutes. The questions that let us see your child's picture properly.</p>
-        </div>
-        <div class="ty-step">
-          <div class="ty-step-line"><span class="ty-dot-node"></span></div>
-          <div class="ty-step-num">03</div>
-          <h3 class="ty-step-title">Your plan</h3>
-          <p class="ty-step-desc">A personalized roadmap: what we'd do, who you'd work with, and what it costs. We talk it through.</p>
-        </div>
-        <div class="ty-step">
-          <div class="ty-step-line"><span class="ty-dot-node"></span></div>
-          <div class="ty-step-num">04</div>
-          <h3 class="ty-step-title">Starting at home</h3>
-          <p class="ty-step-desc">A personalized kit arrives at your house with the equipment you need, and therapy begins.</p>
+        <div class="ty-progress" aria-hidden="true">
+          <span class="ty-seg ty-seg-done"></span>
+          <span class="ty-seg ty-seg-next"></span>
+          <span class="ty-seg"></span>
+          <span class="ty-seg"></span>
         </div>
       </div>
-      <div class="ty-followup">
-        <span>Nothing in your inbox after a day? Write to</span>
-        <a href="mailto:hello@neurohome.com">hello@neurohome.com</a>
-        <span>and we'll follow up personally.</span>
+
+      <div class="ty-row ty-row-done">
+        <div class="ty-marker">
+          <span class="ty-mark" aria-hidden="true"><svg viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="#00CEFD"/><path d="m5 9.3 2.6 2.6L13 6.6" stroke="#08303D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span class="ty-status ty-status-on">Done</span>
+        </div>
+        <div>
+          <h2 class="ty-row-title">Your request</h2>
+          <p class="ty-row-desc">Received a moment ago. Dr. Kyle reads every one.</p>
+        </div>
       </div>
+
+      <div class="ty-row">
+        <div class="ty-marker">
+          <span class="ty-mark ty-mark-todo" aria-hidden="true"></span>
+          <span class="ty-status">Within a day</span>
+        </div>
+        <div>
+          <h2 class="ty-row-title">A parent's story</h2>
+          <p class="ty-row-desc">What they tried, what finally worked, and where their child is today.</p>
+        </div>
+      </div>
+
+      <div class="ty-row ty-row-now">
+        <div class="ty-marker">
+          <span class="ty-mark ty-mark-now" aria-hidden="true"></span>
+          <span class="ty-status ty-status-on">You can do this now</span>
+        </div>
+        <div class="ty-row-split">
+          <div>
+            <h2 class="ty-row-title">Your intake</h2>
+            <p class="ty-row-desc">About twenty minutes. The questions that let us see your child's picture properly. No need to do this now. It's ready when you are.</p>
+          </div>
+          <a class="ty-btn-primary" href="intake.html">
+            Start your intake
+            <svg viewBox="0 0 17 14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 7h14M10 2l5 5-5 5"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="ty-row">
+        <div class="ty-marker">
+          <span class="ty-mark ty-mark-todo" aria-hidden="true"></span>
+          <span class="ty-status">After intake</span>
+        </div>
+        <div>
+          <h2 class="ty-row-title">Your plan</h2>
+          <p class="ty-row-desc">A personalized roadmap: what we'd do, who you'd work with, and what it costs. We talk it through.</p>
+        </div>
+      </div>
+
+      <div class="ty-row">
+        <div class="ty-marker">
+          <span class="ty-mark ty-mark-todo" aria-hidden="true"></span>
+          <span class="ty-status">Once you decide</span>
+        </div>
+        <div>
+          <h2 class="ty-row-title">Starting at home</h2>
+          <p class="ty-row-desc">A personalized kit arrives at your house with the equipment you need, and therapy begins.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="ty-footrow">
+      <p>Nothing in your inbox after a day? Write to <a href="mailto:hello@neurohome.com">hello@neurohome.com</a> and we'll follow up personally.</p>
+      <a class="ty-back" href="index.html">Back to NeuroHome <span aria-hidden="true">&#8594;</span></a>
     </div>
   </section>
 </main>
@@ -199,5 +257,24 @@
 </footer>
 
 <script src="neurohome.js"></script>
+<script>
+// Echo back the address the parent typed, so a typo is obvious while they can
+// still do something about it. The value is read from sessionStorage, set by
+// start.html just before it redirects here. Deliberately not a query string: an
+// email address in the URL would end up in browser history, referrer headers
+// and any analytics that records paths.
+// A direct visit has nothing stored, and the sentence still reads correctly
+// without it, so there is no fallback text to write.
+(function () {
+  var wrap = document.getElementById('ty-email-wrap');
+  var slot = document.getElementById('ty-email');
+  if (!wrap || !slot) return;
+  var email = '';
+  try { email = sessionStorage.getItem('nh_lead_email') || ''; } catch (e) { return; }
+  if (!email) return;
+  slot.textContent = email;   // textContent, never innerHTML: this is user input
+  wrap.hidden = false;
+})();
+</script>
 </body>
 </html>
