@@ -961,18 +961,6 @@ body.reel-lock { overflow: hidden; }
   .steps-grid { grid-template-columns: repeat(2, 1fr); } /* 2-up on tablet/small-laptop; 4-up only above 1120px */
 }
 
-/* Lead capture form (#start): primary conversion path, sits above the booking widget.
-   The iframe carries its own fixed height (1311px) and border-radius; we only cap the
-   width so the form reads as a form, not a full-bleed billboard, and center it. */
-.lead-form-embed { max-width: 720px; margin: 0 auto; }
-.lead-form-alt { text-align: center; font-size: 15px; color: var(--text-2); margin: 28px 0 0; }
-.lead-form-alt a { color: var(--brand); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; transition: color 0.2s; }
-.lead-form-alt a:hover { color: var(--text); }
-/* Halve the bottom padding vs the default --section-y: the tall form already
-   supplies breathing room before the booking section. Top padding is left as
-   the .section default so the incoming gap from the FAQ is preserved. */
-#start { padding-bottom: clamp(36px, 4.5vw, 56px); }
-
 /* =====================================================
    Sub-page content
    ===================================================== */
