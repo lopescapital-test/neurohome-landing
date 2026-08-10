@@ -968,6 +968,10 @@ body.reel-lock { overflow: hidden; }
 .lead-form-alt { text-align: center; font-size: 15px; color: var(--text-2); margin: 28px 0 0; }
 .lead-form-alt a { color: var(--brand); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; transition: color 0.2s; }
 .lead-form-alt a:hover { color: var(--text); }
+/* Halve the bottom padding vs the default --section-y: the tall form already
+   supplies breathing room before the booking section. Top padding is left as
+   the .section default so the incoming gap from the FAQ is preserved. */
+#start { padding-bottom: clamp(36px, 4.5vw, 56px); }
 
 /* =====================================================
    Sub-page content
