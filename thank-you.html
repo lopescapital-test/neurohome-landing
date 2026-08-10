@@ -33,6 +33,9 @@
   .ty-h1 { font-family: 'Outfit', sans-serif; font-size: clamp(34px, 6vw, 70px); font-weight: 800; letter-spacing: -2.6px; line-height: 1.0; margin: 0 0 22px; text-wrap: balance; color: #1D2939; }
   .ty-dot { color: #00CEFD; }
   .ty-lead { max-width: none; font-size: clamp(17px, 1.3vw, 19px); line-height: 1.65; color: #475467; margin: 0; text-wrap: pretty; }
+  /* Optional fast path to the intake. Set a step below the lead so it reads as
+     an aside rather than competing with the confirmation. */
+  .ty-lead-alt { max-width: none; font-size: clamp(16px, 1.2vw, 17.5px); line-height: 1.65; color: #475467; margin: 14px 0 0; text-wrap: pretty; }
 
   .ty-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 34px; }
   .ty-btn-primary { display: inline-flex; align-items: center; gap: 10px; padding: 15px 26px; border-radius: 999px; background: #101B2D; color: #fff; font-size: 15.5px; font-weight: 700; text-decoration: none; transition: background 0.2s; }
@@ -47,12 +50,15 @@
   .ty-next-head { margin-bottom: 44px; }
   .ty-h2 { font-family: 'Outfit', sans-serif; font-size: clamp(22px, 2.4vw, 28px); font-weight: 700; letter-spacing: -0.8px; margin: 0; color: #1D2939; }
   .ty-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); grid-template-rows: auto auto auto auto; gap: 0 clamp(16px, 1.8vw, 22px); }
-  .ty-step { display: grid; grid-template-rows: subgrid; grid-row: span 4; align-content: start; margin-bottom: 24px; padding: 26px 24px 28px; background: #fff; border: 1px solid #E1EDF3; border-radius: 18px; box-shadow: 0 1px 2px rgba(16,27,45,0.04); }
+  /* Navy cards. Same #0f1b33 as the promise strip on /start.html, so the two
+     pages in the funnel share one dark tone. Text colors below are all set for
+     contrast against it rather than against white. */
+  .ty-step { display: grid; grid-template-rows: subgrid; grid-row: span 4; align-content: start; margin-bottom: 24px; padding: 26px 24px 28px; background: #0f1b33; border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; box-shadow: 0 6px 20px rgba(16,27,45,0.16); }
   .ty-step-line { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
-  .ty-dot-node { width: 11px; height: 11px; border-radius: 50%; background: #00CEFD; flex: none; box-shadow: 0 0 0 5px rgba(0,206,253,0.16); }
-  .ty-step-num { font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 1.4px; color: #98A2B3; margin-bottom: 8px; }
-  .ty-step-title { font-family: 'Outfit', sans-serif; font-size: 19px; font-weight: 700; letter-spacing: -0.4px; margin: 0 0 10px; color: #1D2939; }
-  .ty-step-desc { font-size: 15.5px; line-height: 1.65; color: #475467; margin: 0; text-wrap: pretty; }
+  .ty-dot-node { width: 11px; height: 11px; border-radius: 50%; background: #00CEFD; flex: none; box-shadow: 0 0 0 5px rgba(0,206,253,0.22); }
+  .ty-step-num { font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 1.4px; color: #93A3B8; margin-bottom: 8px; }
+  .ty-step-title { font-family: 'Outfit', sans-serif; font-size: 19px; font-weight: 700; letter-spacing: -0.4px; margin: 0 0 10px; color: #fff; }
+  .ty-step-desc { font-size: 15.5px; line-height: 1.65; color: #C9D6E4; margin: 0; text-wrap: pretty; }
   .ty-followup { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 6px; padding-top: 26px; border-top: 1px solid #E4EEF3; font-size: 15.5px; color: #475467; }
   .ty-followup a { font-weight: 600; color: #0787AE; text-decoration: underline; text-underline-offset: 3px; }
   .ty-followup a:hover { color: #1D2939; }
@@ -103,6 +109,7 @@
       </div>
       <h1 class="ty-h1">Thank you for reaching out<span class="ty-dot">.</span></h1>
       <p class="ty-lead">We've got your details. Keep an eye on your inbox. A parent who has been where you are will reach out personally.</p>
+      <p class="ty-lead-alt">If you are ready to get started right now, start your intake below.</p>
       <div class="ty-actions">
         <a class="ty-btn-primary" href="intake.html">
           Start your intake
