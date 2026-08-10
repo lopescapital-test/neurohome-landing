@@ -185,7 +185,7 @@
       </div>
 
       <button class="btn-primary start-submit" type="submit" id="submit-btn">
-        <span id="submit-label">Send me the video</span>
+        <span id="submit-label">Start your family's plan</span>
       </button>
 
       <p class="start-legal">By submitting, you agree to our <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a> and <a href="terms.html" target="_blank" rel="noopener">Terms of Service</a>.</p>
@@ -289,7 +289,7 @@ function clearError() {
 function setPending(isPending) {
   submitBtn.disabled = isPending;
   submitBtn.setAttribute('aria-busy', isPending ? 'true' : 'false');
-  submitLabel.textContent = isPending ? 'Sending...' : 'Send me the video';
+  submitLabel.textContent = isPending ? 'Sending...' : "Start your family's plan";
 }
 function value(name) {
   return form.elements[name].value.trim();
