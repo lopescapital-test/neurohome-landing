@@ -399,6 +399,57 @@ function value(name) {
   return form.elements[name].value.trim();
 }
 
+// Phone formatting. Same NANP shape and cursor-preserving approach as
+// intake.html, so a number typed here looks like one typed there.
+// Unlike intake.html this form is open to any country, so formatting is
+// skipped whenever the number is clearly not NANP: a leading +, or a
+// selected country outside the US and Canada. Reformatting those would
+// corrupt a perfectly valid international number.
+const NANP_COUNTRIES = ['', 'United States', 'Canada'];
+const phoneEl = form.elements.phone;
+
+function formatPhoneNANP(digits) {
+  if (digits.length === 0) return '';
+  if (digits.length <= 3) return '(' + digits;
+  if (digits.length <= 6) return '(' + digits.slice(0, 3) + ') ' + digits.slice(3);
+  return '(' + digits.slice(0, 3) + ') ' + digits.slice(3, 6) + '-' + digits.slice(6, 10);
+}
+
+function shouldFormatPhone() {
+  if (phoneEl.value.trim().charAt(0) === '+') return false;
+  return NANP_COUNTRIES.indexOf(form.elements.country.value) !== -1;
+}
+
+phoneEl.addEventListener('input', function (event) {
+  if (!shouldFormatPhone()) return;
+  const input = event.target;
+  const oldValue = input.value;
+  const oldCursor = input.selectionStart || 0;
+  const digitsBeforeCursor = oldValue.slice(0, oldCursor).replace(/\D/g, '').length;
+  let allDigits = oldValue.replace(/\D/g, '');
+  // A pasted 1-602-889-9655 should not become (160) 288-9965.
+  if (allDigits.length === 11 && allDigits.charAt(0) === '1') allDigits = allDigits.slice(1);
+  allDigits = allDigits.slice(0, 10);
+  const formatted = formatPhoneNANP(allDigits);
+  input.value = formatted;
+  // Put the caret back where the typist expects it, counting by digits
+  // rather than by character offset so the inserted punctuation is skipped.
+  let newCursor = 0, digitsSeen = 0;
+  for (let i = 0; i < formatted.length; i++) {
+    if (digitsSeen >= digitsBeforeCursor) break;
+    if (/\d/.test(formatted[i])) digitsSeen++;
+    newCursor = i + 1;
+  }
+  input.setSelectionRange(newCursor, newCursor);
+});
+
+// Switching to a country outside the NANP leaves any US shaping behind.
+form.elements.country.addEventListener('change', function () {
+  if (!shouldFormatPhone() && phoneEl.value.indexOf('(') !== -1) {
+    phoneEl.value = phoneEl.value.replace(/[()\-\s]/g, '');
+  }
+});
+
 async function postLead(payload) {
   const response = await fetch(LEAD_WEBHOOK_URL, {
     method: 'POST',
