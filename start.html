@@ -41,9 +41,12 @@
   .start-promise svg { width: 20px; height: 20px; flex: none; margin-top: 1px; color: var(--brand); }
   .start-promise p { margin: 0; font-size: 14.5px; line-height: 1.55; color: #C9D6E4; text-wrap: pretty; }
 
-  .start-badges { display: flex; gap: 10px 16px; justify-content: space-between; flex-wrap: wrap; padding: 14px clamp(20px,3vw,32px); background: var(--brand-light); border-bottom: 1px solid var(--border); }
-  .start-badge { display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600; color: var(--text-2); }
-  .start-badge svg { width: 15px; height: 15px; color: var(--brand-deep); flex: none; }
+  /* Single row on desktop. The five badges only just fit the card's inner
+     width, so they stay on one line via nowrap and are allowed to wrap only
+     once the card itself narrows. */
+  .start-badges { display: flex; gap: 10px 14px; justify-content: space-between; flex-wrap: nowrap; padding: 14px clamp(20px,3vw,28px); background: var(--brand-light); border-bottom: 1px solid var(--border); }
+  .start-badge { display: flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; color: var(--text-2); white-space: nowrap; }
+  .start-badge svg { width: 14px; height: 14px; color: var(--brand-deep); flex: none; }
 
   .start-card-body { padding: clamp(24px,4vw,40px); display: flex; flex-direction: column; gap: 24px; }
 
@@ -115,6 +118,11 @@
      detect and skip. Never shown to, or reachable by, a real visitor. */
   .start-hp { position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden; }
 
+  /* Below this the card is no longer at its full 820px, so the single row of
+     badges stops fitting and is allowed to wrap. */
+  @media (max-width: 900px) {
+    .start-badges { flex-wrap: wrap; justify-content: flex-start; gap: 10px 18px; }
+  }
   @media (max-width: 860px) {
     .start-proof { grid-template-columns: 1fr; }
     .start-proof-kyle { flex-direction: row; justify-content: center; text-align: left; gap: 16px; }
@@ -124,7 +132,6 @@
     .start-pair { grid-template-columns: 1fr; gap: 18px; }
     .start-h1 { letter-spacing: -1px; }
     .start-rows { gap: 18px; }
-    .start-badges { gap: 12px 20px; }
   }
 </style>
 </head>
@@ -176,10 +183,10 @@
       </div>
 
       <div class="start-badges">
-        <div class="start-badge"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 8.4 3.2 3.2L13 5"/></svg>Reviewed by Dr. Kyle</div>
-        <div class="start-badge"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 8.4 3.2 3.2L13 5"/></svg>HIPAA-compliant intake</div>
-        <div class="start-badge"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 8.4 3.2 3.2L13 5"/></svg>No cost, no obligation</div>
-        <div class="start-badge"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 8.4 3.2 3.2L13 5"/></svg>Talk to a parent, not a salesperson</div>
+        <div class="start-badge"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 8.4 3.2 3.2L13 5"/></svg>Dr. Kyle Reviewed</div>
+        <div class="start-badge"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 8.4 3.2 3.2L13 5"/></svg>HIPAA-Compliant</div>
+        <div class="start-badge"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 8.4 3.2 3.2L13 5"/></svg>No-Cost, No Obligation</div>
+        <div class="start-badge"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 8.4 3.2 3.2L13 5"/></svg>Talk to a Parent, not a Salesperson</div>
       </div>
 
       <form class="start-card-body" id="lead-form">
