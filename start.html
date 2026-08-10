@@ -235,7 +235,7 @@
           <input type="checkbox" name="consent_sms_marketing" value="yes">
           <span>Send me marketing and promotional texts from NeuroHome.</span>
         </label>
-        <p class="start-consent-full">I consent to receive non-marketing text messages about my inquiry. Message frequency varies; message and data rates may apply. Reply HELP for help, STOP to opt out. By checking the second box, I consent to receive marketing and promotional text messages from NeuroHome at the number provided. Consent is not a condition of purchase. Message frequency varies. Message and data rates may apply. Reply HELP for help, STOP to opt out.</p>
+        <p class="start-consent-full">I consent to receive non-marketing text messages about my inquiry. By checking the second box, I also consent to receive marketing and promotional text messages from NeuroHome at the number provided; consent is not a condition of purchase. Message frequency varies. Message and data rates may apply. Reply HELP for help, STOP to opt out.</p>
       </div>
 
       <button class="btn-primary start-submit" type="submit" id="submit-btn">
@@ -319,7 +319,8 @@
 const LEAD_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/OzXiG0YQaeEKh2w5XeyU/webhook-trigger/5a62405e-23a2-439b-99d5-fc0af5fa0f74';
 // Records which consent wording the person actually saw. Bump this whenever the
 // consent copy changes, otherwise the stored record stops being defensible.
-// v2: checkbox labels shortened, full wording moved below them and always shown.
+// v2: checkbox labels shortened, full wording moved below them and always shown,
+// with the duplicated rates and opt-out boilerplate stated once instead of twice.
 const CONSENT_TEXT_VERSION = 'v2-2026-08';
 const SUBMISSION_TIMEOUT_MS = 30000;
 const REDIRECT_URL = 'thank-you.html';
