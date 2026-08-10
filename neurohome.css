@@ -454,7 +454,9 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--brand-deep); ou
 @media (max-width: 620px) { .reel-card { flex-basis: 86%; } }                      /* 1 across, peek */
 .testimonial-card-ig {
   background: var(--bg-card);
-  border: 1px solid var(--border);
+  /* A definite light grey rather than var(--border) at 8% opacity, which was
+     effectively invisible against the white section behind these cards. */
+  border: 1px solid #CBD5E1;
   border-radius: var(--radius);
   padding: 24px;
   display: flex;
@@ -464,7 +466,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--brand-deep); ou
   transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
 }
 .testimonial-card-ig:hover {
-  border-color: var(--border-hover);
+  border-color: #94A3B8;
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
