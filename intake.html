@@ -300,7 +300,10 @@ em { font-style: normal; color: var(--brand); }
 .hope-block { margin-bottom: 24px; }
 .hope-label { display: block; font-family: 'Outfit', sans-serif; font-size: 17px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
 .hope-prompt { font-size: 14px; line-height: 1.55; color: var(--ink-2); margin: 0 0 10px; }
-.hope-input { height: auto; padding: 12px 14px; line-height: 1.55; resize: vertical; font-family: 'Inter', sans-serif; }
+/* width: 100% is load-bearing. The other .field-input uses are grid items and get
+   stretched for free, but a hope block is a plain div, so without this the textarea
+   falls back to its intrinsic cols width and sits in a narrow column. */
+.hope-input { display: block; width: 100%; height: auto; padding: 12px 14px; line-height: 1.55; resize: vertical; font-family: 'Inter', sans-serif; }
 
 .next-steps { list-style: none; counter-reset: ns; display: grid; gap: 16px; margin: 0; padding: 0; }
 .next-steps li { counter-increment: ns; position: relative; padding-left: 40px; font-size: 14px; line-height: 1.55; color: var(--ink-2); }
@@ -812,7 +815,7 @@ footer.foot code { font-family: ui-monospace, monospace; color: var(--brand-deep
   </svg>
   <div class="intake-brand-wordmark">
     <span class="intake-brand-name">Neuro<span>Home</span></span>
-    <span class="intake-brand-tag">Pre-call Intake</span>
+    <span class="intake-brand-tag">Child Assessment</span>
   </div>
   <div class="intake-brand-right">
     <span class="brand-save-note" id="brand-save-note">Saves as you go</span>
