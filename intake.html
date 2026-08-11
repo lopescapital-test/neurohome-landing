@@ -126,27 +126,61 @@ em { font-style: normal; color: var(--brand); }
 }
 .button-secondary:hover { border-color: var(--brand); color: var(--brand-deep); }
 /* ========== WELCOME ========== */
+/* Welcome. Navy intro card over a light band, then a white card carrying the
+   fields, matching start.html and thank-you.html. */
+.welcome-band { padding: 40px clamp(16px,4vw,24px) 20px; }
 .welcome-hero {
-  padding: 64px 24px 40px;
-  text-align: left;
-  max-width: 680px;
+  max-width: 1000px;
+  box-sizing: border-box;
   margin: 0 auto;
+  background: #0f1b33;
+  border-radius: 20px;
+  padding: clamp(26px,3.5vw,40px);
+  display: grid;
+  grid-template-columns: 1fr 260px;
+  gap: clamp(24px,4vw,44px);
+  align-items: center;
+  text-align: left;
 }
-.welcome-hero .tag { display: block; margin-bottom: 20px; }
+.welcome-hero .tag { display: inline-block; margin-bottom: 16px; background: rgba(0,206,253,0.16); color: #8FD9F2; border: none; }
+.welcome-hero h1 { color: #fff; }
+.welcome-hero h1 em { color: var(--brand); }
 .welcome-hero p.lede {
-  color: var(--ink-2);
-  font-size: 16px;
-  line-height: 1.65;
-  margin: 22px 0 12px;
-  max-width: 620px;
+  color: #C9D6E4;
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 14px 0 0;
+  max-width: none;
 }
-.welcome-hero p.lede strong { color: var(--ink); font-weight: 600; }
+.welcome-hero p.lede strong { color: #fff; font-weight: 600; }
+/* Stats rail. Splits off to its own column on desktop, sits under the copy
+   once the card stacks. */
+.welcome-stats { display: grid; gap: 14px; border-left: 2px solid rgba(143,217,242,0.3); padding-left: 26px; }
+.welcome-stat-num { font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 800; color: #fff; line-height: 1.1; }
+.welcome-stat-label { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #8FD9F2; }
+@media (max-width: 860px) {
+  .welcome-hero { grid-template-columns: 1fr; gap: 24px; }
+  .welcome-stats { border-left: none; border-top: 2px solid rgba(143,217,242,0.3); padding-left: 0; padding-top: 22px; grid-template-columns: repeat(3,1fr); }
+}
+@media (max-width: 480px) { .welcome-stats { grid-template-columns: 1fr; } }
+
+.welcome-card {
+  max-width: 1000px;
+  box-sizing: border-box;
+  margin: 0 auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: clamp(24px,3.5vw,36px);
+  box-shadow: var(--shadow-card);
+}
+.welcome-group-title { font-size: 11.5px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 16px; }
 .welcome-fields {
-  margin: 32px 0 28px;
+  margin: 0 0 28px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
-  max-width: 620px;
+  max-width: none;
 }
 @media (max-width: 540px) { .welcome-fields { grid-template-columns: 1fr; } }
 .field-block { display: flex; flex-direction: column; gap: 6px; }
@@ -183,20 +217,40 @@ em { font-style: normal; color: var(--brand); }
   line-height: 1.6;
 }
 .welcome-meta strong { color: var(--ink); font-weight: 600; }
+/* Scoring-scale legend. Dots deepen 0 to 4 so the scale reads as a ramp
+   rather than five equal chips. */
+.welcome-band-last { padding-bottom: 48px; }
+.scale-card { background: #F0F7FA; border-color: #D8E9F2; }
+.scale-lede { font-size: 14.5px; line-height: 1.6; color: var(--ink-2); margin: 0 0 18px; max-width: 680px; }
+.scale-legend { display: grid; grid-template-columns: repeat(5,1fr); gap: 12px; }
+.scale-step { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; font-size: 12px; color: var(--ink-3); line-height: 1.3; }
+.scale-step b { font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 800; color: var(--ink); }
+.scale-dot { width: 26px; height: 26px; border-radius: 50%; border: 1px solid rgba(14,14,14,0.06); }
+.scale-dot.s0 { background: #EAF8FD; }
+.scale-dot.s1 { background: #DDF2FB; }
+.scale-dot.s2 { background: #C4E9F8; }
+.scale-dot.s3 { background: #7FD5F2; }
+.scale-dot.s4 { background: #16C7F2; }
+.scale-note { font-size: 13px; color: var(--ink-3); margin: 18px 0 0; }
+.scale-note em { color: var(--brand-deep); font-weight: 600; }
+@media (max-width: 540px) { .scale-legend { grid-template-columns: repeat(3,1fr); gap: 14px 8px; } }
 /* ========== INTAKE ========== */
 .intake-shell { max-width: 760px; margin: 0 auto; padding: 0 24px; }
 .intake-progress {
   display: flex;
   gap: 4px;
-  padding: 16px 24px 0;
-  max-width: 760px;
+  padding: 0;
+  max-width: 1000px;
   margin: 0 auto;
 }
+/* Navy rail behind the 13 section segments, so progress reads against a dark
+   band the way the design has it rather than as faint ticks on white. */
+.intake-progress-rail { background: #0f1b33; padding: 18px clamp(16px,4vw,24px); }
 .intake-progress-bar {
   flex: 1;
-  height: 3px;
-  background: var(--border);
-  border-radius: 2px;
+  height: 6px;
+  background: rgba(255,255,255,0.14);
+  border-radius: 3px;
   transition: background 0.3s;
 }
 .intake-progress-bar.complete { background: var(--brand); }
@@ -508,12 +562,21 @@ em { font-style: normal; color: var(--brand); }
   min-height: 20px;
 }
 /* ========== THANKS ========== */
+/* Navy confirmation card, matching thank-you.html so the two endings of the
+   funnel look like the same product. */
+.thanks-band { padding: 48px clamp(16px,4vw,24px); }
 .thanks-hero {
-  padding: 80px 24px 40px;
-  text-align: center;
-  max-width: 600px;
+  max-width: 1000px;
+  box-sizing: border-box;
   margin: 0 auto;
+  background: #0f1b33;
+  border-radius: 20px;
+  padding: clamp(28px,4vw,44px);
+  text-align: center;
 }
+.thanks-hero h1 { color: #fff; }
+.thanks-hero .thanks-message { color: #C9D6E4; }
+.thanks-hero .thanks-note { color: #93A3B8; }
 .thanks-check {
   width: 60px;
   height: 60px;
@@ -589,15 +652,35 @@ footer.foot code { font-family: ui-monospace, monospace; color: var(--brand-deep
 
 <!-- ============ WELCOME ============ -->
 <section class="screen active" id="screen-welcome">
-  <div class="welcome-hero">
-    <span class="tag">Pre-call Intake · 121 questions · ~20 min</span>
-    <h1 class="display-xl">Tell us about <em>your child.</em></h1>
-    <p class="lede">
-      Thanks for booking a call with us. This intake gives Dr. Kyle's team a complete picture of your child: nervous system, behavior, history, what's going well, what's been hard, what you've noticed change over time. Filling it out before your call means we walk in already knowing your child, so the conversation can focus on the specifics rather than starting from scratch.
-    </p>
-    <p class="lede">
-      <strong>Score each item from 0 to 4</strong>, based on how often or how severely it applies. The form saves automatically. You can close it and return later.
-    </p>
+  <div class="welcome-band">
+    <div class="welcome-hero">
+      <div>
+        <span class="tag">Pre-call Intake</span>
+        <h1 class="display-xl">Tell us about <em>your child.</em></h1>
+        <p class="lede">
+          Thanks for booking a call with us. This intake gives Dr. Kyle's team a complete picture of your child: nervous system, behavior, history, what's going well, what's been hard, what you've noticed change over time. Filling it out before your call means we walk in already knowing your child, so the conversation can focus on the specifics rather than starting from scratch.
+        </p>
+      </div>
+      <div class="welcome-stats">
+        <div>
+          <div class="welcome-stat-num">121</div>
+          <div class="welcome-stat-label">Questions</div>
+        </div>
+        <div>
+          <div class="welcome-stat-num">~20</div>
+          <div class="welcome-stat-label">Minutes</div>
+        </div>
+        <div>
+          <div class="welcome-stat-num">Auto</div>
+          <div class="welcome-stat-label">Saves as you go</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="welcome-band">
+    <div class="welcome-card">
+    <div class="welcome-group-title">About you</div>
     <div class="welcome-fields">
       <div class="field-block">
         <label class="field-label" for="parent-first-name">Your first name <span class="req">*</span></label>
@@ -830,14 +913,27 @@ footer.foot code { font-family: ui-monospace, monospace; color: var(--brand-deep
       </div>
     </div>
     <button class="button-primary" id="welcome-begin">Begin <span>&rarr;</span></button>
-    <div class="welcome-meta">
-      <strong>Scoring scale.</strong> 0: Never / doesn't apply. 1: Rarely (once or twice ever). 2: Sometimes (monthly or mild). 3: Often (weekly or moderate). 4: Always (daily or severe). If you genuinely don't know, pick <em>Unsure</em> and we'll skip it in scoring.
+    </div>
+  </div>
+
+  <div class="welcome-band welcome-band-last">
+    <div class="welcome-card scale-card">
+      <div class="welcome-group-title">Scoring scale</div>
+      <p class="scale-lede">Score each item from 0 to 4, based on how often or how severely it applies. The form saves automatically, so you can close it and come back.</p>
+      <div class="scale-legend">
+        <div class="scale-step"><span class="scale-dot s0"></span><b>0</b>Never</div>
+        <div class="scale-step"><span class="scale-dot s1"></span><b>1</b>Rarely</div>
+        <div class="scale-step"><span class="scale-dot s2"></span><b>2</b>Sometimes</div>
+        <div class="scale-step"><span class="scale-dot s3"></span><b>3</b>Often</div>
+        <div class="scale-step"><span class="scale-dot s4"></span><b>4</b>Always</div>
+      </div>
+      <p class="scale-note">If you genuinely don't know, pick <em>Unsure</em> and we'll skip it in scoring.</p>
     </div>
   </div>
 </section>
 <!-- ============ INTAKE ============ -->
 <section class="screen" id="screen-intake">
-  <div class="intake-progress" id="intake-progress"></div>
+  <div class="intake-progress-rail"><div class="intake-progress" id="intake-progress"></div></div>
   <div class="intake-shell">
     <div class="intake-header">
       <div class="meta-row">
@@ -867,6 +963,7 @@ footer.foot code { font-family: ui-monospace, monospace; color: var(--brand-deep
 </section>
 <!-- ============ THANKS ============ -->
 <section class="screen" id="screen-thanks">
+  <div class="thanks-band">
   <div class="thanks-hero">
     <div class="thanks-check" id="thanks-check">&#10003;</div>
     <h1 class="display-l" id="thanks-title">Thank you.</h1>
@@ -876,9 +973,10 @@ footer.foot code { font-family: ui-monospace, monospace; color: var(--brand-deep
       <button class="button-secondary" id="thanks-review">Review my answers (read-only)</button>
     </div>
   </div>
+  </div>
 </section>
 <footer class="foot">
-  <p>NeuroHome &middot; Pre-call Intake &middot; Form <code>v1.4.0</code> &middot; Engine <code>v1.3.2</code> &middot; 121 questions across 12 phenotypes</p>
+  <p>NeuroHome &middot; Pre-call Intake &middot; Form <code>v1.5.0</code> &middot; Engine <code>v1.3.2</code> &middot; 121 questions across 12 phenotypes</p>
 </footer>
 <script>
 // =====================================================
