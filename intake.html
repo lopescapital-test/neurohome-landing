@@ -1534,7 +1534,10 @@ const STORAGE_KEY = 'neurosage_intake_draft_v' + DRAFT_SCHEMA_VERSION;
 // details and part of a clinical history, and nothing else will ever come back for it.
 const RETIRED_STORAGE_KEYS = ['neurosage_intake_v1_0'];
 const GHL_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/OzXiG0YQaeEKh2w5XeyU/webhook-trigger/4c769438-be07-4700-835b-48961cc6885a';
-const INTAKE_FORM_VERSION = 'v1.5.0';
+// Bumped for the onboarding screens, the five parent_* fields, the four _text
+// flag fields, flat child_age, lead prefill and draft schema v2. The engine
+// version below is deliberately untouched: none of that changed the scoring.
+const INTAKE_FORM_VERSION = 'v1.6.0';
 const INTAKE_ENGINE_VERSION = 'v1.3.2';
 const SUBMISSION_TIMEOUT_MS = 30000;
 // --- Scoring / draft-lifecycle tuning (edit these in one place) ---
@@ -1621,6 +1624,21 @@ function loadFromStorage() {
       }
     }
   } catch (e) { /* corrupt/absent, ignore */ }
+  // The family already gave us these on the lead form. Pull them across rather
+  // than making them type their own details twice. Blanks only: a saved draft is
+  // the parent's own typing and always wins, and the URL params below stay able
+  // to override, being the more explicit signal.
+  try {
+    const lead = JSON.parse(sessionStorage.getItem('nh_lead') || 'null');
+    if (lead && typeof lead === 'object') {
+      if (!state.parentFirstName) state.parentFirstName = lead.first_name || '';
+      if (!state.parentLastName)  state.parentLastName  = lead.last_name || '';
+      if (!state.email)           state.email           = lead.email || '';
+      if (!state.phone)           state.phone           = lead.phone || '';
+      if (!state.childName)       state.childName       = lead.child_first_name || '';
+      if (!state.parentCountry)   state.parentCountry   = lead.country || '';
+    }
+  } catch (e) { /* absent or corrupt, the parent just fills it in themselves */ }
   if (typeof window !== 'undefined' && window.location && window.location.search) {
     const params = new URLSearchParams(window.location.search);
     const urlEmail = params.get('email');
@@ -1675,8 +1693,13 @@ function setupWelcome() {
   emailEl.value = state.email || '';
   nameEl.value  = state.childName || '';
   ageEl.value   = state.age == null ? '' : state.age;
-  const rawDigits = (state.phone || '').replace(/\D/g, '').slice(0, 10);
-  phoneEl.value = rawDigits.length > 0 ? formatPhoneNANP(rawDigits) : '';
+  // Only reformat what is actually a North American number. The old version ran
+  // every value through formatPhoneNANP against its first ten digits, which
+  // turned a UK number into (442) 079-4609 and an E.164 US one into
+  // (160) 255-5014. Anything else now passes through as the parent wrote it.
+  const phoneDigits = (state.phone || '').replace(/\D/g, '');
+  const isNanp = phoneDigits.length === 10 || (phoneDigits.length === 11 && phoneDigits.charAt(0) === '1');
+  phoneEl.value = isNanp ? formatPhoneNANP(phoneDigits.slice(-10)) : (state.phone || '');
   state.phone = phoneEl.value;
   firstNameEl.addEventListener('input', () => { state.parentFirstName = firstNameEl.value.trim(); saveToStorage(); });
   lastNameEl.addEventListener('input',  () => { state.parentLastName  = lastNameEl.value.trim();  saveToStorage(); });
@@ -2492,6 +2515,12 @@ async function submitIntake(r) {
     parent_last_name: state.parentLastName || '',
     country: state.parentCountry || '',
     child_first_name: state.childName || '',
+    // Flat, not just buried in raw_intake_json. Age gates routing through
+    // ageAppropriate, so it belongs in a field the CRM can bind and filter on
+    // like every other clinically relevant value. Screen 1 will not advance
+    // without a whole number from 1 to 18, and a restored draft is range
+    // checked, so this is never null by the time a submit runs.
+    child_age: state.age,
     primary_archetype: r.arch || '',
     archetype_subtype: r.subtype || '',
     home_intensive_candidate: r.home_intensive_candidate ? 'true' : 'false',

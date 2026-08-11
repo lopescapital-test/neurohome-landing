@@ -526,7 +526,24 @@ form.addEventListener('submit', function (event) {
       // sessionStorage rather than a query string: an email in the URL would
       // leak into history, referrers and analytics. Failure here is harmless,
       // the next page just omits the address.
-      try { sessionStorage.setItem('nh_lead_email', payload.email); } catch (e) { /* ignore */ }
+      try {
+        sessionStorage.setItem('nh_lead_email', payload.email);
+        // Carry the identity across to the intake as well, so a family does not
+        // type their own name, address and number a second time at the front
+        // door of a 121-question form. sessionStorage for the same reason as the
+        // address above. The phone travels as typed rather than E.164 because
+        // the intake's field is a display field that normalises on its own.
+        // child_age is deliberately left out: this form collects a bucket
+        // ("3-18") and the intake needs an exact year.
+        sessionStorage.setItem('nh_lead', JSON.stringify({
+          first_name: payload.first_name,
+          last_name: payload.last_name,
+          email: payload.email,
+          phone: value('phone'),
+          child_first_name: payload.child_first_name,
+          country: payload.country
+        }));
+      } catch (e) { /* ignore */ }
       // Deliberately stays disabled through the redirect so a slow navigation
       // cannot be double-submitted.
       window.location.href = REDIRECT_URL;
