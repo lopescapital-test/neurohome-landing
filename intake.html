@@ -2497,9 +2497,19 @@ async function submitIntake(r) {
     home_intensive_candidate: r.home_intensive_candidate ? 'true' : 'false',
     consult_track: r.consult_track ? 'true' : 'false',
     auto_route_ok: r.autoRoute ? 'true' : 'false',
+    // Each of these four travels twice. The JSON form is the machine-readable
+    // record and stays exactly as it was, so no existing mapping moves. The _text
+    // form is what a CRM field can actually hold: the platform stores the JSON
+    // string as one opaque value, so a multi-select ends up with a single option
+    // named ["a","b"] and cannot be filtered or grouped by the individual flags.
+    // Joined text also makes empty mean empty, where the JSON form put a literal
+    // [] in the field. Same join(', ') the parent concerns already use.
     safety_gates_fired: JSON.stringify(r.safetyFired || []),
+    safety_gates_fired_text: (r.safetyFired || []).join(', '),
     modifier_flags: JSON.stringify(r.flags || []),
+    modifier_flags_text: (r.flags || []).join(', '),
     history_flags: JSON.stringify(r.historyFlags || []),
+    history_flags_text: (r.historyFlags || []).join(', '),
     p01_sensory_autonomic_score: round(pcts.sensory_autonomic_overload),
     p02_left_hemisphere_score: round(pcts.left_hemisphere_fixation),
     p03_right_hemisphere_score: round(pcts.right_hemisphere_social_emotional),
@@ -2523,6 +2533,7 @@ async function submitIntake(r) {
     nbss_developmental_brain_organization: r.nbss?.domains?.developmental_brain_organization ?? 0,
     nbss_sensory_safety: r.nbss?.domains?.sensory_safety ?? 0,
     low_confidence_phenotypes: JSON.stringify(r.lowConfidencePhenotypes || []),
+    low_confidence_phenotypes_text: (r.lowConfidencePhenotypes || []).join(', '),
     total_unsure_count: Object.values(r.unsureCounts || {}).reduce((s, c) => s + c.unsure, 0),
     raw_intake_json: JSON.stringify({
       scores: state.scores,
