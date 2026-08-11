@@ -251,15 +251,46 @@ em { font-style: normal; color: var(--brand); }
   text-transform: uppercase;
 }
 .subsection-label:first-of-type { margin-top: 0; }
+/* Column-aligned scoring grid. Fixed column widths mean every row lines up
+   under the same header, which is what makes 121 questions scannable instead
+   of a wall of loose buttons. Stacks below 760px: five 64px columns plus the
+   Unsure column cannot fit a phone, and this form gets filled on phones. */
+.likert-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0 16px;
+  align-items: end;
+  padding: 0 0 10px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 74px;
+  background: var(--surface);
+  z-index: 5;
+}
+.likert-header-scale { display: grid; grid-template-columns: repeat(5, 64px) 88px; gap: 6px; }
+.likert-header-cell {
+  text-align: center;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  line-height: 1.25;
+}
+.likert-header-cell b { display: block; font-size: 12px; color: var(--ink-2); font-weight: 800; }
 .question {
-  padding: 16px 0;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0 16px;
+  align-items: center;
+  padding: 10px 0;
   border-top: 1px solid var(--border-soft);
 }
-.question:first-of-type { border-top: none; padding-top: 4px; }
+.question:first-of-type { border-top: none; }
 .question-text {
   font-size: 15px;
   color: var(--ink);
-  margin-bottom: 12px;
+  margin-bottom: 0;
   line-height: 1.45;
   font-weight: 500;
 }
@@ -273,14 +304,12 @@ em { font-style: normal; color: var(--brand); }
   letter-spacing: 0.04em;
 }
 .likert {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(5, 64px) 88px;
+  gap: 6px;
 }
 .likert-btn {
-  flex: 1;
-  min-width: 72px;
-  padding: 10px 12px;
+  padding: 10px 6px;
   background: var(--surface);
   border: 1.5px solid var(--border);
   border-radius: 100px;
@@ -336,10 +365,23 @@ em { font-style: normal; color: var(--brand); }
   color: var(--ink-2);
 }
 .likert-btn.likert-unsure.selected .likert-val { color: var(--ink-2); }
+/* Labels sit in the sticky header on desktop, so the buttons stay compact
+   enough to hold their columns. */
+.likert-btn .likert-label { display: none; }
+/* Below 760px the five 64px columns plus Unsure no longer fit, so the row
+   stacks: question text on its own line, then the buttons in a wrapping grid
+   with their labels back inside them. */
+@media (max-width: 760px) {
+  .likert-header { display: none; }
+  .question { grid-template-columns: 1fr; gap: 10px; padding: 14px 0; }
+  .likert { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .likert-btn { padding: 10px 8px; font-size: 12.5px; }
+  .likert-btn .likert-label { display: block; }
+}
 @media (max-width: 540px) {
-  .likert-btn { min-width: 0; padding: 10px 6px; font-size: 12px; }
+  .likert { grid-template-columns: repeat(2, 1fr); }
+  .likert-btn { padding: 10px 6px; font-size: 12px; }
   .likert-btn .likert-val { font-size: 14px; }
-  .likert-btn.likert-unsure { margin-left: 0; flex-basis: 100%; }
 }
 /* Read-only / locked state (after successful submit) */
 .readonly-note {
@@ -414,6 +456,12 @@ em { font-style: normal; color: var(--brand); }
   padding: 16px 24px;
   margin: 0 -24px;
 }
+/* .intake-shell drops to padding 0 at 600px, so the footer's full-bleed
+   negative margin has nothing left to cancel and made the page 48px wider
+   than the viewport. Declared after the rule above, not inside the earlier
+   600px block, because a media query adds no specificity and the later
+   declaration would win. */
+@media (max-width: 600px) { .intake-footer { margin: 0; } }
 .intake-footer-inner {
   max-width: 760px;
   margin: 0 auto;
@@ -1292,6 +1340,17 @@ function renderIntakeSection() {
       html += `</div></div>`;
     });
   } else {
+    // Scale header. The 0 to 4 labels live here once rather than on all 121
+    // rows; each button keeps its own aria-label, and the labels reappear
+    // inside the buttons once the grid stacks on narrow screens.
+    html += `
+      <div class="likert-header">
+        <div class="likert-header-q">Score each item</div>
+        <div class="likert-header-scale">
+          ${[0,1,2,3,4].map(v => `<div class="likert-header-cell"><b>${v}</b>${LIKERT_LABELS[v]}</div>`).join('')}
+          <div class="likert-header-cell"><b>?</b>Unsure</div>
+        </div>
+      </div>`;
     let currentSub = '__INIT__';
     section.questions.forEach(q => {
       if (q.sub && q.sub !== currentSub) {
@@ -1306,11 +1365,11 @@ function renderIntakeSection() {
             ${[0,1,2,3,4].map(v => `
               <button type="button" class="likert-btn ${val === v ? 'selected' : ''}" data-qid="${q.qid}" data-val="${v}" aria-label="${q.text}: score ${v} (${LIKERT_LABELS[v]})" ${locked ? 'disabled' : ''}>
                 <span class="likert-val">${v}</span>
-                <span>${LIKERT_LABELS[v]}</span>
+                <span class="likert-label">${LIKERT_LABELS[v]}</span>
               </button>`).join('')}
             <button type="button" class="likert-btn likert-unsure ${val === UNSURE ? 'selected' : ''}" data-qid="${q.qid}" data-val="unsure" aria-label="${q.text}: unsure / skip" ${locked ? 'disabled' : ''}>
               <span class="likert-val">?</span>
-              <span>Unsure</span>
+              <span class="likert-label">Unsure</span>
             </button>
           </div>
         </div>`;
