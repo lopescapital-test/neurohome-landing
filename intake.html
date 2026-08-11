@@ -159,9 +159,12 @@ em { font-style: normal; color: var(--brand); }
 .welcome-hero p.lede strong { color: #fff; font-weight: 600; }
 /* Stats rail. Splits off to its own column on desktop, sits under the copy
    once the card stacks. */
-.welcome-stats { display: grid; gap: 6px; border-left: 2px solid rgba(143,217,242,0.3); padding-left: 26px; }
-.welcome-stat-num { font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 800; color: #fff; line-height: 1.1; }
-.welcome-stat-label { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #8FD9F2; }
+/* Tight line-heights matter more than the gap here: the label inherits the
+   body's 1.55, which put ~6px of dead leading under every stat and made the
+   rail read as three separate blocks. */
+.welcome-stats { display: grid; gap: 4px; border-left: 2px solid rgba(143,217,242,0.3); padding-left: 26px; }
+.welcome-stat-num { font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 800; color: #fff; line-height: 1.05; }
+.welcome-stat-label { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #8FD9F2; line-height: 1.2; }
 @media (max-width: 860px) {
   .welcome-hero { grid-template-columns: 1fr; gap: 24px; }
   .welcome-stats { border-left: none; border-top: 2px solid rgba(143,217,242,0.3); padding-left: 0; padding-top: 22px; grid-template-columns: repeat(3,1fr); }
