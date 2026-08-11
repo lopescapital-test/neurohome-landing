@@ -1515,7 +1515,21 @@ function bandOf(pct) {
   return 'LOW';
 }
 function bandAtLeast(band, target) { return BANDS.indexOf(band) >= BANDS.indexOf(target); }
-const STORAGE_KEY = 'neurosage_intake_v1_0';
+// The saved draft is this page's real cache. It outlives a reload and gets merged
+// straight back into live state, so a draft written by an older form is every bit as
+// dangerous as a stale stylesheet and a good deal quieter about it. The schema
+// version therefore rides in the key: an old-shaped draft is never read at all,
+// rather than read and patched up field by field. Bump DRAFT_SCHEMA_VERSION whenever
+// what saveToStorage() writes changes shape, meaning a renamed state field, a retired
+// question, or a field that gained or lost a default. Copy edits need no bump, and
+// drafts survive those intact.
+// v1 -> v2: parentState became parentCountry, age lost its "5" default and became
+// required, and the onboarding screens added topConcerns, primaryConcern and goal*.
+const DRAFT_SCHEMA_VERSION = 2;
+const STORAGE_KEY = 'neurosage_intake_draft_v' + DRAFT_SCHEMA_VERSION;
+// Superseded keys, swept on load. Each one holds a child's name, a parent's contact
+// details and part of a clinical history, and nothing else will ever come back for it.
+const RETIRED_STORAGE_KEYS = ['neurosage_intake_v1_0'];
 const GHL_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/OzXiG0YQaeEKh2w5XeyU/webhook-trigger/4c769438-be07-4700-835b-48961cc6885a';
 const INTAKE_FORM_VERSION = 'v1.5.0';
 const INTAKE_ENGINE_VERSION = 'v1.3.2';
@@ -1553,7 +1567,20 @@ const state = {
   goal5Years: '',
   currentSection: 0,
 };
+// Copy across only the entries whose keys the current form still defines. A retired
+// or renamed qid restored blindly would sit in state counting toward
+// MIN_ANSWERED_FRACTION, and would ride along to the CRM inside raw_intake_json,
+// as an answer to a question nobody was asked. Values are passed through untouched;
+// this filters keys, it does not second-guess the engine.
+function restoreKnownKeys(target, saved, allowed) {
+  if (!saved || typeof saved !== 'object') return;
+  Object.keys(saved).forEach(k => { if (allowed.has(k)) target[k] = saved[k]; });
+}
 function loadFromStorage() {
+  // Sweep drafts left by earlier schema versions before reading the current one.
+  RETIRED_STORAGE_KEYS.forEach(k => {
+    try { localStorage.removeItem(k); } catch (e) { /* ignore */ }
+  });
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
@@ -1563,9 +1590,15 @@ function loadFromStorage() {
         // Item 3: abandoned draft is stale. Discard it and start fresh.
         localStorage.removeItem(STORAGE_KEY);
       } else {
-        Object.assign(state.scores, parsed.scores || {});
-        Object.assign(state.history, parsed.history || {});
-        Object.assign(state.cc, parsed.cc || {});
+        const knownQids = new Set();
+        PHENOTYPE_QUESTIONS.forEach(p => p.questions.forEach(q => knownQids.add(q.qid)));
+        const knownHistory = new Set(), knownCc = new Set();
+        HISTORY_SECTION.groups.forEach(g => g.items.forEach(it => {
+          (it.cc ? knownCc : knownHistory).add(it.key);
+        }));
+        restoreKnownKeys(state.scores, parsed.scores, knownQids);
+        restoreKnownKeys(state.history, parsed.history, knownHistory);
+        restoreKnownKeys(state.cc, parsed.cc, knownCc);
         state.parentFirstName = parsed.parentFirstName || '';
         state.parentLastName = parsed.parentLastName || '';
         state.parentCountry = parsed.parentCountry || '';
@@ -1575,7 +1608,10 @@ function loadFromStorage() {
         state.goal2Years = parsed.goal2Years || '';
         state.goal5Years = parsed.goal5Years || '';
         state.childName = parsed.childName || '';
-        state.age = parsed.age || null;
+        // A draft may only hand back an age the form itself would accept, so a
+        // corrupt or out-of-range value comes back empty and the parent states it.
+        const savedAge = Number(parsed.age);
+        state.age = (Number.isInteger(savedAge) && savedAge >= 1 && savedAge <= 18) ? savedAge : null;
         state.email = parsed.email || '';
         state.phone = parsed.phone || '';
         state.contactId = parsed.contactId || '';
