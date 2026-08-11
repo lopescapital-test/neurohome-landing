@@ -880,7 +880,7 @@ footer.foot code { font-family: ui-monospace, monospace; color: var(--brand-deep
       </div>
       <div class="field-block">
         <label class="field-label" for="parent-phone">Your phone <span class="req">*</span></label>
-        <input class="field-input" id="parent-phone" type="tel" placeholder="(555) 123-4567" required autocomplete="tel" maxlength="14">
+        <input class="field-input" id="parent-phone" type="tel" placeholder="(555) 123-4567" required autocomplete="tel">
       </div>
       <div class="field-block">
         <label class="field-label" for="parent-email">Your email <span class="req">*</span></label>
@@ -1697,18 +1697,34 @@ function setupWelcome() {
   // every value through formatPhoneNANP against its first ten digits, which
   // turned a UK number into (442) 079-4609 and an E.164 US one into
   // (160) 255-5014. Anything else now passes through as the parent wrote it.
-  const phoneDigits = (state.phone || '').replace(/\D/g, '');
-  const isNanp = phoneDigits.length === 10 || (phoneDigits.length === 11 && phoneDigits.charAt(0) === '1');
-  phoneEl.value = isNanp ? formatPhoneNANP(phoneDigits.slice(-10)) : (state.phone || '');
+  const restoredPhone = state.phone || '';
+  const restoredDigits = restoredPhone.replace(/\D/g, '');
+  const restoredIsNanp = shouldFormatPhone(restoredPhone)
+    && (restoredDigits.length === 10 || (restoredDigits.length === 11 && restoredDigits.charAt(0) === '1'));
+  phoneEl.value = restoredIsNanp ? formatPhoneNANP(restoredDigits.slice(-10)) : restoredPhone;
   state.phone = phoneEl.value;
   firstNameEl.addEventListener('input', () => { state.parentFirstName = firstNameEl.value.trim(); saveToStorage(); });
   lastNameEl.addEventListener('input',  () => { state.parentLastName  = lastNameEl.value.trim();  saveToStorage(); });
-  countryEl.addEventListener('change',    () => { state.parentCountry     = countryEl.value;            saveToStorage(); });
+  countryEl.addEventListener('change', () => {
+    state.parentCountry = countryEl.value;
+    // Switching to a country outside the NANP leaves any US shaping behind.
+    if (!shouldFormatPhone(phoneEl.value) && phoneEl.value.indexOf('(') !== -1) {
+      phoneEl.value = phoneEl.value.replace(/[()\-\s]/g, '');
+      state.phone = phoneEl.value;
+    }
+    saveToStorage();
+  });
   emailEl.addEventListener('input', () => { state.email = emailEl.value.trim(); saveToStorage(); });
   nameEl.addEventListener('input',  () => { state.childName = nameEl.value; saveToStorage(); });
   ageEl.addEventListener('input',   () => { const n = parseInt(ageEl.value, 10); state.age = Number.isNaN(n) ? null : n; saveToStorage(); });
   phoneEl.addEventListener('input', (e) => {
     const input = e.target;
+    // Anything not North American is left exactly as the parent typed it.
+    if (!shouldFormatPhone(input.value)) {
+      state.phone = input.value;
+      saveToStorage();
+      return;
+    }
     const oldValue = input.value;
     const oldCursor = input.selectionStart || 0;
     const digitsBeforeCursor = oldValue.slice(0, oldCursor).replace(/\D/g, '').length;
@@ -1780,11 +1796,19 @@ function setupWelcome() {
       return;
     }
     emailEl.style.borderColor = '';
-    const phoneDigits = (state.phone || '').replace(/\D/g, '');
-    if (phoneDigits.length !== 10) {
+    // Ten digits is the right rule for a North American number and the wrong one
+    // for the other 195 countries in the list above. Outside the NANP we only
+    // check that it is long enough to be a real number.
+    const phoneRaw = (state.phone || '').trim();
+    const phoneDigits = phoneRaw.replace(/\D/g, '');
+    const phoneIsNanp = shouldFormatPhone(phoneRaw);
+    const phoneOk = phoneIsNanp ? phoneDigits.length === 10 : phoneDigits.length >= 7;
+    if (!phoneOk) {
       phoneEl.style.borderColor = 'var(--danger)';
       phoneEl.focus();
-      alert('Please enter a 10-digit US phone number, e.g. (555) 123-4567.');
+      alert(phoneIsNanp
+        ? 'Please enter a 10-digit US phone number, e.g. (555) 123-4567.'
+        : 'Please enter your phone number, including the country code, e.g. +44 20 7946 0958.');
       return;
     }
     phoneEl.style.borderColor = '';
@@ -2640,9 +2664,20 @@ function renderThanks(r, succeeded) {
    phone matches reliably. The visible field keeps its (602) 889-9655 formatting;
    only the outbound value changes. A number already in + form, or one that is
    not a clean 10-digit NANP, is passed through untouched rather than guessed at. */
+// The country list offers 197 entries, so North American shaping has to be the
+// exception rather than the default. start.html has had this guard since the lead
+// form was built; the intake did not, which meant a family outside the US had
+// their number reformatted as they typed, rejected by a 10-digit check, and
+// prefixed +1 on the way to the CRM. Mirrors start.html deliberately.
+const NANP_COUNTRIES = ['', 'United States', 'Canada'];
+function shouldFormatPhone(display) {
+  if ((display || '').trim().charAt(0) === '+') return false;
+  return NANP_COUNTRIES.indexOf(state.parentCountry || '') !== -1;
+}
 function toE164(display) {
   const raw = (display || '').trim();
   if (raw.charAt(0) === '+') return raw;
+  if (!shouldFormatPhone(raw)) return raw;
   const d = raw.replace(/\D/g, '');
   if (d.length === 10) return '+1' + d;
   if (d.length === 11 && d.charAt(0) === '1') return '+' + d;
