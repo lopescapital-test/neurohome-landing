@@ -918,8 +918,8 @@ footer.foot code { font-family: ui-monospace, monospace; color: var(--brand-deep
         <input class="field-input" id="child-name" type="text" placeholder="e.g. Lily" required>
       </div>
       <div class="field-block">
-        <label class="field-label" for="child-age">Age (years)</label>
-        <input class="field-input" id="child-age" type="number" min="1" max="18" value="5">
+        <label class="field-label" for="child-age">Age (years) <span class="req">*</span></label>
+        <input class="field-input" id="child-age" type="number" min="1" max="18" placeholder="e.g. 7" required>
       </div>
     </div>
     <button class="button-primary" id="welcome-begin">Begin <span>&rarr;</span></button>
@@ -1249,7 +1249,7 @@ const state = {
   parentLastName: '',
   parentCountry: '',
   childName: '',
-  age: 5,
+  age: null,
   email: '',
   phone: '',
   contactId: '',
@@ -1272,7 +1272,7 @@ function loadFromStorage() {
         state.parentLastName = parsed.parentLastName || '';
         state.parentCountry = parsed.parentCountry || '';
         state.childName = parsed.childName || '';
-        state.age = parsed.age || 5;
+        state.age = parsed.age || null;
         state.email = parsed.email || '';
         state.phone = parsed.phone || '';
         state.contactId = parsed.contactId || '';
@@ -1324,7 +1324,7 @@ function setupWelcome() {
   countryEl.value     = state.parentCountry || '';
   emailEl.value = state.email || '';
   nameEl.value  = state.childName || '';
-  ageEl.value   = state.age || 5;
+  ageEl.value   = state.age == null ? '' : state.age;
   const rawDigits = (state.phone || '').replace(/\D/g, '').slice(0, 10);
   phoneEl.value = rawDigits.length > 0 ? formatPhoneNANP(rawDigits) : '';
   state.phone = phoneEl.value;
@@ -1333,7 +1333,7 @@ function setupWelcome() {
   countryEl.addEventListener('change',    () => { state.parentCountry     = countryEl.value;            saveToStorage(); });
   emailEl.addEventListener('input', () => { state.email = emailEl.value.trim(); saveToStorage(); });
   nameEl.addEventListener('input',  () => { state.childName = nameEl.value; saveToStorage(); });
-  ageEl.addEventListener('input',   () => { state.age = parseInt(ageEl.value) || 5; saveToStorage(); });
+  ageEl.addEventListener('input',   () => { const n = parseInt(ageEl.value, 10); state.age = Number.isNaN(n) ? null : n; saveToStorage(); });
   phoneEl.addEventListener('input', (e) => {
     const input = e.target;
     const oldValue = input.value;
@@ -1388,6 +1388,16 @@ function setupWelcome() {
       return;
     }
     nameEl.style.borderColor = '';
+    // Age feeds routing (ageAppropriate), so it has to be a real answer rather
+    // than a default nobody looked at.
+    const childAge = parseInt(state.age, 10);
+    if (!childAge || childAge < 1 || childAge > 18) {
+      ageEl.style.borderColor = 'var(--danger)';
+      ageEl.focus();
+      alert('Please enter your child\'s age in years, between 1 and 18.');
+      return;
+    }
+    ageEl.style.borderColor = '';
     const email = (state.email || '').trim();
     const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     if (!emailValid) {
