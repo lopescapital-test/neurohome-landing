@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NeuroHome Pre-call Intake</title>
+<title>NeuroHome Child Assessment</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 52 52'%3E%3Crect x='8' y='22' width='36' height='27' rx='3' stroke='%231D2939' stroke-width='2.5' fill='white'/%3E%3Cpath d='M 4 24 L 26 5 L 48 24' stroke='%231D2939' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='8' cy='22' r='3.5' fill='%2300CEFD'/%3E%3Ccircle cx='44' cy='22' r='3.5' fill='%2300CEFD'/%3E%3Ccircle cx='8' cy='49' r='3.5' fill='%2300CEFD'/%3E%3Ccircle cx='44' cy='49' r='3.5' fill='%2300CEFD'/%3E%3Ccircle cx='26' cy='5' r='3.5' fill='%2300CEFD'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1184,7 +1184,7 @@ footer.foot code { font-family: ui-monospace, monospace; color: var(--brand-deep
 
         <div class="onb-actions">
           <button class="button-secondary" id="hopes-back">Back</button>
-          <span class="onb-hint">Answer what you can. You can add more on the call.</span>
+          <span class="onb-hint">Answer what you can. You can always tell us more later.</span>
           <button class="button-primary" id="hopes-next">Continue <span>&rarr;</span></button>
         </div>
       </div>
@@ -1278,7 +1278,7 @@ footer.foot code { font-family: ui-monospace, monospace; color: var(--brand-deep
   </div>
 </section>
 <footer class="foot">
-  <p>NeuroHome &middot; Pre-call Intake &middot; Form <code>v1.5.0</code> &middot; Engine <code>v1.3.2</code> &middot; 121 questions across 12 phenotypes</p>
+  <p>NeuroHome &middot; Child Assessment &middot; Form <code>v1.5.0</code> &middot; Engine <code>v1.3.2</code> &middot; 121 questions across 12 phenotypes</p>
 </footer>
 <script>
 // =====================================================
@@ -1726,7 +1726,7 @@ function setupWelcome() {
     if (!parentCountry) {
       countryEl.style.borderColor = 'var(--danger)';
       countryEl.focus();
-      alert('Please select your country. Dr. Kyle\'s team uses this to confirm availability before your call.');
+      alert('Please select your country. Dr. Kyle\'s team uses this to check what we can offer where you live.');
       return;
     }
     countryEl.style.borderColor = '';
