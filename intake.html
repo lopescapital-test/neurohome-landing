@@ -643,14 +643,16 @@ em { font-style: normal; color: var(--brand); }
   text-align: center;
 }
 .thanks-hero h1 { color: #fff; }
-.thanks-hero .thanks-message { color: #C9D6E4; }
 .thanks-hero .thanks-note { color: #93A3B8; }
+/* Brand cyan with a dark glyph rather than the old bright green, which was
+   the one colour on the card not in the palette. Error keeps amber, which
+   still needs to read as a warning. */
 .thanks-check {
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: var(--accent-green);
-  color: #FFF;
+  background: var(--brand);
+  color: #08303D;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -658,12 +660,16 @@ em { font-style: normal; color: var(--brand); }
   font-family: 'Inter', sans-serif;
   font-weight: 700;
   margin-bottom: 24px;
-  box-shadow: 0 8px 24px rgba(11, 218, 81, 0.25);
+  box-shadow: 0 8px 24px rgba(0, 206, 253, 0.25);
 }
-.thanks-check.error { background: var(--warm); box-shadow: 0 8px 24px rgba(245, 166, 35, 0.25); }
+.thanks-check.error { background: var(--warm); color: #3D2A05; box-shadow: 0 8px 24px rgba(245, 166, 35, 0.25); }
+/* The secondary button is styled for light surfaces; on the navy card its
+   ink-2 text sat at 1.64:1. */
+.thanks-actions .button-secondary { color: #fff; border-color: rgba(255,255,255,0.35); background: transparent; }
+.thanks-actions .button-secondary:hover { border-color: var(--brand); color: var(--brand); }
 .thanks-hero h1 { margin-bottom: 14px; }
 .thanks-hero p.thanks-message {
-  color: var(--ink-2);
+  color: #C9D6E4;
   font-size: 16px;
   line-height: 1.65;
   max-width: 520px;
