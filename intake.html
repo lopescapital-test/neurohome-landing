@@ -245,7 +245,7 @@ em { font-style: normal; color: var(--brand); }
 .scale-note em { color: var(--brand-deep); font-weight: 600; }
 @media (max-width: 540px) { .scale-legend { grid-template-columns: repeat(3,1fr); gap: 14px 8px; } }
 /* ========== INTAKE ========== */
-.intake-shell { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+.intake-shell { max-width: 1000px; margin: 0 auto; padding: 0 clamp(16px,4vw,24px); }
 .intake-progress {
   display: flex;
   gap: 4px;
@@ -253,9 +253,78 @@ em { font-style: normal; color: var(--brand); }
   max-width: 1000px;
   margin: 0 auto;
 }
-/* Navy rail behind the 13 section segments, so progress reads against a dark
-   band the way the design has it rather than as faint ticks on white. */
-.intake-progress-rail { background: #0f1b33; padding: 18px clamp(16px,4vw,24px); }
+/* Navy rail carrying the section title, the running count and the 13 segments,
+   so the whole "where am I" block reads as one dark band. */
+.intake-progress-rail { background: #0f1b33; padding: 16px clamp(16px,4vw,40px) 14px; position: sticky; top: 72px; z-index: 40; }
+.intake-rail-inner { max-width: 1000px; margin: 0 auto; }
+.intake-rail-head { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; margin-bottom: 12px; }
+.intake-rail-title { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; min-width: 0; }
+.intake-rail-tag { font-size: 11.5px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: #16C7F2; white-space: nowrap; }
+.intake-rail-name { font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 800; letter-spacing: -0.5px; color: #fff; margin: 0; line-height: 1.15; }
+.intake-rail-count { font-size: 12.5px; color: #93A3B8; white-space: nowrap; }
+.intake-rail-count strong { color: #fff; font-weight: 700; }
+@media (max-width: 640px) {
+  .intake-rail-head { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .intake-rail-name { font-size: 17px; }
+}
+
+/* ---- Chunked scroll ----
+   Questions arrive in cards of five. The first incomplete chunk is the only
+   open matrix; finished chunks collapse to a summary with a Review link and
+   later chunks sit dimmed with their questions previewed. Progress reads as
+   cards ticking off rather than one bar creeping. */
+/* Phenotype sections sit straight on the band; the chunks are the cards. */
+.section-open { padding: 24px 0 8px; }
+.section-open .section-card-sub { margin: 0 4px 18px; }
+.chunk { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 14px; overflow: hidden; }
+.chunk-head {
+  display: flex; justify-content: space-between; align-items: center; gap: 16px;
+  padding: 14px 20px; background: var(--surface-soft); border-bottom: 1px solid var(--border-soft);
+  font-size: 11.5px; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-3);
+}
+.chunk-note { font-weight: 600; letter-spacing: 0.02em; text-transform: none; font-size: 12.5px; color: var(--ink-4); }
+
+/* Done: collapsed, cyan, with a way back in. */
+.chunk-done { border-color: var(--brand-line); }
+.chunk-done .chunk-head { background: var(--brand-soft); border-bottom: none; color: var(--brand-deep); }
+.chunk-done .chunk-note { color: var(--brand-deep); }
+.chunk-review {
+  background: none; border: none; padding: 0; cursor: pointer; font-family: 'Inter', sans-serif;
+  font-size: 12.5px; font-weight: 700; color: var(--brand-deep); text-decoration: underline; text-underline-offset: 3px;
+}
+.chunk-review:hover { color: var(--ink); }
+
+/* Upcoming: dimmed, questions previewed so the parent can see what is coming. */
+.chunk-upcoming { background: var(--surface-soft); }
+.chunk-preview { padding: 14px 20px; font-size: 13.5px; line-height: 1.6; color: var(--ink-4); }
+
+/* Active: the only full matrix on the page. */
+.chunk-grid { padding: 4px 20px 8px; }
+.likert-header {
+  display: grid;
+  grid-template-columns: 1fr repeat(6, 62px);
+  gap: 0 6px;
+  align-items: end;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+.likert-header-cell { text-align: center; font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-3); }
+.question {
+  display: grid;
+  grid-template-columns: 1fr repeat(6, 62px);
+  gap: 0 6px;
+  align-items: center;
+  padding: 10px 0;
+  border-top: 1px solid var(--border-soft);
+}
+.question:first-of-type { border-top: none; }
+.question-text {
+  font-size: 15px;
+  color: var(--ink);
+  margin-bottom: 0;
+  line-height: 1.45;
+  font-weight: 500;
+}
 .intake-progress-bar {
   flex: 1;
   height: 6px;
@@ -315,42 +384,6 @@ em { font-style: normal; color: var(--brand); }
   text-transform: uppercase;
 }
 .subsection-label:first-of-type { margin-top: 0; }
-/* Column-aligned scoring grid. Fixed column widths mean every row lines up
-   under the same header, which is what makes 121 questions scannable instead
-   of a wall of loose buttons. Stacks below 760px: five 64px columns plus the
-   Unsure column cannot fit a phone, and this form gets filled on phones. */
-.likert-header {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 0 16px;
-  align-items: end;
-  padding: 0 0 10px;
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 74px;
-  background: var(--surface);
-  z-index: 5;
-}
-.likert-header-scale { display: grid; grid-template-columns: repeat(5, 64px) 88px; gap: 6px; }
-.likert-header-cell {
-  text-align: center;
-  font-size: 10.5px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-  line-height: 1.25;
-}
-.likert-header-cell b { display: block; font-size: 12px; color: var(--ink-2); font-weight: 800; }
-.question {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 0 16px;
-  align-items: center;
-  padding: 10px 0;
-  border-top: 1px solid var(--border-soft);
-}
-.question:first-of-type { border-top: none; }
 .question-text {
   font-size: 15px;
   color: var(--ink);
@@ -367,28 +400,34 @@ em { font-style: normal; color: var(--brand); }
   font-weight: 400;
   letter-spacing: 0.04em;
 }
-.likert {
-  display: grid;
-  grid-template-columns: repeat(5, 64px) 88px;
-  gap: 6px;
-}
+/* The buttons become cells of .question directly, so they line up under the
+   header columns without a wrapper of their own. */
+.likert { display: contents; }
 .likert-btn {
-  padding: 10px 6px;
+  justify-self: center;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  padding: 0;
   background: var(--surface);
-  border: 1.5px solid var(--border);
-  border-radius: 100px;
+  border: 1.5px solid #CBD5E1;
   font-family: 'Inter', sans-serif;
-  font-size: 12.5px;
-  font-weight: 500;
-  color: var(--ink-2);
+  font-size: 0;
+  color: transparent;
   cursor: pointer;
   transition: all 0.15s;
   display: inline-flex;
-  flex-direction: column;
   align-items: center;
-  gap: 2px;
-  line-height: 1.2;
+  justify-content: center;
+  line-height: 1;
 }
+.likert-btn:hover { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-glow); }
+/* Selected fills are defined further down and are severity-coded: cyan for
+   0 to 2, amber for 3, red for 4. Left as they were rather than flattened to
+   one colour, since that tint is doing real work for whoever reads these. */
+.likert-btn.likert-unsure { border-style: dashed; }
+/* Values and labels are conveyed by the column headers and each button's
+   aria-label; the circle itself is the control. */
+.likert-btn .likert-val, .likert-btn .likert-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .likert-btn .likert-val {
   font-family: 'Outfit', sans-serif;
   font-size: 15px;
@@ -407,45 +446,64 @@ em { font-style: normal; color: var(--brand); }
 .likert-btn.selected[data-val="4"] .likert-val { color: var(--danger); }
 .likert-btn.selected[data-val="3"] { background: var(--warm-soft); border-color: var(--warm); color: var(--warn); }
 .likert-btn.selected[data-val="3"] .likert-val { color: var(--warn); }
+/* Unsure sits in its own grid column now, so it takes no margin of its own;
+   the 8px here was a leftover from the old flex row and pushed it out of
+   alignment with its header. */
 .likert-btn.likert-unsure {
-  margin-left: 8px;
   border-style: dashed;
   border-color: var(--ink-4);
-  color: var(--ink-3);
   background: transparent;
 }
-.likert-btn.likert-unsure .likert-val {
-  color: var(--ink-3);
-  font-style: italic;
-}
-.likert-btn.likert-unsure:hover {
-  border-color: var(--ink-3);
-  color: var(--ink-2);
-}
+.likert-btn.likert-unsure:hover { border-color: var(--ink-3); }
 .likert-btn.likert-unsure.selected {
-  background: var(--surface-soft);
-  border-color: var(--ink-3);
+  background: var(--ink-4);
+  border-color: var(--ink-4);
   border-style: solid;
-  color: var(--ink-2);
 }
-.likert-btn.likert-unsure.selected .likert-val { color: var(--ink-2); }
 /* Labels sit in the sticky header on desktop, so the buttons stay compact
    enough to hold their columns. */
 .likert-btn .likert-label { display: none; }
 /* Below 760px the five 64px columns plus Unsure no longer fit, so the row
    stacks: question text on its own line, then the buttons in a wrapping grid
    with their labels back inside them. */
+/* Below 760px the seven columns cannot fit, so the row stacks: question text
+   on its own line, then the six controls as labelled pills. The circles carry
+   no visible text, so on mobile they have to become buttons that do. */
 @media (max-width: 760px) {
   .likert-header { display: none; }
   .question { grid-template-columns: 1fr; gap: 10px; padding: 14px 0; }
-  .likert { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  .likert-btn { padding: 10px 8px; font-size: 12.5px; }
-  .likert-btn .likert-label { display: block; }
+  .likert { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .likert-btn {
+    justify-self: stretch;
+    width: auto; height: auto; min-height: 46px; border-radius: 100px;
+    padding: 8px 6px; font-size: 12px; color: var(--ink-2);
+    flex-direction: column; gap: 1px; line-height: 1.2;
+  }
+  /* Selected pills carry visible text on mobile, so they need real contrast.
+     White on the brand cyan is about 1.9:1; dark ink on it is about 12:1.
+     Unsure fills with a mid grey, which takes white. */
+  /* The severity tint stays as the signal, but its text colour does not
+     survive at 10.5px: --danger on --danger-soft is 3.46:1. Dark ink on the
+     same tints clears AA while the background still carries the meaning.
+     Listed per data-val to beat the attribute-selector specificity above. */
+  .likert-btn.selected,
+  .likert-btn.selected[data-val="3"],
+  .likert-btn.selected[data-val="4"] { color: var(--ink); }
+  .likert-btn.selected .likert-val,
+  .likert-btn.selected[data-val="3"] .likert-val,
+  .likert-btn.selected[data-val="4"] .likert-val { color: var(--ink); }
+  .likert-btn.likert-unsure.selected { background: var(--ink-3); border-color: var(--ink-3); color: #fff; }
+  .likert-btn .likert-val, .likert-btn .likert-label {
+    display: block;
+    position: static; width: auto; height: auto; overflow: visible;
+    clip-path: none; white-space: normal;
+  }
+  .likert-btn .likert-val { font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 700; }
+  .likert-btn .likert-label { font-size: 10.5px; }
+  .chunk-grid { padding: 4px 14px 8px; }
 }
 @media (max-width: 540px) {
   .likert { grid-template-columns: repeat(2, 1fr); }
-  .likert-btn { padding: 10px 6px; font-size: 12px; }
-  .likert-btn .likert-val { font-size: 14px; }
 }
 /* Read-only / locked state (after successful submit) */
 .readonly-note {
@@ -527,7 +585,7 @@ em { font-style: normal; color: var(--brand); }
    declaration would win. */
 @media (max-width: 600px) { .intake-footer { margin: 0; } }
 .intake-footer-inner {
-  max-width: 760px;
+  max-width: 1000px;
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
@@ -943,19 +1001,23 @@ footer.foot code { font-family: ui-monospace, monospace; color: var(--brand-deep
 </section>
 <!-- ============ INTAKE ============ -->
 <section class="screen" id="screen-intake">
-  <div class="intake-progress-rail"><div class="intake-progress" id="intake-progress"></div></div>
-  <div class="intake-shell">
-    <div class="intake-header">
-      <div class="meta-row">
-        <span class="tag" id="intake-section-tag">Section 1 of 13</span>
-        <span class="progress-count"><strong id="intake-answered">0</strong> / 121 answered</span>
+  <div class="intake-progress-rail">
+    <div class="intake-rail-inner">
+      <div class="intake-rail-head">
+        <div class="intake-rail-title">
+          <span class="intake-rail-tag" id="intake-section-tag">Section 1 of 13</span>
+          <h2 class="intake-rail-name" id="intake-section-title">Section</h2>
+        </div>
+        <span class="intake-rail-count"><strong id="intake-answered">0</strong> / 121 answered</span>
       </div>
-      <h2 class="display-l" id="intake-section-title">Section</h2>
+      <div class="intake-progress" id="intake-progress"></div>
     </div>
+  </div>
+  <div class="intake-shell">
     <div id="intake-body"></div>
     <div class="intake-footer">
       <div class="intake-footer-inner">
-        <button class="button-secondary" id="intake-back">&larr; Back</button>
+        <button class="button-secondary" id="intake-back">Back to start</button>
         <span class="autosave-note" id="autosave-note">Autosaving locally...</span>
         <button class="button-primary" id="intake-next">Continue &rarr;</button>
       </div>
@@ -1420,6 +1482,39 @@ function setupWelcome() {
     showScreen('intake');
   });
 }
+// Which chunk is force-opened by a Review link. Null means "first unfinished".
+let forceOpenChunk = null;
+
+/* Split a section's questions into cards of five, never leaving a card of one:
+   a trailing single is folded back into the card before it. Chunks break on
+   subsection boundaries so a card never spans two headings. */
+function chunkSection(section) {
+  const out = [];
+  const bySub = [];
+  section.questions.forEach(q => {
+    const sub = q.sub || '';
+    const last = bySub[bySub.length - 1];
+    if (last && last.sub === sub) last.questions.push(q);
+    else bySub.push({ sub, questions: [q] });
+  });
+  let offset = 0;
+  bySub.forEach(group => {
+    const pieces = [];
+    for (let start = 0; start < group.questions.length; start += 5) {
+      pieces.push([start, Math.min(start + 5, group.questions.length)]);
+    }
+    if (pieces.length > 1) {
+      const last = pieces[pieces.length - 1];
+      if (last[1] - last[0] === 1) { pieces[pieces.length - 2][1] = last[1]; pieces.pop(); }
+    }
+    pieces.forEach(([a, b]) => {
+      out.push({ sub: group.sub, from: offset + a, to: offset + b, questions: group.questions.slice(a, b) });
+    });
+    offset += group.questions.length;
+  });
+  return out;
+}
+
 function renderIntakeSection() {
   window.scrollTo(0, 0);
   const section = SECTIONS[state.currentSection];
@@ -1439,7 +1534,10 @@ function renderIntakeSection() {
     return `<div class="intake-progress-bar ${cls}"></div>`;
   }).join('');
   const body = document.getElementById('intake-body');
-  let html = `<div class="section-card">`;
+  // Phenotype sections render their chunks as the cards, so they are not
+  // wrapped in another one. History keeps the single card, since its toggle
+  // groups are one continuous block.
+  let html = isHistory ? `<div class="section-card">` : `<div class="section-open">`;
   if (locked) html += `<div class="readonly-note">Submitted. Your answers are read-only. To change anything, contact Dr. Kyle's team.</div>`;
   if (section.descriptor) html += `<div class="section-card-sub">${section.descriptor}</div>`;
   if (isHistory) {
@@ -1458,37 +1556,75 @@ function renderIntakeSection() {
       html += `</div></div>`;
     });
   } else {
-    // Scale header. The 0 to 4 labels live here once rather than on all 121
-    // rows; each button keeps its own aria-label, and the labels reappear
-    // inside the buttons once the grid stacks on narrow screens.
-    html += `
+    const chunks = chunkSection(section);
+    const isAnswered = q => state.scores[q.qid] !== undefined;
+    const complete = chunks.map(c => c.questions.every(isAnswered));
+    // The open chunk is the first unfinished one, unless the parent used a
+    // Review link to reopen an earlier chunk. Once submitted everything is
+    // read-only, so open them all rather than hiding answers behind summaries.
+    let activeIdx = complete.findIndex(x => !x);
+    if (activeIdx === -1) activeIdx = chunks.length - 1;
+    if (forceOpenChunk !== null && forceOpenChunk < chunks.length) activeIdx = forceOpenChunk;
+
+    const headerRow = `
       <div class="likert-header">
-        <div class="likert-header-q">Score each item</div>
-        <div class="likert-header-scale">
-          ${[0,1,2,3,4].map(v => `<div class="likert-header-cell"><b>${v}</b>${LIKERT_LABELS[v]}</div>`).join('')}
-          <div class="likert-header-cell"><b>?</b>Unsure</div>
-        </div>
+        <div></div>
+        ${LIKERT_LABELS.map(l => `<div class="likert-header-cell">${l}</div>`).join('')}
+        <div class="likert-header-cell">Unsure</div>
       </div>`;
-    let currentSub = '__INIT__';
-    section.questions.forEach(q => {
-      if (q.sub && q.sub !== currentSub) {
-        currentSub = q.sub;
-        html += `<div class="subsection-label">${q.sub}</div>`;
+
+    chunks.forEach((c, ci) => {
+      const n = c.questions.length;
+      const isActive = locked || ci === activeIdx;
+      const isDone = complete[ci] && !isActive;
+      const label = `${c.sub ? c.sub + ' &middot; ' : 'Questions '}${c.from + 1} to ${c.to}`;
+
+      if (isDone) {
+        html += `
+          <div class="chunk chunk-done">
+            <div class="chunk-head">
+              <span>${label}</span>
+              <span class="chunk-note">All ${n} answered &nbsp;<button type="button" class="chunk-review" data-chunk="${ci}">Review</button></span>
+            </div>
+          </div>`;
+        return;
       }
-      const val = state.scores[q.qid];
+      if (!isActive) {
+        const answered = c.questions.filter(isAnswered).length;
+        const left = n - answered;
+        html += `
+          <div class="chunk chunk-upcoming">
+            <div class="chunk-head">
+              <span>${label}</span>
+              <span class="chunk-note">${left} question${left === 1 ? '' : 's'} left</span>
+            </div>
+            <div class="chunk-preview">${c.questions.map(q => q.text).join(', ')}</div>
+          </div>`;
+        return;
+      }
       html += `
-        <div class="question" data-qid="${q.qid}">
-          <div class="question-text">${q.text}<small>${q.qid}</small></div>
-          <div class="likert">
-            ${[0,1,2,3,4].map(v => `
-              <button type="button" class="likert-btn ${val === v ? 'selected' : ''}" data-qid="${q.qid}" data-val="${v}" aria-label="${q.text}: score ${v} (${LIKERT_LABELS[v]})" ${locked ? 'disabled' : ''}>
-                <span class="likert-val">${v}</span>
-                <span class="likert-label">${LIKERT_LABELS[v]}</span>
-              </button>`).join('')}
-            <button type="button" class="likert-btn likert-unsure ${val === UNSURE ? 'selected' : ''}" data-qid="${q.qid}" data-val="unsure" aria-label="${q.text}: unsure / skip" ${locked ? 'disabled' : ''}>
-              <span class="likert-val">?</span>
-              <span class="likert-label">Unsure</span>
-            </button>
+        <div class="chunk chunk-active">
+          <div class="chunk-head"><span>${label}</span></div>
+          <div class="chunk-grid">
+            ${headerRow}
+            ${c.questions.map(q => {
+              const val = state.scores[q.qid];
+              return `
+                <div class="question" data-qid="${q.qid}">
+                  <div class="question-text">${q.text}<small>${q.qid}</small></div>
+                  <div class="likert">
+                    ${[0,1,2,3,4].map(v => `
+                      <button type="button" class="likert-btn ${val === v ? 'selected' : ''}" data-qid="${q.qid}" data-val="${v}" aria-label="${q.text}: score ${v} (${LIKERT_LABELS[v]})" ${locked ? 'disabled' : ''}>
+                        <span class="likert-val">${v}</span>
+                        <span class="likert-label">${LIKERT_LABELS[v]}</span>
+                      </button>`).join('')}
+                    <button type="button" class="likert-btn likert-unsure ${val === UNSURE ? 'selected' : ''}" data-qid="${q.qid}" data-val="unsure" aria-label="${q.text}: unsure / skip" ${locked ? 'disabled' : ''}>
+                      <span class="likert-val">?</span>
+                      <span class="likert-label">Unsure</span>
+                    </button>
+                  </div>
+                </div>`;
+            }).join('')}
           </div>
         </div>`;
     });
@@ -1509,6 +1645,23 @@ function renderIntakeSection() {
       refreshQuestionRow(qid);
       refreshAnsweredCount();
       saveToStorage();
+      // If that answer finished the open chunk, collapse it and open the next.
+      // Re-render only on that transition, so scoring within a chunk stays
+      // instant and does not rebuild the DOM under the parent's finger.
+      const openChunk = btn.closest('.chunk-active');
+      if (openChunk) {
+        const qids = [...openChunk.querySelectorAll('.question')].map(el => el.dataset.qid);
+        if (qids.every(id => state.scores[id] !== undefined)) {
+          forceOpenChunk = null;
+          renderIntakeSection();
+        }
+      }
+    });
+  });
+  body.querySelectorAll('.chunk-review').forEach(btn => {
+    btn.addEventListener('click', () => {
+      forceOpenChunk = parseInt(btn.dataset.chunk, 10);
+      renderIntakeSection();
     });
   });
   body.querySelectorAll('[data-hist]').forEach(el => {
@@ -1560,13 +1713,13 @@ function refreshAnsweredCount() {
 function setupIntakeNav() {
   document.getElementById('intake-back').addEventListener('click', () => {
     if (state.currentSection > 0) {
-      state.currentSection--;
+      state.currentSection--; forceOpenChunk = null;
       renderIntakeSection();
     }
   });
   document.getElementById('intake-next').addEventListener('click', () => {
     if (state.currentSection < SECTIONS.length - 1) {
-      state.currentSection++;
+      state.currentSection++; forceOpenChunk = null;
       renderIntakeSection();
     } else {
       classify();
