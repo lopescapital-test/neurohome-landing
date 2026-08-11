@@ -64,22 +64,26 @@ body {
 }
 em { font-style: normal; color: var(--brand); }
 /* ========== Brand header bar (matches site nav) ========== */
+/* Matches the site nav in neurohome.css: 72px tall, 44px mark, 22px wordmark,
+   same gutters, blur and hairline border, so the intake does not read as a
+   different product from the pages that lead into it. */
 .intake-brand {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 18px 24px;
+  height: 72px;
+  padding: 0 clamp(20px, 3vw, 44px);
   border-bottom: 1px solid var(--border);
-  background: rgba(255,255,255,0.85);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(250,250,250,0.82);
+  backdrop-filter: blur(28px) saturate(1.6);
+  -webkit-backdrop-filter: blur(28px) saturate(1.6);
   position: sticky;
   top: 0;
   z-index: 50;
 }
-.intake-brand-mark { display: block; flex-shrink: 0; width: 38px; height: 38px; }
+.intake-brand-mark { display: block; flex-shrink: 0; width: 44px; height: 44px; }
 .intake-brand-wordmark { display: flex; flex-direction: column; gap: 2px; font-family: 'Outfit', sans-serif; line-height: 1.1; }
-.intake-brand-name { font-size: 19px; font-weight: 800; letter-spacing: -0.5px; color: var(--ink); }
+.intake-brand-name { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; color: var(--ink); }
 .intake-brand-name span { color: var(--brand); }
 .intake-brand-tag { font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 500; color: var(--ink-3); letter-spacing: 0.4px; text-transform: uppercase; }
 /* ========== Typography ========== */
@@ -155,7 +159,7 @@ em { font-style: normal; color: var(--brand); }
 .welcome-hero p.lede strong { color: #fff; font-weight: 600; }
 /* Stats rail. Splits off to its own column on desktop, sits under the copy
    once the card stacks. */
-.welcome-stats { display: grid; gap: 14px; border-left: 2px solid rgba(143,217,242,0.3); padding-left: 26px; }
+.welcome-stats { display: grid; gap: 6px; border-left: 2px solid rgba(143,217,242,0.3); padding-left: 26px; }
 .welcome-stat-num { font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 800; color: #fff; line-height: 1.1; }
 .welcome-stat-label { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #8FD9F2; }
 @media (max-width: 860px) {
@@ -658,7 +662,7 @@ footer.foot code { font-family: ui-monospace, monospace; color: var(--brand-deep
         <span class="tag">Pre-call Intake</span>
         <h1 class="display-xl">Tell us about <em>your child.</em></h1>
         <p class="lede">
-          Thanks for booking a call with us. This intake gives Dr. Kyle's team a complete picture of your child: nervous system, behavior, history, what's going well, what's been hard, what you've noticed change over time. Filling it out before your call means we walk in already knowing your child, so the conversation can focus on the specifics rather than starting from scratch.
+          This is where we get to know your child properly: nervous system, behavior, history, what is going well, what has been hard, and what you have noticed change over time. Your answers are what we build your child's plan from, so take your time and answer as honestly as you can.
         </p>
       </div>
       <div class="welcome-stats">
