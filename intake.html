@@ -2065,7 +2065,7 @@ async function submitIntake(r) {
   const round = (v) => (v == null ? 0 : Math.round(v));
   const payload = {
     email: state.email,
-    phone: state.phone,
+    phone: toE164(state.phone),
     parent_first_name: state.parentFirstName || '',
     parent_last_name: state.parentLastName || '',
     country: state.parentCountry || '',
@@ -2159,6 +2159,19 @@ function renderThanks(r, succeeded) {
   }
   showScreen('thanks');
 }
+/* Submit phones in E.164 so the CRM stores one canonical shape and a lookup by
+   phone matches reliably. The visible field keeps its (602) 889-9655 formatting;
+   only the outbound value changes. A number already in + form, or one that is
+   not a clean 10-digit NANP, is passed through untouched rather than guessed at. */
+function toE164(display) {
+  const raw = (display || '').trim();
+  if (raw.charAt(0) === '+') return raw;
+  const d = raw.replace(/\D/g, '');
+  if (d.length === 10) return '+1' + d;
+  if (d.length === 11 && d.charAt(0) === '1') return '+' + d;
+  return raw;
+}
+
 function formatPhoneNANP(digits) {
   if (digits.length === 0) return '';
   if (digits.length <= 3) return '(' + digits;

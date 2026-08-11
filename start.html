@@ -450,6 +450,21 @@ form.elements.country.addEventListener('change', function () {
   }
 });
 
+/* Submit the phone in E.164 so the CRM stores one canonical shape and a lookup
+   by phone matches reliably. The visible field keeps its formatting; only the
+   outbound value changes. +1 is only ever assumed for a clean 10-digit number
+   under a NANP country: anything already in + form, any other country, or any
+   other length is passed through as typed rather than guessed at. */
+function toE164(display) {
+  const raw = (display || '').trim();
+  if (raw.charAt(0) === '+') return raw;
+  if (!shouldFormatPhone()) return raw;
+  const d = raw.replace(/\D/g, '');
+  if (d.length === 10) return '+1' + d;
+  if (d.length === 11 && d.charAt(0) === '1') return '+' + d;
+  return raw;
+}
+
 async function postLead(payload) {
   const response = await fetch(LEAD_WEBHOOK_URL, {
     method: 'POST',
@@ -486,7 +501,7 @@ form.addEventListener('submit', function (event) {
   const payload = {
     first_name: value('first_name'),
     last_name: value('last_name'),
-    phone: value('phone'),
+    phone: toE164(value('phone')),
     email: value('email'),
     child_first_name: value('child_first_name'),
     child_age: value('child_age'),
