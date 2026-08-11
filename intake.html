@@ -209,7 +209,9 @@ em { font-style: normal; color: var(--brand); }
   border-radius: 10px;
   padding: 12px 14px;
   font-family: 'Inter', sans-serif;
-  font-size: 15px;
+  /* 16px minimum: iOS zooms the viewport on focus for anything smaller, which
+     it was doing on every field here including the three goal textareas. */
+  font-size: 16px;
   color: var(--ink);
   transition: border-color 0.15s, box-shadow 0.15s;
 }
@@ -227,6 +229,60 @@ em { font-style: normal; color: var(--brand); }
   line-height: 1.6;
 }
 .welcome-meta strong { color: var(--ink); font-weight: 600; }
+/* ---- Onboarding screens (priorities, hopes, assessment intro) ---- */
+.onb-band { max-width: 1000px; margin: 0 auto; padding: calc(24px) clamp(16px,4vw,24px) 48px; }
+/* Step rail. Four steps before the assessment takes over its own progress. */
+.onb-steps { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 20px 4px 18px; font-size: 12px; }
+.onb-step { display: inline-flex; align-items: center; gap: 7px; color: var(--ink-4); white-space: nowrap; }
+.onb-step-dot { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-size: 10.5px; font-weight: 700; background: var(--surface-soft); color: var(--ink-3); border: 1px solid var(--border); }
+.onb-step.done .onb-step-dot { background: var(--brand); border-color: var(--brand); color: #08303D; }
+.onb-step.current { color: var(--ink); font-weight: 600; }
+.onb-step.current .onb-step-dot { background: var(--brand-soft); border-color: var(--brand); color: var(--brand-deep); }
+.onb-step-sep { width: 14px; height: 1px; background: var(--border); flex: none; }
+@media (max-width: 700px) { .onb-step-label { display: none; } .onb-step-sep { width: 8px; } }
+
+.onb-lede { font-size: 15.5px; line-height: 1.65; color: var(--ink-2); margin: 0 0 14px; max-width: 720px; }
+.onb-lede em { font-style: normal; color: var(--brand-deep); font-weight: 600; }
+.onb-instruction { font-size: 14px; font-weight: 600; color: var(--ink); margin: 0 0 16px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.onb-count { font-weight: 600; font-size: 12.5px; color: var(--ink-3); }
+.onb-count.full { color: var(--brand-deep); }
+.onb-rule { height: 1px; background: var(--border); margin: 26px 0 22px; }
+.onb-primary[hidden] { display: none; }
+.onb-actions { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin-top: 28px; flex-wrap: wrap; }
+
+/* Selectable concern chips. Buttons, not checkboxes, so the whole chip is the
+   target: these get tapped on phones. */
+.chip-grid { display: flex; flex-wrap: wrap; gap: 9px; }
+.chip {
+  font-family: 'Inter', sans-serif; font-size: 13.5px; font-weight: 500;
+  padding: 10px 16px; border-radius: 100px; cursor: pointer;
+  background: var(--surface); border: 1.5px solid var(--border); color: var(--ink-2);
+  transition: all 0.15s; text-align: left; line-height: 1.3;
+}
+.chip:hover { border-color: var(--brand-line); color: var(--ink); }
+.chip.selected { background: var(--brand-soft); border-color: var(--brand); color: var(--ink); font-weight: 600; }
+/* Once five are chosen the rest read as unavailable rather than silently
+   refusing the tap. */
+.chip.maxed:not(.selected) { opacity: 0.45; cursor: not-allowed; }
+.chip.maxed:not(.selected):hover { border-color: var(--border); color: var(--ink-2); }
+.chip-grid-primary .chip.selected { background: var(--brand); border-color: var(--brand); color: #08303D; }
+
+.hope-block { margin-bottom: 24px; }
+.hope-label { display: block; font-family: 'Outfit', sans-serif; font-size: 17px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+.hope-prompt { font-size: 14px; line-height: 1.55; color: var(--ink-2); margin: 0 0 10px; }
+.hope-input { height: auto; padding: 12px 14px; line-height: 1.55; resize: vertical; font-family: 'Inter', sans-serif; }
+
+.next-steps { list-style: none; counter-reset: ns; display: grid; gap: 16px; margin: 0; padding: 0; }
+.next-steps li { counter-increment: ns; position: relative; padding-left: 40px; font-size: 14px; line-height: 1.55; color: var(--ink-2); }
+.next-steps li::before {
+  content: counter(ns); position: absolute; left: 0; top: 0;
+  width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--brand-soft); color: var(--brand-deep); font-family: 'Outfit', sans-serif;
+  font-size: 13px; font-weight: 800;
+}
+.next-steps li b { display: block; font-family: 'Outfit', sans-serif; font-size: 15.5px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+.next-steps-foot { margin: 22px 0 0; padding-top: 16px; border-top: 1px solid var(--border-soft); font-size: 13px; color: var(--ink-3); }
+
 /* Scoring-scale legend. Dots deepen 0 to 4 so the scale reads as a ramp
    rather than five equal chips. */
 .welcome-band-last { padding-bottom: 48px; }
@@ -992,14 +1048,92 @@ footer.foot code { font-family: ui-monospace, monospace; color: var(--brand-deep
         <input class="field-input" id="child-age" type="number" min="1" max="18" placeholder="e.g. 7" required>
       </div>
     </div>
-    <button class="button-primary" id="welcome-begin">Begin <span>&rarr;</span></button>
+    <button class="button-primary" id="welcome-begin">Continue <span>&rarr;</span></button>
     </div>
   </div>
 
   <div class="welcome-band welcome-band-last">
+    <div class="welcome-card">
+      <div class="welcome-group-title">What happens next</div>
+      <ol class="next-steps">
+        <li><b>Tell us what matters most</b>Choose the areas you most want help with.</li>
+        <li><b>Tell us what you're hoping for</b>Share what meaningful progress would look like.</li>
+        <li><b>Help us understand the full picture</b>Complete our detailed developmental and health assessment.</li>
+      </ol>
+      <p class="next-steps-foot">About 20 minutes &middot; Saves automatically as you go</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2. PRIORITIES ============ -->
+<section class="screen" id="screen-priorities">
+  <div class="onb-band">
+    <div class="onb-steps" id="onb-steps-priorities"></div>
+    <div class="welcome-card">
+      <div class="welcome-group-title">What matters most to you?</div>
+      <p class="onb-lede">Before we get into the detailed assessment, tell us what matters most to your family.</p>
+      <p class="onb-instruction">Choose up to 5 concerns you most want help with. <span class="onb-count" id="concern-count">0 of 5</span></p>
+      <div class="chip-grid" id="concern-chips"></div>
+
+      <div class="onb-primary" id="primary-concern-block" hidden>
+        <div class="onb-rule"></div>
+        <div class="welcome-group-title">Of everything you selected, what matters most right now?</div>
+        <div class="chip-grid chip-grid-primary" id="primary-chips"></div>
+      </div>
+
+      <div class="onb-actions">
+        <button class="button-secondary" id="priorities-back">Back</button>
+        <button class="button-primary" id="priorities-next">Continue <span>&rarr;</span></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3. HOPES ============ -->
+<section class="screen" id="screen-hopes">
+  <div class="onb-band">
+    <div class="onb-steps" id="onb-steps-hopes"></div>
+    <div class="welcome-card">
+      <div class="welcome-group-title">What are you hoping for?</div>
+      <p class="onb-lede">There are no right or wrong answers. Tell us what meaningful progress would look like for your child and your family.</p>
+
+      <div class="hope-block">
+        <label class="hope-label" for="goal-6m">In 6 months...</label>
+        <p class="hope-prompt">What would you most love to see improve?</p>
+        <textarea class="field-input hope-input" id="goal-6m" rows="3" placeholder="In your own words"></textarea>
+      </div>
+      <div class="hope-block">
+        <label class="hope-label" for="goal-2y">In 2 years...</label>
+        <p class="hope-prompt">What do you hope your child will be able to do, communicate, or manage more independently?</p>
+        <textarea class="field-input hope-input" id="goal-2y" rows="4" placeholder="In your own words"></textarea>
+      </div>
+      <div class="hope-block">
+        <label class="hope-label" for="goal-5y">In 5 years...</label>
+        <p class="hope-prompt">When you picture your child five years from now, what are you hoping life looks like?</p>
+        <textarea class="field-input hope-input" id="goal-5y" rows="6" placeholder="In your own words"></textarea>
+      </div>
+
+      <div class="onb-actions">
+        <button class="button-secondary" id="hopes-back">Back</button>
+        <button class="button-primary" id="hopes-next">Continue <span>&rarr;</span></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4. ASSESSMENT INTRO ============ -->
+<section class="screen" id="screen-assessment-intro">
+  <div class="onb-band">
+    <div class="onb-steps" id="onb-steps-intro"></div>
+    <div class="welcome-card">
+      <div class="welcome-group-title">Now help us understand the full picture</div>
+      <p class="onb-lede">Next, we'll ask about your child's development, communication, regulation, movement, health, and history.</p>
+      <p class="onb-lede">Some questions are very specific. If you genuinely don't know, choose <em>Unsure</em>. We'll review everything with you.</p>
+    </div>
+
     <div class="welcome-card scale-card">
       <div class="welcome-group-title">Scoring scale</div>
-      <p class="scale-lede">Score each item from 0 to 4, based on how often or how severely it applies. The form saves automatically, so you can close it and come back.</p>
+      <p class="scale-lede">Choose the answer that best describes how much each item applies to your child. For behaviors or symptoms, think about how often you see it. For abilities or characteristics, think about how strongly it describes your child.</p>
       <div class="scale-legend">
         <div class="scale-step"><span class="scale-dot s0"></span><b>0</b>Never<small>Doesn't apply</small></div>
         <div class="scale-step"><span class="scale-dot s1"></span><b>1</b>Rarely<small>Once or twice ever</small></div>
@@ -1008,6 +1142,10 @@ footer.foot code { font-family: ui-monospace, monospace; color: var(--brand-deep
         <div class="scale-step"><span class="scale-dot s4"></span><b>4</b>Always<small>Daily, or severe</small></div>
       </div>
       <p class="scale-note">If you genuinely don't know, pick <em>Unsure</em> and we'll skip it in scoring.</p>
+      <div class="onb-actions">
+        <button class="button-secondary" id="intro-back">Back</button>
+        <button class="button-primary" id="intro-begin">Begin Assessment <span>&rarr;</span></button>
+      </div>
     </div>
   </div>
 </section>
@@ -1327,6 +1465,15 @@ const state = {
   email: '',
   phone: '',
   contactId: '',
+  // Parent-priority and goal capture from the onboarding screens. Deliberately
+  // outside the clinical engine: nothing here feeds scoring, banding, safety
+  // gates or routing. It travels to the CRM so the team reads what the family
+  // came for before they read the assessment.
+  topConcerns: [],
+  primaryConcern: '',
+  goal6Months: '',
+  goal2Years: '',
+  goal5Years: '',
   currentSection: 0,
 };
 function loadFromStorage() {
@@ -1345,6 +1492,11 @@ function loadFromStorage() {
         state.parentFirstName = parsed.parentFirstName || '';
         state.parentLastName = parsed.parentLastName || '';
         state.parentCountry = parsed.parentCountry || '';
+        state.topConcerns = Array.isArray(parsed.topConcerns) ? parsed.topConcerns : [];
+        state.primaryConcern = parsed.primaryConcern || '';
+        state.goal6Months = parsed.goal6Months || '';
+        state.goal2Years = parsed.goal2Years || '';
+        state.goal5Years = parsed.goal5Years || '';
         state.childName = parsed.childName || '';
         state.age = parsed.age || null;
         state.email = parsed.email || '';
@@ -1489,6 +1641,119 @@ function setupWelcome() {
       return;
     }
     phoneEl.style.borderColor = '';
+    // Screen 1 now hands off to the priorities screen rather than straight
+    // into the assessment.
+    renderPriorities();
+    showScreen('priorities');
+  });
+}
+
+/* ================= Onboarding screens 2 to 4 =================
+   Parent priorities and goals. None of this touches scoring, banding, safety
+   gates or routing: it is captured, saved and sent so the clinical team knows
+   what the family came for. */
+const CONCERNS = [
+  'Speech / not talking', 'Communication', 'Meltdowns / emotional regulation',
+  'Aggression or self-injury', 'Anxiety / fears', 'Attention / hyperactivity',
+  'Sensory sensitivities', 'Social connection', 'Sleep',
+  'Picky eating / feeding', 'Constipation / digestive issues', 'Toileting',
+  'Motor skills / coordination', 'Toe walking', 'Learning / school',
+  'Loss of skills / regression', 'Tics / staring spells / seizures',
+  'Repetitive or compulsive behaviors', 'Safety / wandering',
+  'Independence / daily living', 'Overall health / frequent illness', 'Other'
+];
+const MAX_CONCERNS = 5;
+const ONB_STEPS = ['Your Child', 'Your Priorities', 'Your Hopes', 'Full Assessment'];
+
+function renderOnbSteps(elId, currentIndex) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  el.innerHTML = ONB_STEPS.map((label, i) => {
+    const cls = i < currentIndex ? 'done' : (i === currentIndex ? 'current' : '');
+    const mark = i < currentIndex ? '&#10003;' : (i + 1);
+    return `${i ? '<span class="onb-step-sep"></span>' : ''}
+      <span class="onb-step ${cls}"><span class="onb-step-dot">${mark}</span><span class="onb-step-label">Step ${i + 1} of 4 &middot; ${label}</span></span>`;
+  }).join('');
+}
+
+function renderPriorities() {
+  renderOnbSteps('onb-steps-priorities', 1);
+  const grid = document.getElementById('concern-chips');
+  const atMax = state.topConcerns.length >= MAX_CONCERNS;
+  grid.innerHTML = CONCERNS.map(c => {
+    const on = state.topConcerns.includes(c);
+    return `<button type="button" class="chip ${on ? 'selected' : ''} ${atMax ? 'maxed' : ''}" data-concern="${c}" aria-pressed="${on}">${c}</button>`;
+  }).join('');
+  grid.querySelectorAll('.chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const c = btn.dataset.concern;
+      const i = state.topConcerns.indexOf(c);
+      if (i > -1) state.topConcerns.splice(i, 1);
+      else if (state.topConcerns.length < MAX_CONCERNS) state.topConcerns.push(c);
+      else return;
+      // A concern that stops being selected cannot stay the primary one.
+      if (state.primaryConcern && !state.topConcerns.includes(state.primaryConcern)) state.primaryConcern = '';
+      saveToStorage();
+      renderPriorities();
+    });
+  });
+
+  const count = document.getElementById('concern-count');
+  count.textContent = `${state.topConcerns.length} of ${MAX_CONCERNS}`;
+  count.classList.toggle('full', atMax);
+
+  const block = document.getElementById('primary-concern-block');
+  block.hidden = state.topConcerns.length === 0;
+  const pg = document.getElementById('primary-chips');
+  pg.innerHTML = state.topConcerns.map(c => {
+    const on = state.primaryConcern === c;
+    return `<button type="button" class="chip ${on ? 'selected' : ''}" data-primary="${c}" aria-pressed="${on}">${c}</button>`;
+  }).join('');
+  pg.querySelectorAll('.chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.primaryConcern = state.primaryConcern === btn.dataset.primary ? '' : btn.dataset.primary;
+      saveToStorage();
+      renderPriorities();
+    });
+  });
+}
+
+function renderHopes() {
+  renderOnbSteps('onb-steps-hopes', 2);
+  document.getElementById('goal-6m').value = state.goal6Months || '';
+  document.getElementById('goal-2y').value = state.goal2Years || '';
+  document.getElementById('goal-5y').value = state.goal5Years || '';
+}
+
+function setupOnboarding() {
+  document.getElementById('priorities-back').addEventListener('click', () => showScreen('welcome'));
+  document.getElementById('priorities-next').addEventListener('click', () => {
+    renderHopes();
+    showScreen('hopes');
+  });
+
+  const bind = (id, key) => {
+    const el = document.getElementById(id);
+    el.addEventListener('input', () => { state[key] = el.value; saveToStorage(); });
+  };
+  bind('goal-6m', 'goal6Months');
+  bind('goal-2y', 'goal2Years');
+  bind('goal-5y', 'goal5Years');
+
+  document.getElementById('hopes-back').addEventListener('click', () => {
+    renderPriorities();
+    showScreen('priorities');
+  });
+  document.getElementById('hopes-next').addEventListener('click', () => {
+    renderOnbSteps('onb-steps-intro', 3);
+    showScreen('assessment-intro');
+  });
+
+  document.getElementById('intro-back').addEventListener('click', () => {
+    renderHopes();
+    showScreen('hopes');
+  });
+  document.getElementById('intro-begin').addEventListener('click', () => {
     state.currentSection = 0;
     renderIntakeSection();
     showScreen('intake');
@@ -2119,8 +2384,23 @@ async function submitIntake(r) {
       email: state.email,
       phone: state.phone,
       contactId: state.contactId,
+      parent_top_concerns: state.topConcerns,
+      parent_primary_concern: state.primaryConcern,
+      parent_goal_6_months: state.goal6Months,
+      parent_goal_2_years: state.goal2Years,
+      parent_goal_5_years: state.goal5Years,
       computed: { pcts, nbss: r.nbss, notes: r.notes, unsureCounts: r.unsureCounts }
     }),
+    // Also flat at the top level. The spec only asked for these inside
+    // raw_intake_json, but that is a JSON string: mapping out of it in the CRM
+    // means depending on how the platform parses a nested blob. Flat keys are
+    // additive, break no existing mapping, and are what the team will actually
+    // bind a field to. Concerns are joined for readability in a CRM text field.
+    parent_top_concerns: (state.topConcerns || []).join(', '),
+    parent_primary_concern: state.primaryConcern || '',
+    parent_goal_6_months: state.goal6Months || '',
+    parent_goal_2_years: state.goal2Years || '',
+    parent_goal_5_years: state.goal5Years || '',
     intake_submitted_at: new Date().toISOString(),
     intake_engine_version: INTAKE_ENGINE_VERSION,
     intake_form_version: INTAKE_FORM_VERSION,
@@ -2190,6 +2470,7 @@ document.getElementById('thanks-review').addEventListener('click', () => {
 });
 loadFromStorage();
 setupWelcome();
+setupOnboarding();
 setupIntakeNav();
 </script>
 </body>
