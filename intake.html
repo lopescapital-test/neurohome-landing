@@ -1537,6 +1537,11 @@ const GHL_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/OzXiG0YQaeEK
 // Bumped for the onboarding screens, the five parent_* fields, the four _text
 // flag fields, flat child_age, lead prefill and draft schema v2. The engine
 // version below is deliberately untouched: none of that changed the scoring.
+// Its own trigger, deliberately not the completion webhook above. Start and
+// progress events describe a form still in flight, so routing them through the
+// assessment workflow would create or update contacts with empty clinical
+// fields and overwrite good data from a real submission.
+const INTAKE_PROGRESS_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/OzXiG0YQaeEKh2w5XeyU/webhook-trigger/d1f7a91d-003a-40e2-a835-19fc72ab6ff4';
 const INTAKE_FORM_VERSION = 'v1.6.0';
 const INTAKE_ENGINE_VERSION = 'v1.3.2';
 const SUBMISSION_TIMEOUT_MS = 30000;
@@ -1571,6 +1576,12 @@ const state = {
   goal6Months: '',
   goal2Years: '',
   goal5Years: '',
+  // Abandonment tracking. Persisted with the draft so returning to a half-filled
+  // intake does not read as a second family starting, and cleared along with the
+  // draft on a successful submit.
+  startEventSent: false,
+  startedAt: '',
+  deepestSectionPinged: -1,
   currentSection: 0,
 };
 // Copy across only the entries whose keys the current form still defines. A retired
@@ -1621,6 +1632,11 @@ function loadFromStorage() {
         state.email = parsed.email || '';
         state.phone = parsed.phone || '';
         state.contactId = parsed.contactId || '';
+        // Restored so a reload cannot fire a second start event, and so the
+        // section pings pick up from the deepest point already reported.
+        state.startEventSent = parsed.startEventSent === true;
+        state.startedAt = parsed.startedAt || '';
+        state.deepestSectionPinged = typeof parsed.deepestSectionPinged === 'number' ? parsed.deepestSectionPinged : -1;
       }
     }
   } catch (e) { /* corrupt/absent, ignore */ }
@@ -1812,6 +1828,15 @@ function setupWelcome() {
       return;
     }
     phoneEl.style.borderColor = '';
+    // First point at which we know who this family is, so it is the first point
+    // a start event is worth anything: before this there is no email or phone to
+    // match a contact on. Fires once per draft, not once per visit.
+    if (!state.startEventSent) {
+      state.startEventSent = true;
+      state.startedAt = new Date().toISOString();
+      saveToStorage();
+      postProgress('intake_started');
+    }
     // Screen 1 now hands off to the priorities screen rather than straight
     // into the assessment.
     renderPriorities();
@@ -2197,6 +2222,14 @@ function setupIntakeNav() {
     if (state.currentSection < SECTIONS.length - 1) {
       state.currentSection++; forceOpenChunk = null;
       renderIntakeSection();
+      // Only on reaching a section deeper than any reported before, so going
+      // back to check an answer and forward again does not re-ping. Bounds this
+      // at one request per section for the life of a draft.
+      if (state.currentSection > state.deepestSectionPinged) {
+        state.deepestSectionPinged = state.currentSection;
+        saveToStorage();
+        postProgress('intake_progress');
+      }
     } else {
       classify();
     }
@@ -2684,6 +2717,51 @@ function toE164(display) {
   return raw;
 }
 
+/* Tells the CRM a form is in flight so it can chase a family who started and
+   never finished. A static page cannot notice its own absence, so the waiting
+   and the chasing both live in the GHL workflow: this only reports that a start
+   happened and how far it got.
+
+   Deliberately carries no scores, bands, flags or routing. A half-finished
+   assessment is not an assessment, and putting partial clinical data in front of
+   the team invites someone acting on it. Identity and progress only.
+
+   Never allowed to affect the intake: no await in any UI path, every failure
+   swallowed. A parent filling this in offline should notice nothing. */
+function postProgress(eventType) {
+  if (!INTAKE_PROGRESS_WEBHOOK_URL) return;
+  try {
+    const answered = Object.keys(state.scores).length;
+    const section = SECTIONS[state.currentSection] || {};
+    fetch(INTAKE_PROGRESS_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      // keepalive so a ping fired as the parent navigates away still lands.
+      keepalive: true,
+      body: JSON.stringify({
+        event_type: eventType,
+        email: state.email || '',
+        phone: toE164(state.phone),
+        contact_id: state.contactId || '',
+        parent_first_name: state.parentFirstName || '',
+        parent_last_name: state.parentLastName || '',
+        child_first_name: state.childName || '',
+        child_age: state.age,
+        country: state.parentCountry || '',
+        questions_answered: answered,
+        questions_total: TOTAL_QUESTIONS,
+        percent_complete: TOTAL_QUESTIONS ? Math.round((answered / TOTAL_QUESTIONS) * 100) : 0,
+        section_reached: state.currentSection + 1,
+        sections_total: SECTIONS.length,
+        section_name: section.name || '',
+        intake_started_at: state.startedAt || '',
+        event_at: new Date().toISOString(),
+        intake_form_version: INTAKE_FORM_VERSION,
+        lead_source_intake: 'heterogeneity_intake'
+      })
+    }).catch(() => { /* the intake does not depend on this landing */ });
+  } catch (e) { /* nor on it even being constructable */ }
+}
 function formatPhoneNANP(digits) {
   if (digits.length === 0) return '';
   if (digits.length <= 3) return '(' + digits;
