@@ -111,6 +111,29 @@ body {
 .nav-links.mobile-open .nav-link { font-size: 18px; }
 .nav-links.mobile-open .nav-cta { text-align: center; padding: 14px 28px; font-size: 16px; }
 
+/* No-JavaScript notice
+   Only start.html renders this, inside <noscript>, so it costs every other
+   page nothing. That page's country <select> is populated by JS and is
+   required, so with scripting off the form can never validate and the submit
+   button just silently does nothing. This strip says so.
+   Sits one above .nav in the stack because the nav is position:fixed and would
+   otherwise paint over the top of the notice. Horizontal padding matches the
+   nav gutter so the two line up. --brand-light ground gives ~17.7:1 on --text
+   and ~4.5:1 on the --brand-text link; --brand itself is never used for text
+   here, it is ~1.9:1 and fails. */
+.noscript-notice {
+  position: relative;
+  z-index: 1001;
+  padding: 18px clamp(20px, 3vw, 44px);
+  background: var(--brand-light);
+  border-bottom: 2px solid var(--brand-text);
+  color: var(--text);
+  text-align: center;
+}
+.noscript-notice p { font-size: 15px; line-height: 1.6; }
+.noscript-notice p + p { margin-top: 6px; color: var(--text-2); }
+.noscript-notice a { color: var(--brand-text); text-decoration: underline; text-underline-offset: 2px; }
+
 /* Buttons */
 /* Buttons - dark pill primary, outlined secondary */
 .btn-primary {

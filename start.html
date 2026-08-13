@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="neurohome.css?v=88">
+<link rel="stylesheet" href="neurohome.css?v=89">
 <style>
   /* Lead capture page. Shared nav/footer/tokens come from neurohome.css; this
      block is only the page-specific form, following the same split
@@ -137,6 +137,13 @@
 </head>
 <body>
 
+<noscript>
+  <div class="noscript-notice">
+    <p><strong>This form needs JavaScript to work.</strong></p>
+    <p>Please enable JavaScript, or email us at <a href="mailto:hello@neurohome.com">hello@neurohome.com</a> and we will get you started.</p>
+  </div>
+</noscript>
+
 <nav class="nav" id="nav">
   <a class="nav-brand" href="index.html" aria-label="NeuroHome by NeuroSage Centers">
     <svg class="nav-brand-mark" width="44" height="44" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -189,7 +196,7 @@
         <div class="start-badge"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 8.4 3.2 3.2L13 5"/></svg>Talk to a Parent, not a Salesperson</div>
       </div>
 
-      <form class="start-card-body" id="lead-form">
+      <form class="start-card-body" id="lead-form" method="post">
       <div class="start-error" id="form-error" role="alert" hidden></div>
 
       <div>
