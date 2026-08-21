@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 /* =====================================================
-   NeuroHome intake, form v1.5.0 (re-skinned from source v1.3.9)
+   NeuroHome intake, form v1.7.0 (re-skinned from source v1.3.9)
    Engine v1.3.2 (unchanged). v1.4.0 adds one advisory history item
    (cannot_sit_still) as a home-care-readiness flag; the 121 phenotype
    questions across 12 phenotypes are unchanged.
@@ -114,6 +114,9 @@ em { font-style: normal; color: var(--brand); }
 }
 .button-primary:hover { transform: translateY(-1px); background: var(--brand-deep); box-shadow: 0 8px 24px var(--brand-glow); }
 .button-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+/* display:inline-flex above beats the user-agent [hidden] rule, so hiding one
+   of these needs saying explicitly. */
+.button-primary[hidden] { display: none; }
 .button-secondary {
   display: inline-flex;
   align-items: center;
@@ -130,6 +133,9 @@ em { font-style: normal; color: var(--brand); }
   transition: all 0.15s;
 }
 .button-secondary:hover { border-color: var(--brand); color: var(--brand-deep); }
+/* The class is also worn by anchors (the homepage link on the thanks card), which
+   arrive underlined and inheriting link colour. */
+a.button-secondary { text-decoration: none; }
 /* ========== WELCOME ========== */
 /* Welcome. Navy intro card over a light band, then a white card carrying the
    fields, matching start.html and thank-you.html. */
@@ -396,18 +402,49 @@ em { font-style: normal; color: var(--brand); }
 
 /* Active: the only full matrix on the page. */
 .chunk-grid { padding: 4px 20px 8px; }
+/* Each group ends in its own Continue. Advancing is a deliberate click rather
+   than a side effect of the last answer landing, so a mis-tap cannot collapse
+   the group out from under the parent. */
+.chunk-foot {
+  display: flex; align-items: center; justify-content: flex-end; gap: 16px;
+  padding: 14px 20px 18px; border-top: 1px solid var(--border-soft);
+}
+.chunk-foot-hint { font-size: 12.5px; font-weight: 600; color: var(--ink-4); }
+.chunk-foot-hint.ready { color: var(--brand-deep); }
+.chunk-continue { padding: 10px 20px; font-size: 13px; }
+@media (max-width: 540px) {
+  .chunk-foot { flex-direction: column-reverse; align-items: stretch; gap: 10px; padding: 14px 14px 18px; }
+  .chunk-foot-hint { text-align: center; }
+  .chunk-continue { justify-content: center; }
+}
+/* The header and every question row share one track definition, so the
+   buttons stay under their own column. Widened past 900px to give the
+   anchor text under each header room to sit on two lines instead of three. */
+.likert-header, .question { --likert-col: 62px; }
+@media (min-width: 900px) { .likert-header, .question { --likert-col: 78px; } }
 .likert-header {
   display: grid;
-  grid-template-columns: 1fr repeat(6, 62px);
+  grid-template-columns: 1fr repeat(6, var(--likert-col));
   gap: 0 6px;
-  align-items: end;
+  align-items: start;
   padding: 10px 0;
   border-bottom: 1px solid var(--border-soft);
 }
 .likert-header-cell { text-align: center; font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-3); }
+.likert-header-cell small {
+  display: block;
+  margin-top: 3px;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1.25;
+  color: var(--ink-4);
+  text-wrap: balance;
+}
 .question {
   display: grid;
-  grid-template-columns: 1fr repeat(6, 62px);
+  grid-template-columns: 1fr repeat(6, var(--likert-col));
   gap: 0 6px;
   align-items: center;
   padding: 10px 0;
@@ -430,6 +467,34 @@ em { font-style: normal; color: var(--brand); }
 }
 .intake-progress-bar.complete { background: var(--brand); }
 .intake-progress-bar.active { background: var(--brand); }
+/* In review mode the segments become the quick way between sections. The bar
+   stays 6px, but ::after grows the hit area to 24px so it is not a hairline
+   target on a phone. */
+button.intake-progress-bar { border: none; padding: 0; cursor: pointer; position: relative; }
+button.intake-progress-bar::after { content: ''; position: absolute; inset: -9px 0; }
+button.intake-progress-bar:hover { background: #fff; }
+button.intake-progress-bar:focus-visible { outline: 2px solid var(--brand); outline-offset: 4px; }
+/* Review-mode section picker. Sits under the segments so it never disturbs the
+   rail's layout during the assessment, where it is hidden outright. */
+.rail-jump { display: flex; align-items: center; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+.rail-jump[hidden] { display: none; }
+.rail-jump label {
+  font-size: 11.5px; font-weight: 800; letter-spacing: 0.1em;
+  text-transform: uppercase; color: #16C7F2;
+}
+.rail-jump select {
+  flex: 1 1 240px; max-width: 460px; min-width: 0;
+  background: #1b2a47; color: #fff;
+  border: 1px solid rgba(255,255,255,0.22); border-radius: 100px;
+  padding: 9px 14px;
+  font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
+  cursor: pointer;
+}
+.rail-jump select:hover { border-color: var(--brand); }
+.rail-jump select:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+/* Windows renders the dropped-open list with the OS default unless the options
+   are painted too. */
+.rail-jump option { background: #1b2a47; color: #fff; }
 .intake-header {
   padding: 28px 0 8px;
 }
@@ -486,15 +551,6 @@ em { font-style: normal; color: var(--brand); }
   margin-bottom: 0;
   line-height: 1.45;
   font-weight: 500;
-}
-.question-text small {
-  display: inline-block;
-  margin-left: 8px;
-  font-size: 10.5px;
-  color: var(--ink-4);
-  font-family: ui-monospace, "SF Mono", monospace;
-  font-weight: 400;
-  letter-spacing: 0.04em;
 }
 /* The buttons become cells of .question directly, so they line up under the
    header columns without a wrapper of their own. */
@@ -559,6 +615,9 @@ em { font-style: normal; color: var(--brand); }
 /* Labels sit in the sticky header on desktop, so the buttons stay compact
    enough to hold their columns. */
 .likert-btn .likert-label { display: none; }
+/* Same for the frequency anchor: the header carries it on desktop. It comes
+   back inside the pill below 760px, where the header is gone. */
+.likert-btn .likert-sub { display: none; }
 /* Below 760px the five 64px columns plus Unsure no longer fit, so the row
    stacks: question text on its own line, then the buttons in a wrapping grid
    with their labels back inside them. */
@@ -596,6 +655,12 @@ em { font-style: normal; color: var(--brand); }
   }
   .likert-btn .likert-val { font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 700; }
   .likert-btn .likert-label { font-size: 10.5px; }
+  /* The anchor the desktop header would have shown. Colour is set explicitly
+     rather than inherited at an opacity: 9px text needs the full contrast, and
+     the selected tints underneath vary. */
+  .likert-btn .likert-sub { display: block; font-size: 9px; line-height: 1.2; color: var(--ink-3); }
+  .likert-btn.selected .likert-sub { color: var(--ink); }
+  .likert-btn.likert-unsure.selected .likert-sub { color: #fff; }
   .chunk-grid { padding: 4px 14px 8px; }
 }
 @media (max-width: 540px) {
@@ -684,11 +749,18 @@ em { font-style: normal; color: var(--brand); }
   max-width: 1000px;
   margin: 0 auto;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
 }
+/* Auto margins instead of justify-content: space-between. On a row that fits
+   they distribute the slack identically, but this row wraps once the autosave
+   note runs long, and space-between drops a lone wrapped Continue at the far
+   left. An auto left margin keeps it at the right edge on any line it lands on. */
+.intake-footer .autosave-note,
+.intake-footer .intake-gate-hint,
+.intake-footer #intake-next { margin-left: auto; }
 .intake-footer .autosave-note {
   font-size: 11px;
   color: var(--ink-3);
@@ -698,9 +770,16 @@ em { font-style: normal; color: var(--brand); }
 }
 .intake-footer .autosave-note.saving { color: var(--warm); }
 .intake-footer .autosave-note.saved { color: var(--brand-deep); }
+/* Says why Continue is dead. A disabled button with no reason next to it reads
+   as a broken page, and the parent has no way to find the gap in 16 questions. */
+.intake-gate-hint {
+  font-size: 12.5px; font-weight: 600; color: var(--ink-3); text-align: right;
+}
+.intake-gate-hint:empty { display: none; }
 @media (max-width: 540px) {
   .intake-footer-inner { justify-content: space-between; }
   .intake-footer .autosave-note { width: 100%; text-align: center; order: 3; }
+  .intake-gate-hint { width: 100%; text-align: center; order: 4; }
 }
 /* ========== PROCESSING ========== */
 .processing-hero {
@@ -1222,6 +1301,7 @@ footer.foot code { font-family: ui-monospace, monospace; color: var(--brand-deep
         <div class="scale-step"><span class="scale-dot s4"></span><b>4</b>Always<small>Daily, or severe</small></div>
       </div>
       <p class="scale-note">If you genuinely don't know, pick <em>Unsure</em> and we'll skip it in scoring.</p>
+      <p class="scale-note"><em>If you need to stop:</em> your answers save as you go, so you can close the page and come back. They are kept for <strong>3 days</strong>, on <strong>this device and browser only</strong>, so reopen the link on the same device to pick up where you left off.</p>
       <div class="onb-actions">
         <button class="button-secondary" id="intro-back">Back</button>
         <span class="onb-hint">Section 1 of 13 starts next.</span>
@@ -1242,6 +1322,12 @@ footer.foot code { font-family: ui-monospace, monospace; color: var(--brand-deep
         <span class="intake-rail-count"><strong id="intake-answered">0</strong> / 121 answered</span>
       </div>
       <div class="intake-progress" id="intake-progress"></div>
+      <!-- Review mode only: paging through 13 sections with Back/Continue to
+           re-read one answer is the whole reason a parent gives up on checking. -->
+      <div class="rail-jump" id="rail-jump" hidden>
+        <label for="rail-jump-select">Jump to section</label>
+        <select id="rail-jump-select"></select>
+      </div>
     </div>
   </div>
   <div class="intake-shell">
@@ -1250,6 +1336,7 @@ footer.foot code { font-family: ui-monospace, monospace; color: var(--brand-deep
       <div class="intake-footer-inner">
         <button class="button-secondary" id="intake-back">Back to start</button>
         <span class="autosave-note" id="autosave-note">Autosaving locally...</span>
+        <span class="intake-gate-hint" id="intake-gate-hint"></span>
         <button class="button-primary" id="intake-next">Continue &rarr;</button>
       </div>
     </div>
@@ -1274,12 +1361,13 @@ footer.foot code { font-family: ui-monospace, monospace; color: var(--brand-deep
     <p class="thanks-note" id="thanks-note">You can close this page. Your intake has been submitted. If you need to change anything, contact Dr. Kyle's team.</p>
     <div class="thanks-actions">
       <button class="button-secondary" id="thanks-review">Review my answers (read-only)</button>
+      <a class="button-secondary" href="index.html">Back to homepage</a>
     </div>
   </div>
   </div>
 </section>
 <footer class="foot">
-  <p>NeuroHome &middot; Child Assessment &middot; Form <code>v1.5.0</code> &middot; Engine <code>v1.3.2</code> &middot; 121 questions across 12 phenotypes</p>
+  <p>NeuroHome &middot; Child Assessment &middot; Form <code>v1.7.0</code> &middot; Engine <code>v1.3.2</code> &middot; 121 questions across 12 phenotypes</p>
 </footer>
 <script>
 // =====================================================
@@ -1509,6 +1597,9 @@ const HISTORY_SECTION = {
 const SECTIONS = [...PHENOTYPE_QUESTIONS, HISTORY_SECTION];
 const TOTAL_QUESTIONS = PHENOTYPE_QUESTIONS.reduce((s, p) => s + p.questions.length, 0);
 const LIKERT_LABELS = ['Never', 'Rarely', 'Sometimes', 'Often', 'Always'];
+// The anchors shown on the scoring-scale intro screen, repeated under each column
+// header so parents do not have to remember them for 121 questions.
+const LIKERT_SUBLABELS = ["Doesn't apply", 'Once or twice', 'Monthly', 'Weekly', 'Daily'];
 const UNSURE = 'unsure';
 const BANDS = ['LOW', 'MODERATE', 'WATCHLIST', 'HIGH', 'VERY_HIGH'];
 function bandOf(pct) {
@@ -1543,7 +1634,7 @@ const GHL_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/OzXiG0YQaeEK
 // assessment workflow would create or update contacts with empty clinical
 // fields and overwrite good data from a real submission.
 const INTAKE_PROGRESS_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/OzXiG0YQaeEKh2w5XeyU/webhook-trigger/d1f7a91d-003a-40e2-a835-19fc72ab6ff4';
-const INTAKE_FORM_VERSION = 'v1.6.0';
+const INTAKE_FORM_VERSION = 'v1.7.0';
 const INTAKE_ENGINE_VERSION = 'v1.3.2';
 const SUBMISSION_TIMEOUT_MS = 30000;
 // --- Scoring / draft-lifecycle tuning (edit these in one place) ---
@@ -1553,7 +1644,12 @@ const SUBMISSION_TIMEOUT_MS = 30000;
 // treated as low-confidence (Item 4b). Placeholder pending Dr. Kyle's sign-off.
 const MIN_ANSWERED_FRACTION = 0.5;
 // Item 3: abandoned (never-submitted) drafts are discarded on load after this long.
-const DRAFT_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
+// Measured from the last answer, not from the start, since savedAt is rewritten on
+// every save. Checked on load rather than on a timer, so a draft nobody comes back
+// to keeps sitting in localStorage on the family's own device until they do; the
+// window is how long it stays useful, not how long it stays on disk. Submitting
+// deletes it outright.
+const DRAFT_TTL_MS = 3 * 24 * 60 * 60 * 1000; // 3 days
 let submitPhase = 'idle';
 let submitGeneration = 0;
 const state = {
@@ -1853,7 +1949,7 @@ const CONCERNS = [
   'Speech / not talking', 'Communication', 'Meltdowns / emotional regulation',
   'Aggression or self-injury', 'Anxiety / fears', 'Attention / hyperactivity',
   'Sensory sensitivities', 'Social connection', 'Sleep',
-  'Picky eating / feeding', 'Constipation / digestive issues', 'Toileting',
+  'Picky eating / feeding', 'Diet / nutrition', 'Constipation / digestive issues', 'Toileting',
   'Motor skills / coordination', 'Toe walking', 'Learning / school',
   'Loss of skills / regression', 'Tics / staring spells / seizures',
   'Repetitive or compulsive behaviors', 'Safety / wandering',
@@ -1942,7 +2038,10 @@ function setupOnboarding() {
   const saveNote = document.getElementById('brand-save-note');
   saveBtn.addEventListener('click', () => {
     saveToStorage();
-    saveNote.textContent = 'Saved. You can close this page.';
+    // The header is a fixed 72px with the section rail sticky beneath it, so this
+    // has to stay one short line. The full version of the caveat is on the scale
+    // card; this is the reminder at the moment a parent actually leaves.
+    saveNote.textContent = 'Saved. Reopen on this device within 3 days.';
     saveBtn.textContent = 'Saved';
     saveBtn.disabled = true;
     setTimeout(() => {
@@ -2029,12 +2128,22 @@ function renderIntakeSection() {
   document.getElementById('intake-section-tag').textContent = `Section ${sectionNum} of ${total} · ${section.code}`;
   document.getElementById('intake-section-title').textContent = section.name;
   const progressEl = document.getElementById('intake-progress');
-  progressEl.innerHTML = SECTIONS.map((_, i) => {
+  progressEl.innerHTML = SECTIONS.map((s, i) => {
     let cls = '';
     if (i < state.currentSection) cls = 'complete';
     else if (i === state.currentSection) cls = 'active';
-    return `<div class="intake-progress-bar ${cls}"></div>`;
+    // Only reviewing turns the segments into controls. During the assessment the
+    // gates decide what a parent may open, so a shortcut past them would lie.
+    if (!locked) return `<div class="intake-progress-bar ${cls}"></div>`;
+    return `<button type="button" class="intake-progress-bar ${cls}" data-jump="${i}"
+      aria-label="Go to section ${i + 1} of ${total}: ${s.name}"
+      aria-current="${i === state.currentSection ? 'true' : 'false'}"
+      title="${i + 1}. ${s.name}"></button>`;
   }).join('');
+  progressEl.querySelectorAll('[data-jump]').forEach(b => {
+    b.addEventListener('click', () => jumpToSection(parseInt(b.dataset.jump, 10)));
+  });
+  renderRailJump(locked);
   const body = document.getElementById('intake-body');
   // Phenotype sections render their chunks as the cards, so they are not
   // wrapped in another one. History keeps the single card, since its toggle
@@ -2071,8 +2180,8 @@ function renderIntakeSection() {
     const headerRow = `
       <div class="likert-header">
         <div></div>
-        ${LIKERT_LABELS.map(l => `<div class="likert-header-cell">${l}</div>`).join('')}
-        <div class="likert-header-cell">Unsure</div>
+        ${LIKERT_LABELS.map((l, i) => `<div class="likert-header-cell">${l}<small>${LIKERT_SUBLABELS[i]}</small></div>`).join('')}
+        <div class="likert-header-cell">Unsure<small>Skipped</small></div>
       </div>`;
 
     chunks.forEach((c, ci) => {
@@ -2113,21 +2222,28 @@ function renderIntakeSection() {
               const val = state.scores[q.qid];
               return `
                 <div class="question" data-qid="${q.qid}">
-                  <div class="question-text">${q.text}<small>${q.qid}</small></div>
+                  <div class="question-text">${q.text}</div>
                   <div class="likert">
                     ${[0,1,2,3,4].map(v => `
-                      <button type="button" class="likert-btn ${val === v ? 'selected' : ''}" data-qid="${q.qid}" data-val="${v}" aria-label="${q.text}: score ${v} (${LIKERT_LABELS[v]})" ${locked ? 'disabled' : ''}>
+                      <button type="button" class="likert-btn ${val === v ? 'selected' : ''}" data-qid="${q.qid}" data-val="${v}" aria-label="${q.text}: score ${v} (${LIKERT_LABELS[v]}, ${LIKERT_SUBLABELS[v]})" ${locked ? 'disabled' : ''}>
                         <span class="likert-val">${v}</span>
                         <span class="likert-label">${LIKERT_LABELS[v]}</span>
+                        <span class="likert-sub">${LIKERT_SUBLABELS[v]}</span>
                       </button>`).join('')}
                     <button type="button" class="likert-btn likert-unsure ${val === UNSURE ? 'selected' : ''}" data-qid="${q.qid}" data-val="unsure" aria-label="${q.text}: unsure / skip" ${locked ? 'disabled' : ''}>
                       <span class="likert-val">?</span>
                       <span class="likert-label">Unsure</span>
+                      <span class="likert-sub">Skipped</span>
                     </button>
                   </div>
                 </div>`;
             }).join('')}
           </div>
+          ${(locked || ci === chunks.length - 1) ? '' : `
+          <div class="chunk-foot">
+            <span class="chunk-foot-hint"></span>
+            <button type="button" class="button-primary chunk-continue" data-chunk="${ci}">Continue <span>&rarr;</span></button>
+          </div>`}
         </div>`;
     });
   }
@@ -2146,18 +2262,19 @@ function renderIntakeSection() {
       }
       refreshQuestionRow(qid);
       refreshAnsweredCount();
+      // Finishing the group no longer collapses it. The parent clicks Continue.
+      // Only the gates move, so scoring within a group stays instant and never
+      // rebuilds the DOM under the parent's finger.
+      refreshGates();
       saveToStorage();
-      // If that answer finished the open chunk, collapse it and open the next.
-      // Re-render only on that transition, so scoring within a chunk stays
-      // instant and does not rebuild the DOM under the parent's finger.
-      const openChunk = btn.closest('.chunk-active');
-      if (openChunk) {
-        const qids = [...openChunk.querySelectorAll('.question')].map(el => el.dataset.qid);
-        if (qids.every(id => state.scores[id] !== undefined)) {
-          forceOpenChunk = null;
-          renderIntakeSection();
-        }
-      }
+    });
+  });
+  body.querySelectorAll('.chunk-continue').forEach(btn => {
+    btn.addEventListener('click', () => {
+      // Clearing the override hands control back to renderIntakeSection, which
+      // opens the first group still missing answers, or the last one if none are.
+      forceOpenChunk = null;
+      renderIntakeSection();
     });
   });
   body.querySelectorAll('.chunk-review').forEach(btn => {
@@ -2187,11 +2304,84 @@ function renderIntakeSection() {
     // stay navigable for read-only review.
     nextBtn.innerHTML = isLast ? 'Submitted <span>&#10003;</span>' : 'Continue <span>&rarr;</span>';
     nextBtn.disabled = isLast;
+    nextBtn.hidden = false;
+    document.getElementById('intake-gate-hint').textContent = '';
   } else {
     nextBtn.innerHTML = isLast ? 'Submit intake <span>&rarr;</span>' : 'Continue <span>&rarr;</span>';
-    nextBtn.disabled = false;
+    refreshGates();
   }
   refreshAnsweredCount();
+}
+/* Review-mode navigation. Both the picker and the rail segments land here, so
+   there is one definition of what moving to a section means. */
+function jumpToSection(i) {
+  if (!Number.isInteger(i) || i < 0 || i >= SECTIONS.length) return;
+  if (i === state.currentSection) return;
+  state.currentSection = i;
+  forceOpenChunk = null;
+  renderIntakeSection();
+}
+/* The picker only exists while reviewing a submitted intake: during the
+   assessment the gates decide what may be opened. Options are rebuilt from
+   SECTIONS each render so a label can never drift from the section it points at,
+   and the value is pushed back in step with whatever moved the section, whether
+   that was the picker, a segment, Back or Continue. */
+function renderRailJump(locked) {
+  const wrap = document.getElementById('rail-jump');
+  const sel = document.getElementById('rail-jump-select');
+  if (!wrap || !sel) return;
+  wrap.hidden = !locked;
+  if (!locked) return;
+  sel.innerHTML = SECTIONS
+    .map((s, i) => `<option value="${i}">${i + 1}. ${s.name}</option>`)
+    .join('');
+  sel.value = String(state.currentSection);
+}
+/* Every phenotype question has to be answered before its group, and then its
+   section, will let the parent move on. Unsure counts as an answer: the scale
+   offers it as the honest way out, and a guess forced out of a parent is worse
+   data than a declared skip, which the engine already discounts via
+   MIN_ANSWERED_FRACTION.
+
+   The history section is exempt. It is a check-anything-that-applies list, so
+   "unanswered" and "does not apply" are the same state and cannot be told apart.
+
+   Runs on every answer without re-rendering: the gates are the only thing that
+   changes, and a re-render would cost the parent their scroll position. */
+function refreshGates() {
+  const section = SECTIONS[state.currentSection];
+  const nextBtn = document.getElementById('intake-next');
+  const sectionHint = document.getElementById('intake-gate-hint');
+  if (submitPhase === 'submitted_success' || !section.questions) {
+    if (sectionHint) sectionHint.textContent = '';
+    // Explicit rather than left alone, so an ungated section can never inherit a
+    // hidden or disabled Continue from the gated one the parent arrived from.
+    if (nextBtn && submitPhase !== 'submitted_success') { nextBtn.disabled = false; nextBtn.hidden = false; }
+    return;
+  }
+  document.querySelectorAll('.chunk-active').forEach(chunk => {
+    const left = [...chunk.querySelectorAll('.question')]
+      .filter(el => state.scores[el.dataset.qid] === undefined).length;
+    const btn = chunk.querySelector('.chunk-continue');
+    if (btn) btn.disabled = left > 0;
+    const hint = chunk.querySelector('.chunk-foot-hint');
+    if (hint) {
+      hint.textContent = left ? `${left} more to answer` : 'All answered';
+      hint.classList.toggle('ready', left === 0);
+    }
+  });
+  const left = section.questions.filter(q => state.scores[q.qid] === undefined).length;
+  // Hidden rather than disabled: while a group is open its own Continue is the
+  // only thing to press, and a second greyed-out Continue in the sticky bar just
+  // reads as ambiguity. The hint takes the same slot in the footer's
+  // space-between row, so the bar never sits with a hole in it. Kept disabled in
+  // step with hidden so it cannot be reached while it is invisible.
+  if (nextBtn) { nextBtn.disabled = left > 0; nextBtn.hidden = left > 0; }
+  if (sectionHint) {
+    sectionHint.textContent = left
+      ? `${left} question${left === 1 ? '' : 's'} left in this section`
+      : '';
+  }
 }
 function refreshQuestionRow(qid) {
   const buttons = document.querySelectorAll(`.likert-btn[data-qid="${qid}"]`);
@@ -2213,6 +2403,12 @@ function refreshAnsweredCount() {
   if (el) el.textContent = answered;
 }
 function setupIntakeNav() {
+  // Bound once: the select element itself outlives every render, only its
+  // options are rebuilt, so binding inside the render would stack listeners.
+  const jumpSel = document.getElementById('rail-jump-select');
+  if (jumpSel) {
+    jumpSel.addEventListener('change', () => jumpToSection(parseInt(jumpSel.value, 10)));
+  }
   document.getElementById('intake-back').addEventListener('click', () => {
     if (state.currentSection > 0) {
       state.currentSection--; forceOpenChunk = null;

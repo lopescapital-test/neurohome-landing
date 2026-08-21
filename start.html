@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Start Your Family's Plan | NeuroHome</title>
+<title>Start your child's plan | NeuroHome</title>
 <meta name="description" content="Tell us a little about you and your child to explore how NeuroHome can help your family. A parent who has been in your shoes will reach out.">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 52 52'%3E%3Crect x='8' y='22' width='36' height='27' rx='3' stroke='%231D2939' stroke-width='2.5' fill='white'/%3E%3Cpath d='M 4 24 L 26 5 L 48 24' stroke='%231D2939' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='8' cy='22' r='3.5' fill='%2300CEFD'/%3E%3Ccircle cx='44' cy='22' r='3.5' fill='%2300CEFD'/%3E%3Ccircle cx='8' cy='49' r='3.5' fill='%2300CEFD'/%3E%3Ccircle cx='44' cy='49' r='3.5' fill='%2300CEFD'/%3E%3Ccircle cx='26' cy='5' r='3.5' fill='%2300CEFD'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -167,7 +167,7 @@
     <a class="nav-link" href="index.html#testimonials">Results</a>
     <a class="nav-link" href="index.html#faq">FAQ</a>
     <a class="nav-link" href="https://neurohome-app.vercel.app/login">Family Login</a>
-    <a class="nav-cta" href="start.html">Start your family's plan</a>
+    <a class="nav-cta" href="start.html">Start your child's plan</a>
   </div>
   <button class="nav-mobile-toggle" onclick="toggleMobileNav()" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">
     <span></span><span></span><span></span>
@@ -271,7 +271,7 @@
       </div>
 
       <button class="btn-primary start-submit" type="submit" id="submit-btn">
-        <span id="submit-label">Start your family's plan</span>
+        <span id="submit-label">Start your child's plan</span>
       </button>
 
       <p class="start-legal">By submitting, you agree to our <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a> and <a href="terms.html" target="_blank" rel="noopener">Terms of Service</a>.</p>
@@ -400,7 +400,7 @@ function clearError() {
 function setPending(isPending) {
   submitBtn.disabled = isPending;
   submitBtn.setAttribute('aria-busy', isPending ? 'true' : 'false');
-  submitLabel.textContent = isPending ? 'Sending...' : "Start your family's plan";
+  submitLabel.textContent = isPending ? 'Sending...' : "Start your child's plan";
 }
 function value(name) {
   return form.elements[name].value.trim();
