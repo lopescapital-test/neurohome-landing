@@ -195,3 +195,49 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
   window.addEventListener('resize', update);
   update();
 })();
+
+// ========== RESUME INTAKE CTA ==========
+/* A parent who starts the 121-question intake and closes the tab has their
+   answers on this device for three days, but nothing on the site said so: the
+   nav CTA still pointed at the lead form they had already filled in. When a
+   live draft exists, that CTA becomes the way back into it.
+
+   Only the nav CTA is repointed. The hero, founder, method, footer and sticky
+   buttons are the pitch to a first-time visitor, and rewriting those for anyone
+   whose browser holds a draft would change the whole page for the wrong reason.
+
+   Deliberately visible on a shared device: the household will see that someone
+   here has an intake in progress. That is the accepted trade for making the
+   draft recoverable at all.
+
+   !! These two constants mirror intake.html and there is no shared module to
+   !! enforce it, because intake.html is deliberately self-contained. If
+   !! DRAFT_SCHEMA_VERSION or DRAFT_TTL_MS changes there, change them here too or
+   !! this feature silently stops working: no error, the CTA just never swaps. */
+(function () {
+  var DRAFT_SCHEMA_VERSION = 2;                      // intake.html DRAFT_SCHEMA_VERSION
+  var DRAFT_KEY = 'neurosage_intake_draft_v' + DRAFT_SCHEMA_VERSION;
+  var DRAFT_TTL_MS = 3 * 24 * 60 * 60 * 1000;        // intake.html DRAFT_TTL_MS
+
+  function liveDraftExists() {
+    try {
+      var raw = localStorage.getItem(DRAFT_KEY);
+      if (!raw) return false;
+      var savedAt = (JSON.parse(raw) || {}).savedAt || 0;
+      // The same expiry intake.html applies on load. Offering to resume a draft
+      // it is about to discard would drop the parent into a blank form, which is
+      // worse than not offering at all.
+      if (savedAt && (Date.now() - savedAt) > DRAFT_TTL_MS) return false;
+      return true;
+    } catch (e) {
+      // Private mode, storage disabled, corrupt JSON: no draft we can promise.
+      return false;
+    }
+  }
+
+  if (!liveDraftExists()) return;
+  document.querySelectorAll('a.nav-cta[href="start.html"]').forEach(function (cta) {
+    cta.setAttribute('href', 'intake.html');
+    cta.textContent = 'Resume your intake';
+  });
+})();

@@ -1620,6 +1620,10 @@ function bandAtLeast(band, target) { return BANDS.indexOf(band) >= BANDS.indexOf
 // drafts survive those intact.
 // v1 -> v2: parentState became parentCountry, age lost its "5" default and became
 // required, and the onboarding screens added topConcerns, primaryConcern and goal*.
+// !! neurohome.js mirrors DRAFT_SCHEMA_VERSION and DRAFT_TTL_MS to decide whether
+// !! the site's nav CTA becomes "Resume your intake". This page loads no shared
+// !! script, so nothing enforces the match. Bumping either value here without
+// !! bumping it there silently retires that CTA: no error, it just stops swapping.
 const DRAFT_SCHEMA_VERSION = 2;
 const STORAGE_KEY = 'neurosage_intake_draft_v' + DRAFT_SCHEMA_VERSION;
 // Superseded keys, swept on load. Each one holds a child's name, a parent's contact
