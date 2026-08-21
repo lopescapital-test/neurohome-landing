@@ -2,3 +2,4 @@
 # here is fetchable at its own URL. These are excluded from the deployment.
 scripts/
 .claude/
+.githooks/

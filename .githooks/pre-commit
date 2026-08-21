@@ -1,0 +1,27 @@
+#!/bin/sh
+# Pre-commit: refuse a commit that leaves the hand-duplicated constants out of
+# sync. See scripts/check-constants.js for what it guards and why.
+#
+# This directory is tracked, unlike .git/hooks, so the hook travels with the repo.
+# Each clone has to opt in once:
+#
+#     git config core.hooksPath .githooks
+#
+# To commit anyway, deliberately:  git commit --no-verify
+
+if ! command -v node >/dev/null 2>&1; then
+  # A check that cannot run should not stop someone working, but it must not
+  # pass quietly either: without node this commit is going in unverified.
+  echo "pre-commit: node not found, SKIPPING scripts/check-constants.js" >&2
+  echo "pre-commit: this commit has NOT been checked for constant drift." >&2
+  exit 0
+fi
+
+if ! node scripts/check-constants.js; then
+  echo "" >&2
+  echo "pre-commit: commit blocked, the constants above disagree." >&2
+  echo "pre-commit: fix them, or run 'git commit --no-verify' if this is deliberate." >&2
+  exit 1
+fi
+
+exit 0
