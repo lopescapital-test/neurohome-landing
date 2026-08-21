@@ -213,7 +213,8 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
    !! These two constants mirror intake.html and there is no shared module to
    !! enforce it, because intake.html is deliberately self-contained. If
    !! DRAFT_SCHEMA_VERSION or DRAFT_TTL_MS changes there, change them here too or
-   !! this feature silently stops working: no error, the CTA just never swaps. */
+   !! this feature silently stops working: no error, the CTA just never swaps.
+   !! Run `node scripts/check-constants.js` after touching either one. */
 (function () {
   var DRAFT_SCHEMA_VERSION = 2;                      // intake.html DRAFT_SCHEMA_VERSION
   var DRAFT_KEY = 'neurosage_intake_draft_v' + DRAFT_SCHEMA_VERSION;

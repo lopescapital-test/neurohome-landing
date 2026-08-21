@@ -1624,6 +1624,7 @@ function bandAtLeast(band, target) { return BANDS.indexOf(band) >= BANDS.indexOf
 // !! the site's nav CTA becomes "Resume your intake". This page loads no shared
 // !! script, so nothing enforces the match. Bumping either value here without
 // !! bumping it there silently retires that CTA: no error, it just stops swapping.
+// !! Run `node scripts/check-constants.js` after touching either one.
 const DRAFT_SCHEMA_VERSION = 2;
 const STORAGE_KEY = 'neurosage_intake_draft_v' + DRAFT_SCHEMA_VERSION;
 // Superseded keys, swept on load. Each one holds a child's name, a parent's contact

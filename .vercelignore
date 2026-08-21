@@ -1,0 +1,4 @@
+# Internal tooling. The repo root is served as the public site, so anything left
+# here is fetchable at its own URL. These are excluded from the deployment.
+scripts/
+.claude/
