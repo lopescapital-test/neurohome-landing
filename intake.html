@@ -1683,6 +1683,12 @@ const state = {
   startEventSent: false,
   startedAt: '',
   deepestSectionPinged: -1,
+  // Set once the parent passes the scale card into the questions. Persisted, so a
+  // parent who already did the four onboarding screens comes back to the
+  // assessment rather than to the start of the form. Distinct from
+  // currentSection > 0: someone who left partway through section 1 has also
+  // reached the assessment and should return to it.
+  assessmentReached: false,
   currentSection: 0,
 };
 // Copy across only the entries whose keys the current form still defines. A retired
@@ -1690,6 +1696,18 @@ const state = {
 // MIN_ANSWERED_FRACTION, and would ride along to the CRM inside raw_intake_json,
 // as an answer to a question nobody was asked. Values are passed through untouched;
 // this filters keys, it does not second-guess the engine.
+/* Index of the first section still missing an answer. Used to clamp a restored
+   currentSection so resuming can never drop a parent past an unanswered section.
+   Reads state.scores, so it is only meaningful after those have been restored.
+   The history section is checkboxes, where unanswered and does-not-apply are the
+   same state, so it is never incomplete and always terminates the search. */
+function firstIncompleteSection() {
+  for (let i = 0; i < PHENOTYPE_QUESTIONS.length; i++) {
+    const gap = PHENOTYPE_QUESTIONS[i].questions.some(q => state.scores[q.qid] === undefined);
+    if (gap) return i;
+  }
+  return SECTIONS.length - 1;
+}
 function restoreKnownKeys(target, saved, allowed) {
   if (!saved || typeof saved !== 'object') return;
   Object.keys(saved).forEach(k => { if (allowed.has(k)) target[k] = saved[k]; });
@@ -1738,6 +1756,21 @@ function loadFromStorage() {
         state.startEventSent = parsed.startEventSent === true;
         state.startedAt = parsed.startedAt || '';
         state.deepestSectionPinged = typeof parsed.deepestSectionPinged === 'number' ? parsed.deepestSectionPinged : -1;
+        state.assessmentReached = parsed.assessmentReached === true;
+        // Where they stopped. Validated rather than trusted: a draft written by an
+        // older build has no currentSection at all, and one written when the form
+        // had more sections could point past the end of SECTIONS.
+        const savedSection = Number(parsed.currentSection);
+        const inRange = Number.isInteger(savedSection)
+          && savedSection >= 0 && savedSection < SECTIONS.length;
+        // Never resume past a gap. The section gates mean everything before
+        // currentSection should already be answered, but that is an invariant of
+        // another feature, and dropping a parent beyond an unanswered section
+        // would let them reach submit with holes in the middle of the assessment.
+        // Clamping to the first incomplete section makes this safe on its own.
+        state.currentSection = inRange
+          ? Math.min(savedSection, firstIncompleteSection())
+          : 0;
       }
     }
   } catch (e) { /* corrupt/absent, ignore */ }
@@ -1773,8 +1806,11 @@ function saveToStorage() {
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
     try {
+      // currentSection rides along now. Restoring the answers without the place
+      // meant a parent who stopped in section 6 came back to screen one and had
+      // to click through four prefilled onboarding screens to reach their own
+      // questions, which reads as starting over. loadFromStorage validates it.
       const persistable = { ...state };
-      delete persistable.currentSection;
       persistable.savedAt = Date.now(); // item 3: timestamp for abandoned-draft expiry
       localStorage.setItem(STORAGE_KEY, JSON.stringify(persistable));
       if (note) { note.textContent = 'Saved'; note.className = 'autosave-note saved'; }
@@ -2083,6 +2119,10 @@ function setupOnboarding() {
   });
   document.getElementById('intro-begin').addEventListener('click', () => {
     state.currentSection = 0;
+    // The one door from onboarding into the questions, so the one place to record
+    // that a return visit belongs in the assessment and not back at screen one.
+    state.assessmentReached = true;
+    saveToStorage();
     renderIntakeSection();
     showScreen('intake');
   });
@@ -2978,8 +3018,18 @@ loadFromStorage();
 setupWelcome();
 setupOnboarding();
 setupIntakeNav();
-// Screen 1 is active on load, so bring the rail up with it.
-showScreen('welcome');
+// A parent who already reached the questions comes back to them. Their answers
+// were always restored; without this their place was not, so a return visit meant
+// four Continue clicks through prefilled onboarding to get back to their own
+// section. Anyone who left during onboarding still starts at screen one, which is
+// where the details they have not given yet are asked for.
+if (state.assessmentReached) {
+  renderIntakeSection();
+  showScreen('intake');
+} else {
+  // Screen 1 is active on load, so bring the rail up with it.
+  showScreen('welcome');
+}
 </script>
 </body>
 </html>
