@@ -104,7 +104,10 @@
   .start-proof-kyle { display: flex; align-items: center; gap: 18px; text-align: left; }
   /* flex: none or the row shrinks it and the circular crop renders as an ellipse. */
   .start-proof-kyle img { flex: none; width: 104px; height: 104px; border-radius: 50%; object-fit: cover; }
-  .start-proof-kyle-name { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 3px; }
+  /* Weight 600 rather than 700: this line used to be a three word label, and a
+     full sentence at 700 reads shouty. text-wrap: pretty keeps a single word off
+     the last line. */
+  .start-proof-kyle-name { font-size: 15.5px; font-weight: 600; line-height: 1.45; color: #fff; margin-bottom: 5px; text-wrap: pretty; }
   .start-proof-kyle-role { font-size: 13.5px; line-height: 1.4; color: #93A3B8; }
 
   .start-alt { text-align: center; font-size: 15px; font-weight: 500; color: var(--text-2); margin: clamp(26px,3vw,32px) 0 0; }
@@ -122,6 +125,11 @@
   }
   @media (max-width: 860px) {
     .start-proof-kyle img { width: 72px; height: 72px; }
+  }
+  /* Beside the photo the sentence gets about 197px at 375, which wrapped it to five
+     lines in a narrow ribbon. Stacking gives it the full card width instead. */
+  @media (max-width: 560px) {
+    .start-proof-kyle { flex-direction: column; align-items: center; text-align: center; gap: 14px; }
   }
   @media (max-width: 620px) {
     .start-pair { grid-template-columns: 1fr; gap: 18px; }
@@ -282,8 +290,8 @@
       <div class="start-proof-kyle">
         <img src="images/dr-kyle-headshot.jpg" alt="Dr. Kyle Daigle" width="387" height="516" loading="lazy">
         <div>
-          <div class="start-proof-kyle-name">Dr. Kyle reads every intake</div>
-          <div class="start-proof-kyle-role">Clinical lead, NeuroSage Centers</div>
+          <div class="start-proof-kyle-name">Dr. Kyle and the entire NeuroSage clinical team are looking forward to working with you and your child.</div>
+          <div class="start-proof-kyle-role">Dr. Kyle Daigle, clinical lead</div>
         </div>
       </div>
     </section>
