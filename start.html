@@ -98,18 +98,6 @@
   .start-error { margin: 0; border: 1px solid rgba(241,4,51,0.35); background: rgba(241,4,51,0.06); color: #A80220; border-radius: var(--radius-sm); padding: 14px 16px; font-size: 14.5px; line-height: 1.55; }
   .start-error[hidden] { display: none; }
 
-  /* Single centred element since the testimonial column was removed. The quote,
-     attribution and avatar styles went with it. */
-  .start-proof { max-width: 820px; margin: clamp(28px,3.5vw,44px) auto 0; background: linear-gradient(135deg, #16294a 0%, #0a0f1c 100%); border-radius: var(--radius); padding: clamp(26px,3.5vw,36px) clamp(24px,3.5vw,40px); display: flex; justify-content: center; }
-  .start-proof-kyle { display: flex; align-items: center; gap: 18px; text-align: left; }
-  /* flex: none or the row shrinks it and the circular crop renders as an ellipse. */
-  .start-proof-kyle img { flex: none; width: 104px; height: 104px; border-radius: 50%; object-fit: cover; }
-  /* Weight 600 rather than 700: this line used to be a three word label, and a
-     full sentence at 700 reads shouty. text-wrap: pretty keeps a single word off
-     the last line. */
-  .start-proof-kyle-name { font-size: 15.5px; font-weight: 600; line-height: 1.45; color: #fff; margin-bottom: 5px; text-wrap: pretty; }
-  .start-proof-kyle-role { font-size: 13.5px; line-height: 1.4; color: #93A3B8; }
-
   .start-alt { text-align: center; font-size: 15px; font-weight: 500; color: var(--text-2); margin: clamp(26px,3vw,32px) 0 0; }
   .start-alt a { color: var(--brand-text); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; transition: color 0.2s; }
   .start-alt a:hover { color: var(--text); }
@@ -122,14 +110,6 @@
      badges stops fitting and is allowed to wrap. */
   @media (max-width: 900px) {
     .start-badges { flex-wrap: wrap; justify-content: flex-start; gap: 10px 18px; }
-  }
-  @media (max-width: 860px) {
-    .start-proof-kyle img { width: 72px; height: 72px; }
-  }
-  /* Beside the photo the sentence gets about 197px at 375, which wrapped it to five
-     lines in a narrow ribbon. Stacking gives it the full card width instead. */
-  @media (max-width: 560px) {
-    .start-proof-kyle { flex-direction: column; align-items: center; text-align: center; gap: 14px; }
   }
   @media (max-width: 620px) {
     .start-pair { grid-template-columns: 1fr; gap: 18px; }
@@ -281,20 +261,14 @@
       </form>
     </div>
 
-    <!-- This card carried a parent testimonial attributed to "Sarah M., parent of a
-         6-year-old". It was invented, so it is gone. Our own HIPAA notice says a
-         signed testimonial and media release is required before any quote appears
-         on the site, and the reel testimonials on index.html are real families who
-         gave one. Anything added back here needs the same. -->
-    <section class="start-proof">
-      <div class="start-proof-kyle">
-        <img src="images/dr-kyle-headshot.jpg" alt="Dr. Kyle Daigle" width="387" height="516" loading="lazy">
-        <div>
-          <div class="start-proof-kyle-name">Dr. Kyle and the entire NeuroSage clinical team are looking forward to working with you and your child.</div>
-          <div class="start-proof-kyle-role">Dr. Kyle Daigle, clinical lead</div>
-        </div>
-      </div>
-    </section>
+    <!-- The card that sat here is gone. It began as a parent testimonial attributed
+         to "Sarah M., parent of a 6-year-old", which was invented and was removed;
+         what remained was a headshot and a line of copy resting on a 15KB, heavily
+         compressed JPEG that never looked right at any size we tried.
+
+         If it comes back: any quote needs a signed testimonial and media release,
+         per our own HIPAA notice, and the photo needs a clean re-export with a WebP
+         sibling like every other image on the site has. -->
 
     <p class="start-alt">Prefer to talk first? <a href="index.html#book">Book a call</a></p>
 
