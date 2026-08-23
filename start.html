@@ -102,8 +102,18 @@
      attribution and avatar styles went with it. */
   .start-proof { max-width: 820px; margin: clamp(28px,3.5vw,44px) auto 0; background: linear-gradient(135deg, #16294a 0%, #0a0f1c 100%); border-radius: var(--radius); padding: clamp(26px,3.5vw,36px) clamp(24px,3.5vw,40px); display: flex; justify-content: center; }
   .start-proof-kyle { display: flex; align-items: center; gap: 18px; text-align: left; }
+  /* 80px, not 104. The source file is 387x516 at 0.078 bytes per pixel, the most
+     heavily compressed photo on the site (the others run 0.120 to 0.168), so it
+     carries visible JPEG artifacts. Resolution is not the problem: 387px covers
+     even a 3x display. The artifacts are, and they hide as the downscale ratio
+     grows. At 104px a 2x display downscaled 1.86x and a 3x display only 1.24x,
+     which left the mush on show. At 80px those become 2.42x and 1.61x.
+
+     This is a mitigation, not a fix. Replace the file with a clean re-export from
+     the original, add a WebP sibling like every other photo here has, and the
+     circle can go back up. */
   /* flex: none or the row shrinks it and the circular crop renders as an ellipse. */
-  .start-proof-kyle img { flex: none; width: 104px; height: 104px; border-radius: 50%; object-fit: cover; }
+  .start-proof-kyle img { flex: none; width: 80px; height: 80px; border-radius: 50%; object-fit: cover; }
   /* Weight 600 rather than 700: this line used to be a three word label, and a
      full sentence at 700 reads shouty. text-wrap: pretty keeps a single word off
      the last line. */
@@ -122,9 +132,6 @@
      badges stops fitting and is allowed to wrap. */
   @media (max-width: 900px) {
     .start-badges { flex-wrap: wrap; justify-content: flex-start; gap: 10px 18px; }
-  }
-  @media (max-width: 860px) {
-    .start-proof-kyle img { width: 72px; height: 72px; }
   }
   /* Beside the photo the sentence gets about 197px at 375, which wrapped it to five
      lines in a narrow ribbon. Stacking gives it the full card width instead. */
