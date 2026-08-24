@@ -1182,6 +1182,70 @@ footer.foot code { font-family: ui-monospace, monospace; color: var(--brand-deep
           <option value="Zimbabwe">Zimbabwe</option>
         </select>
       </div>
+      <!-- State, shown only for the United States. Our physical therapists have to
+           be licensed where the child is, so this decides what we can offer a family
+           before anyone gets on a call about it. It was collected in schema v1 as
+           parentState, dropped in v2, and is back because the summary and the
+           consult both need it. Hidden rather than absent when the country is not
+           the US, since licensure is a state question only here. -->
+      <div class="field-block field-block-full" id="parent-state-block" hidden>
+        <label class="field-label" for="parent-state">State <span class="req">*</span></label>
+        <select class="field-input" id="parent-state" autocomplete="address-level1">
+          <option value="">Select your state...</option>
+          <option value="Alabama">Alabama</option>
+          <option value="Alaska">Alaska</option>
+          <option value="Arizona">Arizona</option>
+          <option value="Arkansas">Arkansas</option>
+          <option value="California">California</option>
+          <option value="Colorado">Colorado</option>
+          <option value="Connecticut">Connecticut</option>
+          <option value="Delaware">Delaware</option>
+          <option value="District of Columbia">District of Columbia</option>
+          <option value="Florida">Florida</option>
+          <option value="Georgia">Georgia</option>
+          <option value="Hawaii">Hawaii</option>
+          <option value="Idaho">Idaho</option>
+          <option value="Illinois">Illinois</option>
+          <option value="Indiana">Indiana</option>
+          <option value="Iowa">Iowa</option>
+          <option value="Kansas">Kansas</option>
+          <option value="Kentucky">Kentucky</option>
+          <option value="Louisiana">Louisiana</option>
+          <option value="Maine">Maine</option>
+          <option value="Maryland">Maryland</option>
+          <option value="Massachusetts">Massachusetts</option>
+          <option value="Michigan">Michigan</option>
+          <option value="Minnesota">Minnesota</option>
+          <option value="Mississippi">Mississippi</option>
+          <option value="Missouri">Missouri</option>
+          <option value="Montana">Montana</option>
+          <option value="Nebraska">Nebraska</option>
+          <option value="Nevada">Nevada</option>
+          <option value="New Hampshire">New Hampshire</option>
+          <option value="New Jersey">New Jersey</option>
+          <option value="New Mexico">New Mexico</option>
+          <option value="New York">New York</option>
+          <option value="North Carolina">North Carolina</option>
+          <option value="North Dakota">North Dakota</option>
+          <option value="Ohio">Ohio</option>
+          <option value="Oklahoma">Oklahoma</option>
+          <option value="Oregon">Oregon</option>
+          <option value="Pennsylvania">Pennsylvania</option>
+          <option value="Puerto Rico">Puerto Rico</option>
+          <option value="Rhode Island">Rhode Island</option>
+          <option value="South Carolina">South Carolina</option>
+          <option value="South Dakota">South Dakota</option>
+          <option value="Tennessee">Tennessee</option>
+          <option value="Texas">Texas</option>
+          <option value="Utah">Utah</option>
+          <option value="Vermont">Vermont</option>
+          <option value="Virginia">Virginia</option>
+          <option value="Washington">Washington</option>
+          <option value="West Virginia">West Virginia</option>
+          <option value="Wisconsin">Wisconsin</option>
+          <option value="Wyoming">Wyoming</option>
+        </select>
+      </div>
     </div>
     <button class="button-primary" id="welcome-begin">Continue <span>&rarr;</span></button>
     </div>
@@ -1664,6 +1728,11 @@ const state = {
   parentFirstName: '',
   parentLastName: '',
   parentCountry: '',
+  // Only ever set when parentCountry is the United States. A new optional field
+  // needs no DRAFT_SCHEMA_VERSION bump: the rule above is renames, retirements and
+  // changed defaults, and a v2 draft restores fine with this empty. Bumping would
+  // have deleted every draft in flight, since the version rides in the storage key.
+  parentState: '',
   childName: '',
   age: null,
   email: '',
@@ -1739,6 +1808,7 @@ function loadFromStorage() {
         state.parentFirstName = parsed.parentFirstName || '';
         state.parentLastName = parsed.parentLastName || '';
         state.parentCountry = parsed.parentCountry || '';
+        state.parentState = parsed.parentState || '';
         state.topConcerns = Array.isArray(parsed.topConcerns) ? parsed.topConcerns : [];
         state.primaryConcern = parsed.primaryConcern || '';
         state.goal6Months = parsed.goal6Months || '';
@@ -1837,6 +1907,8 @@ function setupWelcome() {
   const firstNameEl = document.getElementById('parent-first-name');
   const lastNameEl  = document.getElementById('parent-last-name');
   const countryEl   = document.getElementById('parent-country');
+  const stateEl     = document.getElementById('parent-state');
+  const stateBlock  = document.getElementById('parent-state-block');
   const emailEl = document.getElementById('parent-email');
   const phoneEl = document.getElementById('parent-phone');
   const nameEl  = document.getElementById('child-name');
@@ -1844,6 +1916,23 @@ function setupWelcome() {
   firstNameEl.value = state.parentFirstName || '';
   lastNameEl.value  = state.parentLastName || '';
   countryEl.value     = state.parentCountry || '';
+  stateEl.value       = state.parentState || '';
+  // One place decides whether the state field exists for this parent, and it is
+  // called on restore as well as on change, so a resumed US draft comes back with
+  // the field open and a resumed non-US draft never sees it.
+  function syncStateField() {
+    const isUS = countryEl.value === 'United States';
+    stateBlock.hidden = !isUS;
+    if (!isUS && state.parentState) {
+      // Clearing on the way out matters: a parent who picks Texas and then
+      // corrects the country to Canada must not submit with Texas still attached.
+      state.parentState = '';
+      stateEl.value = '';
+      saveToStorage();
+    }
+  }
+  syncStateField();
+  stateEl.addEventListener('change', () => { state.parentState = stateEl.value; saveToStorage(); });
   emailEl.value = state.email || '';
   nameEl.value  = state.childName || '';
   ageEl.value   = state.age == null ? '' : state.age;
@@ -1866,6 +1955,7 @@ function setupWelcome() {
       phoneEl.value = phoneEl.value.replace(/[()\-\s]/g, '');
       state.phone = phoneEl.value;
     }
+    syncStateField();
     saveToStorage();
   });
   emailEl.addEventListener('input', () => { state.email = emailEl.value.trim(); saveToStorage(); });
@@ -1923,6 +2013,15 @@ function setupWelcome() {
       return;
     }
     countryEl.style.borderColor = '';
+    // Required for the United States and not asked anywhere else, so the gate has
+    // to be conditional rather than a plain required attribute on the select.
+    if (parentCountry === 'United States' && !(state.parentState || '').trim()) {
+      stateEl.style.borderColor = 'var(--danger)';
+      stateEl.focus();
+      alert('Please select your state. Our physical therapists have to be licensed where your child is, so this decides what we can offer you.');
+      return;
+    }
+    stateEl.style.borderColor = '';
     const childFirst = (state.childName || '').trim();
     if (!childFirst) {
       nameEl.style.borderColor = 'var(--danger)';
@@ -2813,6 +2912,9 @@ async function submitIntake(r) {
     parent_first_name: state.parentFirstName || '',
     parent_last_name: state.parentLastName || '',
     country: state.parentCountry || '',
+    // Empty for every country except the United States. The consult cannot be
+    // booked without knowing it, because PT licensure is per state.
+    parent_state: state.parentState || '',
     child_first_name: state.childName || '',
     // Flat, not just buried in raw_intake_json. Age gates routing through
     // ageAppropriate, so it belongs in a field the CRM can bind and filter on
@@ -2870,6 +2972,7 @@ async function submitIntake(r) {
       parentFirstName: state.parentFirstName,
       parentLastName: state.parentLastName,
       parentCountry: state.parentCountry,
+      parentState: state.parentState,
       childName: state.childName,
       age: state.age,
       email: state.email,
@@ -2990,6 +3093,7 @@ function postProgress(eventType) {
         child_first_name: state.childName || '',
         child_age: state.age,
         country: state.parentCountry || '',
+        parent_state: state.parentState || '',
         questions_answered: answered,
         questions_total: TOTAL_QUESTIONS,
         percent_complete: TOTAL_QUESTIONS ? Math.round((answered / TOTAL_QUESTIONS) * 100) : 0,
