@@ -355,7 +355,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--brand-deep); ou
 .kyle-content { display: flex; flex-direction: column; gap: 22px; }
 .kyle-name { font-family: 'Outfit', sans-serif; font-size: clamp(28px,3.5vw,42px); font-weight: 800; color: var(--text); letter-spacing: -1px; line-height: 1.1; margin-bottom: 4px; }
 .kyle-name-suffix { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; color: var(--brand-text); letter-spacing: 1px; }
-.kyle-bio { font-size: 16px; color: var(--text-2); line-height: 1.75; }
+.kyle-bio { font-size: clamp(16px,1.7vw,18px); color: var(--text-2); line-height: 1.75; }
 .kyle-bio strong { color: var(--text); font-weight: 600; }
 .kyle-credentials { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
 .kyle-cred { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); transition: border-color 0.25s; }
