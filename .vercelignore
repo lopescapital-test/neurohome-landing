@@ -10,3 +10,8 @@ scripts/
 # in the sitemap. If it turns out to be a page the team sends people to directly,
 # delete this line and it is back on the next deploy.
 compare/
+
+# Local-only prototypes — not for production
+prototype.html
+app-preview.html
+app-prototype/
