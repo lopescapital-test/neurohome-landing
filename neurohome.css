@@ -968,10 +968,6 @@ body.reel-lock { overflow: hidden; }
 #family .conditions-headline { font-size: clamp(28px,3.6vw,46px); max-width: none; }
 /* Span the full container so the lede lines up with the panel edge below it. */
 #family .section-sub { max-width: none; }
-/* The global .conditions-headline em rule paints --brand, which is 1.79:1 on
-   --bg and fails AA. Scoped to --brand-text here (4.73:1) rather than editing
-   the global rule, which is a sitewide decision and not this section's call. */
-#family .conditions-headline em { color: var(--brand-text); }
 
 .family-panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-md); overflow: hidden; display: grid; grid-template-columns: minmax(0,0.62fr) minmax(0,1fr); }
 /* An author `display` declaration outranks the UA [hidden] rule, so setting
