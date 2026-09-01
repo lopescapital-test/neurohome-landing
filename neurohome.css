@@ -966,19 +966,12 @@ body.reel-lock { overflow: hidden; }
    near the end of this block.
    ===================================================== */
 #family .conditions-headline { font-size: clamp(28px,3.6vw,46px); max-width: none; }
+/* Span the full container so the lede lines up with the panel edge below it. */
+#family .section-sub { max-width: none; }
 /* The global .conditions-headline em rule paints --brand, which is 1.79:1 on
    --bg and fails AA. Scoped to --brand-text here (4.73:1) rather than editing
    the global rule, which is a sitewide decision and not this section's call. */
 #family .conditions-headline em { color: var(--brand-text); }
-
-.family-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
-.family-tab { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 5px; min-height: 68px; padding: 14px 22px; text-align: left; font: inherit; cursor: pointer; background: var(--bg-card); border: 1px solid var(--border-hover); border-radius: var(--radius-sm); color: var(--text); transition: background 0.2s, color 0.2s, border-color 0.2s; }
-.family-tab:hover { border-color: var(--text); }
-.family-tab:focus-visible { outline: 2px solid var(--brand-deep); outline-offset: 3px; }
-.family-tab-n { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-3); }
-.family-tab-name { font-family: 'Outfit', sans-serif; font-size: 17px; font-weight: 700; letter-spacing: -0.01em; }
-.family-tab[aria-selected="true"] { background: var(--ink-navy); border-color: var(--ink-navy); color: #fff; }
-.family-tab[aria-selected="true"] .family-tab-n { color: #fff; }
 
 .family-panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-md); overflow: hidden; display: grid; grid-template-columns: minmax(0,0.62fr) minmax(0,1fr); }
 /* An author `display` declaration outranks the UA [hidden] rule, so setting
@@ -1007,9 +1000,18 @@ body.reel-lock { overflow: hidden; }
    in it, which is what the source design did (flex:1 + align-items:center on its
    graphic slot) and what I dropped on the first port. Without it the left column
    ran 143-235px short of the right one and dumped all of it at the bottom. */
-.family-fig { flex: 1; display: flex; align-items: center; }
-.family-fig img { display: block; width: 100%; max-width: 240px; height: auto; }
-.family-fig svg { display: block; width: 100%; max-width: 240px; height: auto; overflow: visible; }
+/* Figure sits directly under logo + meta at its natural height. It no longer
+   takes flex:1 - the CLINICIAN TIME block below does, via margin-top:auto, so
+   leftover height collects between the figure and that block instead of being
+   centred around the graphic.
+
+   240px -> 320px: the brand column content box is ~366px at 1280, so 320 fills
+   it without reaching the padding edge. On the 268-unit tier 01/02 viewBoxes the
+   scale goes 0.896 -> 1.194, which lifts their 10px mono labels from ~9px to
+   ~12px effective and is the real reason for the change. */
+.family-fig { display: flex; align-items: flex-start; }
+.family-fig img { display: block; width: 100%; max-width: 320px; height: auto; }
+.family-fig svg { display: block; width: 100%; max-width: 320px; height: auto; overflow: visible; }
 
 /* Tier figure ink. Container chrome is deliberately faint, matching the four
    method figures in index.html which stroke their own chrome at 1.17-1.53:1;
@@ -1034,6 +1036,26 @@ body.reel-lock { overflow: hidden; }
 .ffig-o75 { opacity: 0.75; }
 .ffig-o70 { opacity: 0.7; }
 
+/* CLINICIAN TIME meter, ported from the source design. margin-top:auto pins it
+   to the bottom of the brand column, which is what absorbs the leftover height
+   the figure used to. Filled segments carry the value and are graded as UI
+   indicators (>=3:1); the empty track is chrome, same precedent as the figure
+   outlines and the method figures at 1.17-1.53:1. */
+.family-access { margin-top: auto; border-top: 1px solid var(--border); padding-top: 22px; display: flex; flex-direction: column; gap: 10px; }
+.family-brand.is-dark .family-access { border-top-color: rgba(250,250,250,0.16); }
+.family-access-l { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-3); }
+.family-brand.is-dark .family-access-l { color: var(--text-inv); opacity: 0.7; }
+.family-access-bar { display: flex; gap: 6px; align-items: center; }
+/* Intensity note under the meter. Source used a single mid grey for both the
+   label and this line; --text-3 is 5.12:1 on --bg and the dark variant lands at
+   7.52:1, so the pair is differentiated by type, not by contrast. */
+.family-access-note { font-size: 13.5px; line-height: 1.5; color: var(--text-3); margin: 0; }
+.family-brand.is-dark .family-access-note { color: var(--text-inv); opacity: 0.7; }
+.family-access-seg { width: 34px; height: 5px; border-radius: 3px; background: var(--border-hover); }
+.family-access-seg.on { background: var(--brand-text); }
+.family-brand.is-dark .family-access-seg { background: rgba(250,250,250,0.22); }
+.family-brand.is-dark .family-access-seg.on { background: #00C2FF; }
+
 .family-body { padding: clamp(28px,3.4vw,52px); display: flex; flex-direction: column; gap: 22px; }
 .family-purpose { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--brand-text); }
 .family-h3 { font-family: 'Outfit', sans-serif; font-size: clamp(24px,2.8vw,36px); font-weight: 800; line-height: 1.12; letter-spacing: -0.02em; color: var(--text); margin: 0; }
@@ -1045,8 +1067,13 @@ body.reel-lock { overflow: hidden; }
 .family-fact dd { font-size: 16.5px; line-height: 1.5; color: var(--text); margin: 0; }
 
 .family-foot { margin-top: auto; border-top: 1px solid var(--border); padding-top: 22px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
-.family-next-l { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-3); display: block; }
-.family-next-t { font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: -0.01em; color: var(--text); }
+/* The arrows are now the only way through the tiers, so this stops reading as a
+   footnote: the eyebrow takes the --brand-text accent that signals interactive
+   elsewhere on the page (4.93:1 on --bg-card) and goes 10px -> 11px, and the
+   destination title goes 16px -> 19px so the pair carries the same weight as the
+   arrow buttons beside it. */
+.family-next-l { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--brand-text); display: block; margin-bottom: 3px; }
+.family-next-t { font-family: 'Outfit', sans-serif; font-size: 19px; font-weight: 700; letter-spacing: -0.015em; color: var(--text); }
 .family-nav { display: flex; gap: 10px; flex: none; }
 
 /* neurohome.css declares no global anchor styling (only a:focus-visible at :188),
@@ -1063,7 +1090,6 @@ body.reel-lock { overflow: hidden; }
    live the open tier is correct from the first frame and nothing flashes. */
 html:not(.js) .family-panel[hidden] { display: grid; }
 html:not(.js) .family-panel + .family-panel { margin-top: 18px; }
-html:not(.js) .family-tabs,
 html:not(.js) .family-foot { display: none; }
 
 /* The same fix for the older #method stepper, which had the JS-off gap this
@@ -1092,7 +1118,6 @@ html:not(.js) #method .mth-closer .mth-back-btn { display: none; }
   .family-fig { margin-top: 0; }
 }
 @media (max-width: 760px) {
-  .family-tabs { grid-template-columns: 1fr; }
   .family-fact { grid-template-columns: 1fr; gap: 6px; }
   .family-foot { flex-direction: column; align-items: flex-start; }
 }
@@ -1174,9 +1199,17 @@ html:not(.js) #method .mth-closer .mth-back-btn { display: none; }
 /* =====================================================
    Responsive
    ===================================================== */
-@media (max-width: 900px) {
+/* The nav collapses earlier than the rest of the responsive block. Seven items
+   plus the CTA stop fitting the 72px bar below ~1080px: links wrap to two lines
+   while the bar height is fixed. The other 22 rules in the 900px block below are
+   unrelated layout collapses (hero, footer, grids, sticky CTA) and deliberately
+   keep their own threshold, so only the two nav rules move here. */
+@media (max-width: 1080px) {
   .nav-links { display: none; }
   .nav-mobile-toggle { display: block; }
+}
+
+@media (max-width: 900px) {
   .steps-grid { grid-template-columns: 1fr; }
   .features-grid { grid-template-columns: 1fr; }
   .protocol-grid { grid-template-columns: 1fr; }

@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="neurohome.css?v=93">
+<link rel="stylesheet" href="neurohome.css?v=94">
 <link rel="canonical" href="https://neurohome-landing.vercel.app/">
 <!-- Social share (Open Graph + Twitter). Absolute URLs point at the Vercel
      production domain. Update these if a custom domain is added later. -->
@@ -65,6 +65,7 @@
     <a class="nav-link" href="#dr-kyle">Dr. Kyle</a>
     <a class="nav-link" href="#method">Our Approach</a>
     <a class="nav-link" href="#testimonials">Results</a>
+    <a class="nav-link" href="#family">NeuroSage Hub</a>
     <a class="nav-link" href="#faq">FAQ</a>
     <a class="nav-link" href="https://neurohome-app.vercel.app/login">Family Login</a>
     <a class="nav-cta" href="start.html">Start your child's plan</a>
@@ -538,25 +539,11 @@
   With JavaScript off, all three panels show stacked and the tabs and arrows
   are hidden. See the html:not(.js) rules in neurohome.css.
 -->
-<section class="section" id="family" data-stepper data-stepper-open="2">
+<section class="section" id="family" data-stepper data-stepper-open="1">
   <div class="section-eyebrow reveal">The NeuroSage family</div>
   <h2 class="conditions-headline reveal reveal-d1">Three levels of care. <em>NeuroHome is one of them.</em></h2>
   <p class="section-sub reveal reveal-d2">Same clinical thinking throughout, offered at three levels of access. Step through them to see where your family fits.</p>
 
-  <div class="family-tabs reveal" role="tablist" aria-label="Levels of care">
-    <button class="family-tab" type="button" role="tab" id="family-tab-1" data-go="1" data-tab="1" aria-selected="false" aria-controls="family-panel-1">
-      <span class="family-tab-n">Tier 01</span>
-      <span class="family-tab-name">NeuroSage Hub</span>
-    </button>
-    <button class="family-tab" type="button" role="tab" id="family-tab-2" data-go="2" data-tab="2" aria-selected="true" aria-controls="family-panel-2">
-      <span class="family-tab-n">Tier 02</span>
-      <span class="family-tab-name">NeuroHome</span>
-    </button>
-    <button class="family-tab" type="button" role="tab" id="family-tab-3" data-go="3" data-tab="3" aria-selected="false" aria-controls="family-panel-3">
-      <span class="family-tab-n">Tier 03</span>
-      <span class="family-tab-name">NeuroSage Centers</span>
-    </button>
-  </div>
 
   <!--
     Tier 01: NeuroSage Hub.
@@ -568,7 +555,7 @@
     match the rest of the site. That gap is a pending asset re-export, not a
     text change to make here.
   -->
-  <div class="family-panel" role="tabpanel" id="family-panel-1" aria-labelledby="family-tab-1" data-step="1" hidden>
+  <div class="family-panel" id="family-panel-1" data-step="1">
     <div class="family-brand">
       <div class="family-logo">
         <img src="images/neurosage-hub-lockup.png" alt="NeuroSage Hub" width="1188" height="446" loading="lazy">
@@ -609,6 +596,15 @@
           </g>
         </svg>
       </div>
+      <div class="family-access">
+        <span class="family-access-l">Clinician time</span>
+        <div class="family-access-bar" role="img" aria-label="Clinician time: 1 of 3">
+          <span class="family-access-seg on"></span>
+          <span class="family-access-seg"></span>
+          <span class="family-access-seg"></span>
+        </div>
+        <p class="family-access-note">Self-guided. The most accessible way in.</p>
+      </div>
     </div>
     <div class="family-body">
       <span class="family-purpose">Purpose</span>
@@ -633,7 +629,7 @@
   </div>
 
   <!-- ---------- Tier 02: NeuroHome (opens by default) ---------- -->
-  <div class="family-panel" role="tabpanel" id="family-panel-2" aria-labelledby="family-tab-2" data-step="2">
+  <div class="family-panel" id="family-panel-2" data-step="2" hidden>
     <div class="family-brand is-dark">
       <div class="family-logo">
         <!--
@@ -670,6 +666,15 @@
           <text x="28" y="141" class="ffig-lab ffig-lab-xs ffig-o70">1:1 LICENSED PT &#183; 8 WEEKS</text>
         </svg>
       </div>
+      <div class="family-access">
+        <span class="family-access-l">Clinician time</span>
+        <div class="family-access-bar" role="img" aria-label="Clinician time: 2 of 3">
+          <span class="family-access-seg on"></span>
+          <span class="family-access-seg on"></span>
+          <span class="family-access-seg"></span>
+        </div>
+        <p class="family-access-note">One-to-one clinician time, without the travel.</p>
+      </div>
     </div>
     <div class="family-body">
       <span class="family-purpose">Purpose</span>
@@ -694,7 +699,7 @@
   </div>
 
   <!-- ---------- Tier 03: NeuroSage Centers ---------- -->
-  <div class="family-panel" role="tabpanel" id="family-panel-3" aria-labelledby="family-tab-3" data-step="3" hidden>
+  <div class="family-panel" id="family-panel-3" data-step="3" hidden>
     <div class="family-brand">
       <div class="family-logo">
         <span class="family-wordmark">NeuroSage Centers</span>
@@ -705,6 +710,15 @@
       </div>
       <div class="family-fig">
         <img src="images/louisiana.svg" alt="Map of Louisiana with Lake Charles marked" width="266" height="240" loading="lazy">
+      </div>
+      <div class="family-access">
+        <span class="family-access-l">Clinician time</span>
+        <div class="family-access-bar" role="img" aria-label="Clinician time: 3 of 3">
+          <span class="family-access-seg on"></span>
+          <span class="family-access-seg on"></span>
+          <span class="family-access-seg on"></span>
+        </div>
+        <p class="family-access-note">The most clinician time, in person with Dr. Kyle.</p>
       </div>
     </div>
     <div class="family-body">
