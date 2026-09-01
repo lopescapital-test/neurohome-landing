@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="neurohome.css?v=92">
+<link rel="stylesheet" href="neurohome.css?v=93">
 <link rel="canonical" href="https://neurohome-landing.vercel.app/">
 <!-- Social share (Open Graph + Twitter). Absolute URLs point at the Vercel
      production domain. Update these if a custom domain is added later. -->
@@ -577,6 +577,38 @@
         <span class="family-setting">Online</span>
         <span class="family-format">Self-guided, open access</span>
       </div>
+      <div class="family-fig">
+        <svg viewBox="0 0 268 184" width="100%" role="img" aria-label="Hub offerings: AI assistance, learning resources, and games">
+          <g>
+            <rect x="0" y="0" width="268" height="54" rx="12" class="ffig-box"/>
+            <g transform="translate(20,16)" class="ffig-ico">
+              <circle cx="11" cy="11" r="4.4"/>
+              <circle cx="11" cy="11" r="10.5" stroke-dasharray="3 3.5"/>
+              <path d="M11 0.5v3M11 18.5v3M0.5 11h3M18.5 11h3"/>
+            </g>
+            <text x="66" y="32" class="ffig-lab">AI ASSISTANCE</text>
+          </g>
+          <g>
+            <rect x="0" y="65" width="268" height="54" rx="12" class="ffig-box"/>
+            <g transform="translate(20,81)" class="ffig-ico">
+              <path d="M1 7l10-4.5L21 7l-10 4.5z"/>
+              <path d="M5 9v6c0 1.6 2.7 3 6 3s6-1.4 6-3V9"/>
+              <path d="M21 7v6"/>
+            </g>
+            <text x="66" y="97" class="ffig-lab">LEARNING</text>
+          </g>
+          <g>
+            <rect x="0" y="130" width="268" height="54" rx="12" class="ffig-box"/>
+            <g transform="translate(20,146)" class="ffig-ico">
+              <rect x="1" y="5" width="20" height="13" rx="5.5"/>
+              <path d="M6 9v5M3.5 11.5h5"/>
+              <circle cx="15.5" cy="10.5" r="1.1" class="ffig-dot"/>
+              <circle cx="18" cy="13.5" r="1.1" class="ffig-dot"/>
+            </g>
+            <text x="66" y="162" class="ffig-lab">GAMES</text>
+          </g>
+        </svg>
+      </div>
     </div>
     <div class="family-body">
       <span class="family-purpose">Purpose</span>
@@ -604,14 +636,39 @@
   <div class="family-panel" role="tabpanel" id="family-panel-2" aria-labelledby="family-tab-2" data-step="2">
     <div class="family-brand is-dark">
       <div class="family-logo">
+        <!--
+          The wordmark text MUST stay inside one wrapping element. .family-wordmark
+          is inline-flex with gap:14px for mark-to-wordmark spacing; a bare "Neuro"
+          text node becomes its own anonymous flex item, so the gap also lands
+          between Neuro and Home and the wordmark reads "Neuro Home".
+        -->
         <span class="family-wordmark">
           <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 52 52' fill='none'%3E%3Crect x='8' y='22' width='36' height='27' rx='3' stroke='%23FAFAFA' stroke-width='2.2'/%3E%3Cpath d='M 4 24 L 26 5 L 48 24' stroke='%23FAFAFA' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Crect x='20' y='34' width='12' height='15' rx='1.5' stroke='%23FAFAFA' stroke-width='1.5'/%3E%3Ccircle cx='8' cy='22' r='3' fill='%2300C2FF'/%3E%3Ccircle cx='44' cy='22' r='3' fill='%2300C2FF'/%3E%3Ccircle cx='8' cy='49' r='3' fill='%2300C2FF'/%3E%3Ccircle cx='44' cy='49' r='3' fill='%2300C2FF'/%3E%3Ccircle cx='26' cy='5' r='3' fill='%2300C2FF'/%3E%3C/svg%3E" alt="" width="52" height="52" loading="lazy">
-          Neuro<b>Home</b>
+          <span>Neuro<b>Home</b></span>
         </span>
       </div>
       <div class="family-meta">
         <span class="family-setting">At home</span>
         <span class="family-format">8-week guided program</span>
+      </div>
+      <div class="family-fig">
+        <svg viewBox="0 0 268 184" width="100%" role="img" aria-label="Telehealth session between a licensed physical therapist and a child at home">
+          <rect x="0" y="10" width="268" height="150" rx="14" class="ffig-box"/>
+          <rect x="16" y="26" width="146" height="92" rx="8" class="ffig-screen"/>
+          <circle cx="89" cy="62" r="15" class="ffig-accent"/>
+          <path d="M66 100c4-13 12-19 23-19s19 6 23 19" class="ffig-accent"/>
+          <circle cx="28" cy="38" r="3.2" class="ffig-live"/>
+          <text x="38" y="41.5" class="ffig-lab ffig-lab-xs ffig-o75">LIVE</text>
+          <rect x="176" y="26" width="76" height="52" rx="8" class="ffig-box"/>
+          <g transform="translate(200,40)" class="ffig-ico-ink">
+            <path d="M0 11L14 0l14 11"/>
+            <path d="M4 9v14h20V9"/>
+          </g>
+          <text x="176" y="100" class="ffig-lab ffig-lab-sm ffig-o70">YOUR HOME</text>
+          <path d="M162 72h14" class="ffig-dash"/>
+          <rect x="16" y="128" width="236" height="18" rx="9" class="ffig-box"/>
+          <text x="28" y="141" class="ffig-lab ffig-lab-xs ffig-o70">1:1 LICENSED PT &#183; 8 WEEKS</text>
+        </svg>
       </div>
     </div>
     <div class="family-body">

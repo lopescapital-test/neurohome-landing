@@ -985,7 +985,7 @@ body.reel-lock { overflow: hidden; }
    display:grid above silently defeats the hidden attribute and every tier
    renders at once. This puts [hidden] back. */
 .family-panel[hidden] { display: none; }
-.family-brand { padding: clamp(28px,3vw,44px); display: flex; flex-direction: column; justify-content: space-between; gap: 26px; border-right: 1px solid var(--border); background: var(--bg); }
+.family-brand { padding: clamp(28px,3vw,44px); display: flex; flex-direction: column; gap: 26px; border-right: 1px solid var(--border); background: var(--bg); }
 .family-brand.is-dark { background: var(--ink-navy); border-right-color: rgba(250,250,250,0.14); }
 .family-logo { min-height: 64px; display: flex; align-items: center; }
 .family-logo img { display: block; width: 200px; max-width: 100%; height: auto; }
@@ -999,10 +999,40 @@ body.reel-lock { overflow: hidden; }
 .family-brand.is-dark .family-wordmark { color: var(--text-inv); }
 .family-brand.is-dark .family-setting { color: #00C2FF; }
 .family-brand.is-dark .family-format { color: var(--text-inv); }
-/* space-between on .family-brand distributes the 1-3 children instead:
-   tier 01 logo only, tier 02 logo + meta, tier 03 logo + meta + figure. */
-.family-fig { margin-top: 0; }
+/* All three tiers now carry logo + meta + figure. justify-content:space-between
+   is gone: it was compensating for tier 01 and 02 having no figure, and with the
+   figures restored it stretched the panel and opened a dead gap mid-column.
+
+   Instead the figure wrapper takes the leftover height and centres the graphic
+   in it, which is what the source design did (flex:1 + align-items:center on its
+   graphic slot) and what I dropped on the first port. Without it the left column
+   ran 143-235px short of the right one and dumped all of it at the bottom. */
+.family-fig { flex: 1; display: flex; align-items: center; }
 .family-fig img { display: block; width: 100%; max-width: 240px; height: auto; }
+.family-fig svg { display: block; width: 100%; max-width: 240px; height: auto; overflow: visible; }
+
+/* Tier figure ink. Container chrome is deliberately faint, matching the four
+   method figures in index.html which stroke their own chrome at 1.17-1.53:1;
+   the icon strokes and labels are the parts that carry meaning and those are
+   graded as text. Light-panel values first, dark-panel overrides below. */
+.ffig-lab { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 1.4px; fill: var(--text-2); }
+.ffig-lab-sm { font-size: 9px; }
+.ffig-lab-xs { font-size: 8.5px; }
+.ffig-box { fill: none; stroke: var(--border-hover); stroke-width: 1; }
+.ffig-ico { fill: none; stroke: var(--brand-text); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.ffig-dot { fill: var(--brand-text); stroke: none; }
+
+/* Dark panel (tier 02). --text-inv is 13.87:1 on --ink-navy, so the source
+   opacities survive: 0.75 gives 8.44:1 and 0.70 gives 7.52:1, both past AA. */
+.family-brand.is-dark .ffig-box { stroke: rgba(250,250,250,0.22); }
+.family-brand.is-dark .ffig-lab { fill: var(--text-inv); }
+.ffig-screen { fill: rgba(0,194,255,0.10); stroke: #00C2FF; stroke-width: 1; }
+.ffig-accent { fill: none; stroke: #00C2FF; stroke-width: 1.6; stroke-linecap: round; }
+.ffig-live { fill: var(--accent-red); stroke: none; }
+.ffig-ico-ink { fill: none; stroke: var(--text-inv); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; opacity: 0.75; }
+.ffig-dash { fill: none; stroke: rgba(250,250,250,0.22); stroke-width: 1.5; stroke-dasharray: 3 4; }
+.ffig-o75 { opacity: 0.75; }
+.ffig-o70 { opacity: 0.7; }
 
 .family-body { padding: clamp(28px,3.4vw,52px); display: flex; flex-direction: column; gap: 22px; }
 .family-purpose { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--brand-text); }
