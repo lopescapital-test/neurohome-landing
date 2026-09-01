@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="neurohome.css?v=91">
+<link rel="stylesheet" href="neurohome.css?v=92">
 <link rel="canonical" href="https://neurohome-landing.vercel.app/">
 <!-- Social share (Open Graph + Twitter). Absolute URLs point at the Vercel
      production domain. Update these if a custom domain is added later. -->
@@ -527,10 +527,13 @@
   [data-stepper-open] the tier that opens first (02, because NeuroHome is what
   this site sells), [data-go] the buttons, [data-step] the panels.
 
-  Tier 01 copy is unresolved. The live site asserts exactly two things about
-  NeuroSage Hub: it is a "certification program" (the FAQ below) and a
-  "methodology" (terms.html:116). Everything the design put in that panel was
-  net-new, so it renders as a TODO(KYLE) rather than as claims nobody approved.
+  Tier 01 copy is approved and signed off. It stays inside education and access:
+  no referral path, no pricing, no availability window, no outcome claim, and
+  nothing implying clinical supervision or a care pathway. The source design's
+  "referrals" claim was dropped rather than reworded, because it implies a
+  clinical pathway the Hub does not provide. Elsewhere the site describes the
+  Hub only as a certification program (the FAQ below) and a methodology
+  (terms.html:116); neither statement is contradicted here.
 
   With JavaScript off, all three panels show stacked and the tabs and arrows
   are hidden. See the html:not(.js) rules in neurohome.css.
@@ -555,29 +558,35 @@
     </button>
   </div>
 
-  <!-- ---------- Tier 01: NeuroSage Hub (copy unresolved) ---------- -->
+  <!--
+    Tier 01: NeuroSage Hub.
+    Education and access, deliberately not framed as a program. No referral
+    path, no pricing, no availability window, no outcome claim, and nothing
+    implying clinical supervision or treatment - the Hub is not care delivery.
+
+    The lockup image reads "Neurosage HUB"; body copy reads "NeuroSage Hub" to
+    match the rest of the site. That gap is a pending asset re-export, not a
+    text change to make here.
+  -->
   <div class="family-panel" role="tabpanel" id="family-panel-1" aria-labelledby="family-tab-1" data-step="1" hidden>
     <div class="family-brand">
       <div class="family-logo">
         <img src="images/neurosage-hub-lockup.png" alt="NeuroSage Hub" width="1188" height="446" loading="lazy">
       </div>
+      <div class="family-meta">
+        <span class="family-setting">Online</span>
+        <span class="family-format">Self-guided, open access</span>
+      </div>
     </div>
     <div class="family-body">
       <span class="family-purpose">Purpose</span>
-      <h3 class="family-h3">NeuroSage Hub</h3>
-      <div class="family-todo">
-        <span class="family-todo-label">TODO(KYLE) &middot; tier 01 copy unresolved</span>
-        <p>The site currently makes two claims about NeuroSage Hub, both in the FAQ and Terms: it is a <strong>certification program</strong> that NeuroHome clinicians train through, and it is a <strong>methodology</strong> owned by NSH Operations, LLC. Nothing else about the Hub appears anywhere on the site.</p>
-        <p>The source design filled this panel with positioning that is not corroborated. It needs Kyle to confirm, in writing, before any of it ships:</p>
-        <ul>
-          <li>Is the Hub a family-facing product at all, or only a practitioner certification track? The design described it as an "educational coordination platform" for parents.</li>
-          <li>Who is the audience? The design claimed parents and caregivers, plus practitioners and educators.</li>
-          <li>What does it actually include? The design claimed guided AI assistance, resources, learning, games, and <strong>referrals</strong>. A referral path is a regulated claim and cannot be drafted here.</li>
-          <li>Is it live, and where do families reach it? No URL, availability, or pricing exists on the site.</li>
-          <li>Does presenting Hub as "Tier 01" of one family conflict with <code>terms.html:116</code>, which lists the Hub methodology and the NeuroHome brand as separate assets of NSH Operations rather than as a hierarchy?</li>
-          <li>The supplied lockup reads "Neurosage HUB". The site standardised on "NeuroSage Hub" this pass. The casing is baked into the raster and needs a re-export.</li>
-        </ul>
-      </div>
+      <h3 class="family-h3">Open-access education and guidance.</h3>
+      <p class="family-p">NeuroSage Hub is self-guided and online. It is not a clinical program and there is nothing to enroll in. Live at <a href="https://neurosagehub.com/">neurosagehub.com</a>.</p>
+      <dl class="family-facts">
+        <div class="family-fact"><dt>Built for</dt><dd>Parents and caregivers</dd></div>
+        <div class="family-fact"><dt>Also serves</dt><dd>Practitioners and educators</dd></div>
+        <div class="family-fact"><dt>Includes</dt><dd>Guided AI assistance, learning resources, games</dd></div>
+      </dl>
       <div class="family-foot">
         <div>
           <span class="family-next-l">Next &middot; Tier 02</span>

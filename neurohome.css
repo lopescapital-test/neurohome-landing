@@ -1019,14 +1019,12 @@ body.reel-lock { overflow: hidden; }
 .family-next-t { font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: -0.01em; color: var(--text); }
 .family-nav { display: flex; gap: 10px; flex: none; }
 
-/* Unresolved copy renders as a visible block rather than silently shipping a
-   claim nobody has signed off. Removing these is a content task, not a code one. */
-.family-todo { border: 1px dashed var(--border-hover); border-left: 3px solid var(--brand-text); border-radius: var(--radius-sm); padding: 18px 22px; background: var(--bg); }
-.family-todo-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--brand-text); display: block; margin-bottom: 8px; }
-.family-todo p { font-size: 15px; line-height: 1.65; color: var(--text-2); margin: 0; }
-.family-todo p + p { margin-top: 10px; }
-.family-todo ul { margin: 10px 0 0 18px; }
-.family-todo li { font-size: 15px; line-height: 1.6; color: var(--text-2); }
+/* neurohome.css declares no global anchor styling (only a:focus-visible at :188),
+   so an unstyled link in body copy renders browser-default blue. The legal pages
+   solve this with their own inline rule on --brand-deep, but that measures 3.31:1
+   on white and fails AA, so this uses --brand-text at 4.93:1. */
+.family-p a { color: var(--brand-text); text-decoration: underline; text-underline-offset: 3px; }
+.family-p a:hover { color: var(--text); }
 
 .family-note { font-size: 15px; line-height: 1.65; color: var(--text-2); margin: 18px 0 0; max-width: 860px; }
 
@@ -1037,6 +1035,24 @@ html:not(.js) .family-panel[hidden] { display: grid; }
 html:not(.js) .family-panel + .family-panel { margin-top: 18px; }
 html:not(.js) .family-tabs,
 html:not(.js) .family-foot { display: none; }
+
+/* The same fix for the older #method stepper, which had the JS-off gap this
+   pattern was built to close: with neurohome.js absent nothing can advance it,
+   so steps 02-04 and the closer were unreachable.
+
+   #method already restores [hidden] at :818 with "display: none !important",
+   its own answer to the same cascade problem, so overriding that needs
+   !important at higher specificity:
+     #method [hidden]                          (1,1,0) !important
+     html:not(.js) #method .mth-step[hidden]   (1,3,1) !important  <- wins
+
+   .mth-step is display:grid and .mth-closer is display:flex, so each needs its
+   own value rather than one shared rule. The navigation goes away because with
+   every step stacked the "Next" labels and arrows are dead controls. */
+html:not(.js) #method .mth-step[hidden] { display: grid !important; }
+html:not(.js) #method .mth-closer[hidden] { display: flex !important; }
+html:not(.js) #method .mth-nav,
+html:not(.js) #method .mth-closer .mth-back-btn { display: none; }
 
 /* Matches .mth-step's collapse point so the two steppers break together. */
 @media (max-width: 1100px) {
