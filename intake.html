@@ -815,8 +815,64 @@ button.intake-progress-bar:focus-visible { outline: 2px solid var(--brand); outl
   background: #0f1b33;
   border-radius: 20px;
   padding: clamp(28px,4vw,44px);
-  text-align: center;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  /* Column gap only. The note is a third grid child sitting in row 2, and a
+     row gap here would push it away from the actions it belongs to; its own
+     margin-top does that spacing instead. */
+  column-gap: clamp(28px,4vw,52px);
+  row-gap: 0;
+  /* stretch, not center: the next-step panel is a bordered card, and centring a
+     276px card against a 369px column leaves it floating with uneven space above
+     and below. Stretch makes it match the column. Its contents stay top-aligned
+     and the CTA button keeps its intrinsic height - .thanks-next is a column
+     flex container and sets no flex-grow on its children. */
+  align-items: stretch;
+  text-align: left;
 }
+@media (max-width: 800px) {
+  .thanks-hero { grid-template-columns: 1fr; column-gap: 28px; row-gap: 28px; }
+  /* The row gap already separates the note; its desktop margin would double it.
+     Scoped to .thanks-hero because the base .thanks-note rule is declared later
+     in the sheet, so an equal-specificity override here would lose the cascade. */
+  .thanks-hero .thanks-note { margin-top: 0; }
+}
+/* The next-step panel. Hidden by renderThanks on the failure branch so success
+   and failure chrome stay mutually exclusive. */
+.thanks-next {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 16px;
+  padding: clamp(22px,3vw,30px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+.thanks-next-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--brand);
+}
+.thanks-next-title { color: #fff; font-size: clamp(24px,3vw,30px); line-height: 1.1; margin: 0; }
+.thanks-cta-line {
+  color: #C9D6E4;
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0;
+  text-wrap: pretty;
+}
+.thanks-next .button-primary {
+  margin-top: 6px;
+  background: var(--brand);
+  color: #0B1526;
+  text-decoration: none;
+  box-shadow: 0 8px 24px var(--brand-glow);
+}
+.thanks-next .button-primary:hover { background: #fff; color: #0B1526; }
 .thanks-hero h1 { color: #fff; }
 .thanks-hero .thanks-note { color: #93A3B8; }
 /* Brand cyan with a dark glyph rather than the old bright green, which was
@@ -847,19 +903,21 @@ button.intake-progress-bar:focus-visible { outline: 2px solid var(--brand); outl
   color: #C9D6E4;
   font-size: 16px;
   line-height: 1.65;
-  max-width: 520px;
-  margin: 0 auto 24px;
+  max-width: 460px;
+  margin: 0;
 }
 .thanks-note {
-  margin-top: 24px;
+  /* Third grid child: pin it to column 1 so it sits under the actions rather
+     than under the next-step panel. */
+  grid-column: 1;
+  margin-top: 18px;
   font-size: 13px;
   color: var(--ink-3);
 }
 .thanks-actions {
   display: flex;
   gap: 12px;
-  justify-content: center;
-  margin-top: 28px;
+  margin-top: 26px;
   flex-wrap: wrap;
 }
 footer.foot {
@@ -1419,14 +1477,30 @@ footer.foot code { font-family: ui-monospace, monospace; color: var(--brand-deep
 <section class="screen" id="screen-thanks">
   <div class="thanks-band">
   <div class="thanks-hero">
-    <div class="thanks-check" id="thanks-check">&#10003;</div>
-    <h1 class="display-l" id="thanks-title">Thank you.</h1>
-    <p class="thanks-message" id="thanks-message">Your intake has been submitted.</p>
-    <p class="thanks-note" id="thanks-note">You can close this page. Your intake has been submitted. If you need to change anything, contact Dr. Kyle's team.</p>
-    <div class="thanks-actions">
-      <button class="button-secondary" id="thanks-review">Review my answers (read-only)</button>
-      <a class="button-secondary" href="index.html">Back to homepage</a>
+    <div class="thanks-main">
+      <div class="thanks-check" id="thanks-check">&#10003;</div>
+      <h1 class="display-l" id="thanks-title">Thank you.</h1>
+      <p class="thanks-message" id="thanks-message">Your intake has been submitted.</p>
+      <div class="thanks-actions">
+        <button class="button-secondary" id="thanks-review">Review my answers (read-only)</button>
+      </div>
     </div>
+    <!-- Next-step panel. renderThanks hides this on the failure branch.
+         The source design gave thanks-cta-line and thanks-book ids; both were
+         referenced by no JS, so they are dropped and the styling hangs off
+         classes. thanks-next keeps its id because renderThanks reads it. -->
+    <aside class="thanks-next" id="thanks-next">
+      <span class="thanks-next-label">Next step</span>
+      <h2 class="thanks-next-title">Book your plan call.</h2>
+      <p class="thanks-cta-line">Dr. Kyle's team walks you through your child's plan and answers whatever you want to ask.</p>
+      <a class="button-primary" href="https://api.leadconnectorhq.com/widget/booking/jIcCqR7oxz12wFJbFdzO" target="_blank" rel="noopener">Book my call</a>
+    </aside>
+    <!-- Third grid child, not a child of .thanks-main. On desktop it lands in
+         row 2 column 1, i.e. directly under the actions, exactly where it was.
+         On mobile the single column follows DOM order, so the stack ends
+         check / title / message / review button / CTA / note - the CTA is the
+         thing a family can act on rather than the dead-end note. -->
+    <p class="thanks-note" id="thanks-note">Need to change something? Contact Dr. Kyle's team.</p>
   </div>
   </div>
 </section>
@@ -3020,12 +3094,14 @@ function renderThanks(r, succeeded) {
   const title = document.getElementById('thanks-title');
   const message = document.getElementById('thanks-message');
   const note = document.getElementById('thanks-note');
+  const nextPanel = document.getElementById('thanks-next');
   const reviewBtn = document.getElementById('thanks-review');
   if (succeeded) {
     check.textContent = '\u2713';
     check.classList.remove('error');
     title.textContent = 'Thank you.';
-    message.textContent = "Your intake has been submitted. Dr. Kyle's team will read everything you shared and use it to build your child's plan: what we would do, who you would work with, and what it costs. They will be in touch to walk you through it.";
+    message.textContent = "Your intake has been submitted. Dr. Kyle's team will read everything you shared and use it to build your child's plan: what we would do, who you would work with, and what it costs.";
+    nextPanel.style.display = '';
     note.style.display = '';
     reviewBtn.textContent = 'Review my answers (read-only)';
   } else {
@@ -3033,6 +3109,7 @@ function renderThanks(r, succeeded) {
     check.classList.add('error');
     title.textContent = "We couldn't submit your intake";
     message.textContent = "We weren't able to submit your intake just now. Please try again, and if it keeps happening, contact Dr. Kyle's team at hello@mail.neurohome.app and we'll help you directly.";
+    nextPanel.style.display = 'none';
     note.style.display = 'none';
     reviewBtn.textContent = 'Return to my intake';
   }

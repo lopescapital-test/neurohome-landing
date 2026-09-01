@@ -1,0 +1,22 @@
+# ---------------------------------------------------------------------------
+# The repo root is served as the public site (see .vercelignore), so anything
+# committed here is fetchable at its own URL. These are working artifacts that
+# must never become pages.
+# ---------------------------------------------------------------------------
+
+# Design-tool bundler exports. Single self-unpacking HTML files that inline
+# their own fonts and rewrite the document on load. They are reference material
+# for porting, never inputs to the build. intake-updated.html is the reason this
+# file exists: it is a complete second intake form wired to the live CRM
+# webhooks, and one `git add -A` would have published it.
+intake-updated.html
+NeuroSage Family Section.html
+
+# Local-only prototypes, already excluded from deploy but never ignored by git.
+prototype.html
+app-preview.html
+app-prototype/
+
+# Scratch and tooling
+mockups/
+.claude/

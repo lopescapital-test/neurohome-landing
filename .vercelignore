@@ -15,3 +15,10 @@ compare/
 prototype.html
 app-preview.html
 app-prototype/
+
+# Design-tool bundler exports. Self-unpacking single files that inline their
+# own fonts and rewrite the document at runtime. Reference material only, but
+# the repo root IS the deploy surface, so an unignored one ships as a live page.
+# intake-updated.html in particular carries the real CRM webhooks.
+intake-updated.html
+NeuroSage Family Section.html
