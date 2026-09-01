@@ -836,6 +836,17 @@ button.intake-progress-bar:focus-visible { outline: 2px solid var(--brand); outl
      Scoped to .thanks-hero because the base .thanks-note rule is declared later
      in the sheet, so an equal-specificity override here would lose the cascade. */
   .thanks-hero .thanks-note { margin-top: 0; }
+  /* Stacked: no column to align to, so the alignment insets come back off.
+     Scoped to .thanks-hero: this block sits above the base .thanks-next and
+     .thanks-main rules, so an equal-specificity reset here would lose. */
+  .thanks-hero .thanks-next { padding-top: clamp(22px,3vw,30px); }
+  .thanks-hero .thanks-main { padding-bottom: 0; }
+  /* 32px is a desktop alignment requirement (it matches .display-l so the two
+     headings and the body copy under them line up). Stacked there is nothing to
+     align to, and 32px wraps this heading onto two lines in a 266px column, so
+     it drops back. Scoped to .thanks-hero for the same reason as the resets
+     above: the base rule is declared later in the sheet. */
+  .thanks-hero .thanks-next-title { font-size: 24px; }
 }
 /* The next-step panel. Hidden by renderThanks on the failure branch so success
    and failure chrome stay mutually exclusive. */
@@ -844,10 +855,20 @@ button.intake-progress-bar:focus-visible { outline: 2px solid var(--brand); outl
   border: 1px solid rgba(255,255,255,0.10);
   border-radius: 16px;
   padding: clamp(22px,3vw,30px);
+  /* Heading alignment. The left column opens with the 60px check plus its 24px
+     margin, so h1 lands 84px below the column top. The right column opens with
+     the 1px border, this padding, the 17px eyebrow and the 12px flex gap:
+     84 - 1 - 17 - 14 = 52. Every term is a fixed px, so the two headings stay
+     on one line at every width above the 800px breakpoint. Below it the columns
+     stack, alignment is moot, and the media query hands padding back to the
+     clamp. */
+  padding-top: 52px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 12px;
+  /* 14px, not 12: matches .thanks-hero h1 margin-bottom so the gap under each
+     heading is identical. */
+  gap: 14px;
 }
 .thanks-next-label {
   font-family: 'Inter', sans-serif;
@@ -857,7 +878,10 @@ button.intake-progress-bar:focus-visible { outline: 2px solid var(--brand); outl
   text-transform: uppercase;
   color: var(--brand);
 }
-.thanks-next-title { color: #fff; font-size: clamp(24px,3vw,30px); line-height: 1.1; margin: 0; }
+/* Matches .display-l (32px / 1.1 = 35.2px) so this heading and the h1 opposite
+   have the same box height. With the gap below also matched to the h1 margin,
+   the body copy under each lands on one line. */
+.thanks-next-title { color: #fff; font-size: 32px; line-height: 1.1; margin: 0; }
 .thanks-cta-line {
   color: #C9D6E4;
   font-size: 15px;
@@ -866,13 +890,24 @@ button.intake-progress-bar:focus-visible { outline: 2px solid var(--brand); outl
   text-wrap: pretty;
 }
 .thanks-next .button-primary {
-  margin-top: 6px;
+  /* auto, not a fixed gap: pins the pill to the panel floor so it shares a
+     baseline with the review button opposite. The 12px flex gap is the floor. */
+  margin-top: auto;
   background: var(--brand);
   color: #0B1526;
   text-decoration: none;
   box-shadow: 0 8px 24px var(--brand-glow);
 }
 .thanks-next .button-primary:hover { background: #fff; color: #0B1526; }
+/* Left column. Flex so .thanks-actions can be pushed to the floor with an auto
+   margin, and inset at the bottom by the same amount as the aside (its padding
+   plus its 1px border) so the two pills land on one baseline rather than the
+   left one sitting a card-padding lower. */
+.thanks-main {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: calc(clamp(22px,3vw,30px) + 1px);
+}
 .thanks-hero h1 { color: #fff; }
 .thanks-hero .thanks-note { color: #93A3B8; }
 /* Brand cyan with a dark glyph rather than the old bright green, which was
@@ -904,7 +939,9 @@ button.intake-progress-bar:focus-visible { outline: 2px solid var(--brand); outl
   font-size: 16px;
   line-height: 1.65;
   max-width: 460px;
-  margin: 0;
+  /* Carries the minimum gap to the actions below, which now use margin-top:auto
+     and would otherwise collapse against this when the column has no slack. */
+  margin: 0 0 26px;
 }
 .thanks-note {
   /* Third grid child: pin it to column 1 so it sits under the actions rather
@@ -917,7 +954,7 @@ button.intake-progress-bar:focus-visible { outline: 2px solid var(--brand); outl
 .thanks-actions {
   display: flex;
   gap: 12px;
-  margin-top: 26px;
+  margin-top: auto;
   flex-wrap: wrap;
 }
 footer.foot {
