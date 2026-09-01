@@ -56,26 +56,59 @@ function toggleFaq(el) {
   }
 }
 
-// ========== THE METHOD - stepper ==========
-// State: one integer `open`, 1-4. Step 01 shows by default; one step shows at a
-// time (swap in place); the right-side "Next" arrow advances to open + 1.
-(function () {
-  const root = document.getElementById('method');
-  if (!root || !root.querySelector('[data-step]')) return;
-  let open = 1;
+// ========== STEPPERS ==========
+// State: one integer `open` per root. One [data-step] shows at a time (swap in
+// place); any [data-go] button inside the root jumps to that index.
+//
+// Two callers, one implementation:
+//   #method  - 4 steps, opens on 01, has a [data-closer] that appears on the
+//              last step only.
+//   #family  - 3 tiers, opens on 02 via [data-stepper-open] because NeuroHome
+//              is what this site sells, and mirrors state onto [data-tab]
+//              buttons through aria-selected.
+//
+// A root is found either by being #method (kept as-is so its markup did not
+// have to change) or by carrying [data-stepper]. New steppers should use the
+// attribute; the #method lookup is here only to avoid touching working markup.
+//
+// Panels carry the `hidden` attribute in markup, so with JS live the correct
+// one is showing from the first paint. CSS under html:not(.js) reveals them all
+// when scripting is off - see the .family-* block in neurohome.css.
+function initStepper(root) {
+  if (!root) return;
+  // Idempotent: #method is initialised by id and #family by attribute, so a
+  // root that ever gains both would otherwise bind two click handlers.
+  if (root.dataset.stepperReady) return;
+  const steps = root.querySelectorAll('[data-step]');
+  if (!steps.length) return;
+  root.dataset.stepperReady = '1';
+
+  const first = +root.dataset.stepperOpen || 1;
+  let open = first;
+
   function render() {
-    root.querySelectorAll('[data-step]').forEach(el => { el.hidden = +el.dataset.step !== open; });
+    steps.forEach(el => { el.hidden = +el.dataset.step !== open; });
+    // Only #method has a closer; it belongs to the final step.
     const closer = root.querySelector('[data-closer]');
-    if (closer) closer.hidden = open !== 4;
+    if (closer) closer.hidden = open !== steps.length;
+    // Only #family has tabs; harmless no-op elsewhere.
+    root.querySelectorAll('[data-tab]').forEach(tab => {
+      tab.setAttribute('aria-selected', String(+tab.dataset.tab === open));
+    });
   }
+
   root.addEventListener('click', e => {
     const btn = e.target.closest('[data-go]');
-    if (!btn) return;
+    if (!btn || !root.contains(btn)) return;
     open = +btn.dataset.go;
     render();
   });
+
   render();
-})();
+}
+
+initStepper(document.getElementById('method'));
+document.querySelectorAll('[data-stepper]').forEach(initStepper);
 
 // ========== SMOOTH SCROLL ==========
 document.querySelectorAll('a[href^="#"]').forEach(a => {

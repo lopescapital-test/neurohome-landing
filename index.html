@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="neurohome.css?v=90">
+<link rel="stylesheet" href="neurohome.css?v=91">
 <link rel="canonical" href="https://neurohome-landing.vercel.app/">
 <!-- Social share (Open Graph + Twitter). Absolute URLs point at the Vercel
      production domain. Update these if a custom domain is added later. -->
@@ -520,6 +520,156 @@
   </div>
 </section>
 
+<!-- ============ THE NEUROSAGE FAMILY ============ -->
+<!--
+  Three-tier stepper, ported from the "NeuroSage Family Section" design export.
+  Driven by the shared stepper in neurohome.js: [data-stepper] marks the root,
+  [data-stepper-open] the tier that opens first (02, because NeuroHome is what
+  this site sells), [data-go] the buttons, [data-step] the panels.
+
+  Tier 01 copy is unresolved. The live site asserts exactly two things about
+  NeuroSage Hub: it is a "certification program" (the FAQ below) and a
+  "methodology" (terms.html:116). Everything the design put in that panel was
+  net-new, so it renders as a TODO(KYLE) rather than as claims nobody approved.
+
+  With JavaScript off, all three panels show stacked and the tabs and arrows
+  are hidden. See the html:not(.js) rules in neurohome.css.
+-->
+<section class="section" id="family" data-stepper data-stepper-open="2">
+  <div class="section-eyebrow reveal">The NeuroSage family</div>
+  <h2 class="conditions-headline reveal reveal-d1">Three levels of care. <em>NeuroHome is one of them.</em></h2>
+  <p class="section-sub reveal reveal-d2">Same clinical thinking throughout, offered at three levels of access. Step through them to see where your family fits.</p>
+
+  <div class="family-tabs reveal" role="tablist" aria-label="Levels of care">
+    <button class="family-tab" type="button" role="tab" id="family-tab-1" data-go="1" data-tab="1" aria-selected="false" aria-controls="family-panel-1">
+      <span class="family-tab-n">Tier 01</span>
+      <span class="family-tab-name">NeuroSage Hub</span>
+    </button>
+    <button class="family-tab" type="button" role="tab" id="family-tab-2" data-go="2" data-tab="2" aria-selected="true" aria-controls="family-panel-2">
+      <span class="family-tab-n">Tier 02</span>
+      <span class="family-tab-name">NeuroHome</span>
+    </button>
+    <button class="family-tab" type="button" role="tab" id="family-tab-3" data-go="3" data-tab="3" aria-selected="false" aria-controls="family-panel-3">
+      <span class="family-tab-n">Tier 03</span>
+      <span class="family-tab-name">NeuroSage Centers</span>
+    </button>
+  </div>
+
+  <!-- ---------- Tier 01: NeuroSage Hub (copy unresolved) ---------- -->
+  <div class="family-panel" role="tabpanel" id="family-panel-1" aria-labelledby="family-tab-1" data-step="1" hidden>
+    <div class="family-brand">
+      <div class="family-logo">
+        <img src="images/neurosage-hub-lockup.png" alt="NeuroSage Hub" width="1188" height="446" loading="lazy">
+      </div>
+    </div>
+    <div class="family-body">
+      <span class="family-purpose">Purpose</span>
+      <h3 class="family-h3">NeuroSage Hub</h3>
+      <div class="family-todo">
+        <span class="family-todo-label">TODO(KYLE) &middot; tier 01 copy unresolved</span>
+        <p>The site currently makes two claims about NeuroSage Hub, both in the FAQ and Terms: it is a <strong>certification program</strong> that NeuroHome clinicians train through, and it is a <strong>methodology</strong> owned by NSH Operations, LLC. Nothing else about the Hub appears anywhere on the site.</p>
+        <p>The source design filled this panel with positioning that is not corroborated. It needs Kyle to confirm, in writing, before any of it ships:</p>
+        <ul>
+          <li>Is the Hub a family-facing product at all, or only a practitioner certification track? The design described it as an "educational coordination platform" for parents.</li>
+          <li>Who is the audience? The design claimed parents and caregivers, plus practitioners and educators.</li>
+          <li>What does it actually include? The design claimed guided AI assistance, resources, learning, games, and <strong>referrals</strong>. A referral path is a regulated claim and cannot be drafted here.</li>
+          <li>Is it live, and where do families reach it? No URL, availability, or pricing exists on the site.</li>
+          <li>Does presenting Hub as "Tier 01" of one family conflict with <code>terms.html:116</code>, which lists the Hub methodology and the NeuroHome brand as separate assets of NSH Operations rather than as a hierarchy?</li>
+          <li>The supplied lockup reads "Neurosage HUB". The site standardised on "NeuroSage Hub" this pass. The casing is baked into the raster and needs a re-export.</li>
+        </ul>
+      </div>
+      <div class="family-foot">
+        <div>
+          <span class="family-next-l">Next &middot; Tier 02</span>
+          <span class="family-next-t">NeuroHome</span>
+        </div>
+        <div class="family-nav">
+          <button class="mth-back-btn" type="button" data-go="3" aria-label="Previous level of care"><span aria-hidden="true">&#8592;</span></button>
+          <button class="mth-arrow-btn" type="button" data-go="2" aria-label="Next level of care: NeuroHome"><span aria-hidden="true">&#8594;</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------- Tier 02: NeuroHome (opens by default) ---------- -->
+  <div class="family-panel" role="tabpanel" id="family-panel-2" aria-labelledby="family-tab-2" data-step="2">
+    <div class="family-brand is-dark">
+      <div class="family-logo">
+        <span class="family-wordmark">
+          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 52 52' fill='none'%3E%3Crect x='8' y='22' width='36' height='27' rx='3' stroke='%23FAFAFA' stroke-width='2.2'/%3E%3Cpath d='M 4 24 L 26 5 L 48 24' stroke='%23FAFAFA' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Crect x='20' y='34' width='12' height='15' rx='1.5' stroke='%23FAFAFA' stroke-width='1.5'/%3E%3Ccircle cx='8' cy='22' r='3' fill='%2300C2FF'/%3E%3Ccircle cx='44' cy='22' r='3' fill='%2300C2FF'/%3E%3Ccircle cx='8' cy='49' r='3' fill='%2300C2FF'/%3E%3Ccircle cx='44' cy='49' r='3' fill='%2300C2FF'/%3E%3Ccircle cx='26' cy='5' r='3' fill='%2300C2FF'/%3E%3C/svg%3E" alt="" width="52" height="52" loading="lazy">
+          Neuro<b>Home</b>
+        </span>
+      </div>
+      <div class="family-meta">
+        <span class="family-setting">At home</span>
+        <span class="family-format">8-week guided program</span>
+      </div>
+    </div>
+    <div class="family-body">
+      <span class="family-purpose">Purpose</span>
+      <h3 class="family-h3">The clinic protocol, delivered to your house.</h3>
+      <p class="family-p">An eight-week program run from home with one licensed physical therapist, one to one. The hardware kit and at-home lab work ship to you, and the plan adapts as your child responds.</p>
+      <dl class="family-facts">
+        <div class="family-fact"><dt>Delivered by</dt><dd>Licensed physical therapist, 1:1</dd></div>
+        <div class="family-fact"><dt>Reach</dt><dd>Families anywhere</dd></div>
+        <div class="family-fact"><dt>Requires</dt><dd>A stable internet connection and a quiet space</dd></div>
+      </dl>
+      <div class="family-foot">
+        <div>
+          <span class="family-next-l">Next &middot; Tier 03</span>
+          <span class="family-next-t">NeuroSage Centers</span>
+        </div>
+        <div class="family-nav">
+          <button class="mth-back-btn" type="button" data-go="1" aria-label="Previous level of care: NeuroSage Hub"><span aria-hidden="true">&#8592;</span></button>
+          <button class="mth-arrow-btn" type="button" data-go="3" aria-label="Next level of care: NeuroSage Centers"><span aria-hidden="true">&#8594;</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------- Tier 03: NeuroSage Centers ---------- -->
+  <div class="family-panel" role="tabpanel" id="family-panel-3" aria-labelledby="family-tab-3" data-step="3" hidden>
+    <div class="family-brand">
+      <div class="family-logo">
+        <span class="family-wordmark">NeuroSage Centers</span>
+      </div>
+      <div class="family-meta">
+        <span class="family-setting">In clinic</span>
+        <span class="family-format">The NeuroSage clinic, Lake Charles</span>
+      </div>
+      <div class="family-fig">
+        <img src="images/louisiana.svg" alt="Map of Louisiana with Lake Charles marked" width="266" height="240" loading="lazy">
+      </div>
+    </div>
+    <div class="family-body">
+      <span class="family-purpose">Purpose</span>
+      <h3 class="family-h3">Direct care with Dr. Kyle, in person.</h3>
+      <p class="family-p">Families come to the NeuroSage clinic in Lake Charles, Louisiana for hands-on evaluation and treatment with Dr. Kyle Daigle and his team. This is where the clinical framework behind NeuroHome was developed.</p>
+      <dl class="family-facts">
+        <div class="family-fact"><dt>Delivered by</dt><dd>Dr. Kyle Daigle and the clinic team</dd></div>
+        <div class="family-fact"><dt>Reach</dt><dd>Families have travelled from 63 countries and 48 states</dd></div>
+        <div class="family-fact"><dt>Requires</dt><dd>Travel to Louisiana</dd></div>
+      </dl>
+      <div class="family-foot">
+        <div>
+          <span class="family-next-l">Next &middot; Tier 01</span>
+          <span class="family-next-t">NeuroSage Hub</span>
+        </div>
+        <div class="family-nav">
+          <button class="mth-back-btn" type="button" data-go="2" aria-label="Previous level of care: NeuroHome"><span aria-hidden="true">&#8592;</span></button>
+          <button class="mth-arrow-btn" type="button" data-go="1" aria-label="Next level of care: NeuroSage Hub"><span aria-hidden="true">&#8594;</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ported verbatim from the FAQ answer at index.html "Who are the clinicians?".
+       The design's wording was "every NeuroHome clinician is certified through
+       NeuroSage Hub", which asserts a held credential rather than training.
+       The sentence below is the one that survived compliance review. -->
+  <p class="family-note reveal">Every clinician is trained on Dr. Kyle Daigle&rsquo;s methodology through the NeuroSage Hub certification program.</p>
+</section>
+
 <!-- ============ 8. FAQ ============ -->
 <section class="section" id="faq">
   <div class="section-eyebrow reveal">Questions</div>
@@ -638,6 +788,6 @@
   </div>
 </div>
 
-<script src="neurohome.js?v=19"></script>
+<script src="neurohome.js?v=20"></script>
 </body>
 </html>

@@ -946,6 +946,112 @@ body.reel-lock { overflow: hidden; }
 .sticky-cta .btn-primary { flex: 1; justify-content: center; padding: 14px 20px; font-size: 15px; }
 
 /* =====================================================
+   The NeuroSage family (#family)
+   Three-tier stepper: Hub / NeuroHome / NeuroSage Centers.
+
+   Ported from the "NeuroSage Family Section" design export, which shipped as
+   React + DCLogic with 100% inline styles on its own blue-grey palette
+   (#1D2939 / #667085 / #98A2B3) and three near-identical tier hues. Rebuilt
+   here on the existing tokens so the site keeps one grey family, and driven by
+   the shared [data-step]/[data-go] stepper in neurohome.js.
+
+   The design's #98A2B3 micro-label grey measured 2.58:1 on white and failed
+   AA in five places; --text-3 replaces it at 5.35:1. The three tier hues were
+   only 1.98:1 apart from each other and the accessible fix made them closer
+   still, so the active tab is one --ink-navy treatment (14.48:1) and the tier
+   is identified by its own label instead of by hue.
+
+   Panel visibility is gated on html.js rather than on [hidden] alone, so all
+   three tiers stay readable with JavaScript off. See the html:not(.js) rules
+   near the end of this block.
+   ===================================================== */
+#family .conditions-headline { font-size: clamp(28px,3.6vw,46px); max-width: none; }
+/* The global .conditions-headline em rule paints --brand, which is 1.79:1 on
+   --bg and fails AA. Scoped to --brand-text here (4.73:1) rather than editing
+   the global rule, which is a sitewide decision and not this section's call. */
+#family .conditions-headline em { color: var(--brand-text); }
+
+.family-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
+.family-tab { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 5px; min-height: 68px; padding: 14px 22px; text-align: left; font: inherit; cursor: pointer; background: var(--bg-card); border: 1px solid var(--border-hover); border-radius: var(--radius-sm); color: var(--text); transition: background 0.2s, color 0.2s, border-color 0.2s; }
+.family-tab:hover { border-color: var(--text); }
+.family-tab:focus-visible { outline: 2px solid var(--brand-deep); outline-offset: 3px; }
+.family-tab-n { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-3); }
+.family-tab-name { font-family: 'Outfit', sans-serif; font-size: 17px; font-weight: 700; letter-spacing: -0.01em; }
+.family-tab[aria-selected="true"] { background: var(--ink-navy); border-color: var(--ink-navy); color: #fff; }
+.family-tab[aria-selected="true"] .family-tab-n { color: #fff; }
+
+.family-panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-md); overflow: hidden; display: grid; grid-template-columns: minmax(0,0.62fr) minmax(0,1fr); }
+/* An author `display` declaration outranks the UA [hidden] rule, so setting
+   display:grid above silently defeats the hidden attribute and every tier
+   renders at once. This puts [hidden] back. */
+.family-panel[hidden] { display: none; }
+.family-brand { padding: clamp(28px,3vw,44px); display: flex; flex-direction: column; justify-content: space-between; gap: 26px; border-right: 1px solid var(--border); background: var(--bg); }
+.family-brand.is-dark { background: var(--ink-navy); border-right-color: rgba(250,250,250,0.14); }
+.family-logo { min-height: 64px; display: flex; align-items: center; }
+.family-logo img { display: block; width: 200px; max-width: 100%; height: auto; }
+.family-wordmark { font-family: 'Outfit', sans-serif; font-size: 30px; font-weight: 800; letter-spacing: -0.02em; color: var(--text); display: inline-flex; align-items: center; gap: 14px; }
+/* The committed nav mark cyan (b6b2a57), deliberately not --brand #00CEFD. */
+.family-wordmark b { font-weight: inherit; color: #00C2FF; }
+.family-wordmark img { width: 46px; height: 46px; display: block; flex: none; }
+.family-meta { display: flex; flex-direction: column; gap: 6px; }
+.family-setting { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--brand-text); }
+.family-format { font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 600; color: var(--text-2); }
+.family-brand.is-dark .family-wordmark { color: var(--text-inv); }
+.family-brand.is-dark .family-setting { color: #00C2FF; }
+.family-brand.is-dark .family-format { color: var(--text-inv); }
+/* space-between on .family-brand distributes the 1-3 children instead:
+   tier 01 logo only, tier 02 logo + meta, tier 03 logo + meta + figure. */
+.family-fig { margin-top: 0; }
+.family-fig img { display: block; width: 100%; max-width: 240px; height: auto; }
+
+.family-body { padding: clamp(28px,3.4vw,52px); display: flex; flex-direction: column; gap: 22px; }
+.family-purpose { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--brand-text); }
+.family-h3 { font-family: 'Outfit', sans-serif; font-size: clamp(24px,2.8vw,36px); font-weight: 800; line-height: 1.12; letter-spacing: -0.02em; color: var(--text); margin: 0; }
+.family-p { font-size: 16.5px; line-height: 1.72; color: var(--text-2); margin: 0; }
+.family-facts { border-top: 1px solid var(--border); margin: 0; }
+.family-fact { display: grid; grid-template-columns: 160px minmax(0,1fr); gap: 24px; align-items: baseline; padding: 15px 0; border-bottom: 1px solid var(--border); }
+.family-fact:last-child { border-bottom: none; }
+.family-fact dt { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3); }
+.family-fact dd { font-size: 16.5px; line-height: 1.5; color: var(--text); margin: 0; }
+
+.family-foot { margin-top: auto; border-top: 1px solid var(--border); padding-top: 22px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+.family-next-l { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-3); display: block; }
+.family-next-t { font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: -0.01em; color: var(--text); }
+.family-nav { display: flex; gap: 10px; flex: none; }
+
+/* Unresolved copy renders as a visible block rather than silently shipping a
+   claim nobody has signed off. Removing these is a content task, not a code one. */
+.family-todo { border: 1px dashed var(--border-hover); border-left: 3px solid var(--brand-text); border-radius: var(--radius-sm); padding: 18px 22px; background: var(--bg); }
+.family-todo-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--brand-text); display: block; margin-bottom: 8px; }
+.family-todo p { font-size: 15px; line-height: 1.65; color: var(--text-2); margin: 0; }
+.family-todo p + p { margin-top: 10px; }
+.family-todo ul { margin: 10px 0 0 18px; }
+.family-todo li { font-size: 15px; line-height: 1.6; color: var(--text-2); }
+
+.family-note { font-size: 15px; line-height: 1.65; color: var(--text-2); margin: 18px 0 0; max-width: 860px; }
+
+/* JS off: there is no stepper, so show every tier stacked and drop the dead
+   controls. html.js is set before first paint (index.html head), so with JS
+   live the open tier is correct from the first frame and nothing flashes. */
+html:not(.js) .family-panel[hidden] { display: grid; }
+html:not(.js) .family-panel + .family-panel { margin-top: 18px; }
+html:not(.js) .family-tabs,
+html:not(.js) .family-foot { display: none; }
+
+/* Matches .mth-step's collapse point so the two steppers break together. */
+@media (max-width: 1100px) {
+  .family-panel { grid-template-columns: 1fr; }
+  .family-brand { border-right: none; border-bottom: 1px solid var(--border); }
+  .family-brand.is-dark { border-bottom-color: rgba(250,250,250,0.14); }
+  .family-fig { margin-top: 0; }
+}
+@media (max-width: 760px) {
+  .family-tabs { grid-template-columns: 1fr; }
+  .family-fact { grid-template-columns: 1fr; gap: 6px; }
+  .family-foot { flex-direction: column; align-items: flex-start; }
+}
+
+/* =====================================================
    FAQ
    ===================================================== */
 .faq-list { display: flex; flex-direction: column; gap: 10px; max-width: 100%; }
