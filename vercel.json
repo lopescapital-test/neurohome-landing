@@ -1,0 +1,11 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "neurohome-landing.vercel.app" }],
+      "destination": "https://neurohome.app/$1",
+      "permanent": true
+    }
+  ]
+}
