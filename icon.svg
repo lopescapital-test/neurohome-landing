@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+  <!-- Extracted verbatim from the data URI that used to sit in every page's
+       rel="icon" tag. Shapes, colors and viewBox are unchanged; the only
+       addition is the white backing rect below, because Google renders the
+       favicon against a white SERP and will not fetch a data URI at all.
+       The dark #1D2939 stroke is invisible on a dark plate, and the house body
+       was already fill="white", so white is the only background this mark takes. -->
+  <rect width="52" height="52" fill="#FFFFFF"/>
+  <rect x="8" y="22" width="36" height="27" rx="3" stroke="#1D2939" stroke-width="2.5" fill="white"/>
+  <path d="M 4 24 L 26 5 L 48 24" stroke="#1D2939" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="8" cy="22" r="3.5" fill="#00CEFD"/>
+  <circle cx="44" cy="22" r="3.5" fill="#00CEFD"/>
+  <circle cx="8" cy="49" r="3.5" fill="#00CEFD"/>
+  <circle cx="44" cy="49" r="3.5" fill="#00CEFD"/>
+  <circle cx="26" cy="5" r="3.5" fill="#00CEFD"/>
+</svg>
