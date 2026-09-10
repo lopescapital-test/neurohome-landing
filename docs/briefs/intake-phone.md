@@ -1,8 +1,29 @@
 # BRIEF — `intake.html` international phone
 
-> **Written 2026-09-10, against `5eb482a`. Point-in-time: every line number and
-> every "currently" below was true at that commit and goes stale on the next one.
-> Re-verify before acting on any of it — see `docs/briefs/README.md`.**
+> **Written 2026-09-10 against `5eb482a`; revised 2026-09-10 against `247ce64`.
+> Point-in-time: every line number and every "currently" below was true at the
+> revision commit and goes stale on the next one. Re-verify before acting on any
+> of it — see `docs/briefs/README.md`.**
+
+> ### PARTIALLY CLOSED by `247ce64`
+>
+> **Closed:** the gate condition. `!== 10` became `< 7` (the same floor
+> `start.html` uses), so a valid number from any of the 197 countries now passes
+> and the bounce never fires for the families it was hitting. Verified: an
+> 11-digit Austrian mobile reaches submit, and `currentSection` in the real draft
+> blob is unchanged at 11 before and after.
+>
+> **Still open, and still in this brief:**
+> - **The bounce mechanic itself.** A genuinely bad number (4 digits, say) still
+>   resets `state.currentSection = 0` and still destroys the parent's place —
+>   reproduced after the fix. Smaller population, same defect. See §3, which is
+>   now answered rather than open.
+> - **The whole divergence.** `toE164` is still NANP-only in this file, so the
+>   phone reaching GHL from both call sites is still not E.164. Confirmed live
+>   during the fix: an Austrian number posted as `0664 123 4567`.
+>
+> Recon §§1, 3 and 4 were answered on 2026-09-10 and their findings are folded in
+> below. §§2, 5–10 are still open.
 
 **Repo:** `C:\dev\neurohome-landing`, branch `main`.
 **Follows:** two shipped `start.html` changes — `7542f57` (country-first, E.164
@@ -25,9 +46,10 @@ The hero says families from 63 countries. International is not hypothetical.
 
 ---
 
-## THE PRIMARY DEFECT — the hard 10-digit gate
+## THE PRIMARY DEFECT — the hard 10-digit gate · CONDITION FIXED in `247ce64`
 
-**`intake.html:2931`**, inside `function classify()`:
+**`intake.html:2958`** (was `:2931` before the fix added 34 lines above it),
+inside `function classify()`. As it stood:
 
 ```js
 if ((state.phone || '').replace(/\D/g, '').length !== 10) {
@@ -36,22 +58,27 @@ if ((state.phone || '').replace(/\D/g, '').length !== 10) {
 }
 ```
 
-Read what this does on failure, because it is worse than a rejection:
+It now reads `< 7` with `start.html`'s wording. **The two lines below the
+condition are unchanged and are still the open half** — the reset and the bounce
+are merely no longer reachable by a valid international number.
+
+What it did on failure, because it was worse than a rejection — and **all three
+still happen for a genuinely bad number**:
 
 1. It fires a **blocking `alert()`**.
 2. It sets `state.currentSection = 0` and calls `showScreen('welcome')` — it
    throws the parent **back to the first screen** of a 121-question form.
 3. It happens at **submit**, i.e. after every question has been answered.
 
-A UK parent whose number is `07700 900123` (11 digits) can complete the entire
-intake and be bounced to the welcome screen with an instruction they cannot
-comply with, because their number is not ten digits and never will be. The same
-is true for most of the 195 non-NANP countries.
+Before `247ce64`, a UK parent whose number is `07700 900123` (11 digits) could
+complete the entire intake and be bounced to the welcome screen with an
+instruction they had no way to satisfy, because their number is not ten digits
+and never will be. That was true for most of the 195 non-NANP countries. It is
+no longer true for any valid number.
 
-The draft is supposed to survive that bounce, which would be the one mercy here.
-**Whether it actually does is recon §3, not an assumption** — and if it does not,
-this defect is materially worse than described above and the urgency changes
-again.
+The draft survives the bounce; **the parent's place in the form does not.** That
+was the open question when this brief was written and it is now answered, with
+the mechanism measured — see §3.
 
 ---
 
@@ -59,7 +86,8 @@ again.
 
 Both files carry their own copy of the same phone logic. Two shipped commits
 have now landed on one side only, so the gap is widening, not stable — **re-read
-the line numbers before trusting them; they moved in `5eb482a`:**
+the line numbers before trusting them; `5eb482a` moved them in start.html
+and `247ce64` moved everything after :2931 in intake.html by +34:**
 
 | symbol | `start.html` | `intake.html` | state |
 |---|---|---|---|
@@ -91,23 +119,24 @@ Whatever you propose has to respect it or argue explicitly for changing it.
 
 ---
 
-## SEQUENCING — these are two defects with different urgency
+## SEQUENCING — RESOLVED. The gate shipped first, alone
 
-This brief describes two problems and it should probably ship as two commits.
+Two defects with different urgency, and they were separated:
 
-| | urgency | risk of the fix |
+| | urgency | outcome |
 |---|---|---|
-| **the gate** (`:2931`) | **active harm.** Families are being bounced out of a completed 121-question form right now. | small and local, IF it can be changed without touching the phone functions |
-| **the divergence** | drift plus a wrong `toE164` for non-NANP. Real, but nobody is being ejected from anything. | larger — touches duplicated logic, possibly a new shared asset, possibly the draft |
+| **the gate condition** (`:2958`) | **was active harm** — families bounced out of a completed 121-question form | **SHIPPED `247ce64`**, one condition and one string, nothing shared touched |
+| **the bounce mechanic** (the two lines under it) | still reachable by a genuinely bad number | **open**, belongs to the work below |
+| **the divergence** | wrong `toE164` for 195 countries, from both call sites | **open**, its own recon and its own gates |
 
-**Do not let the refactor hold the bleeding fix.** Recon must cost these
-separately (§4) and say plainly whether the gate can be fixed in isolation. If
-it can, that is commit one and it ships on its own; the divergence follows on its
-own recon and its own gates.
+The principle held and is worth keeping for the next one: **do not let the
+refactor hold the bleeding fix.** Recon costed the two separately (§4), found the
+gate could be fixed in isolation, and the fix shipped the same day. The
+divergence waits without a family waiting on it.
 
-If they genuinely cannot be separated, say why with evidence rather than
-bundling them by default — "it was easier together" is not a reason to make a
-family wait for a refactor.
+If a future split looks impossible, say why with evidence rather than bundling by
+default — "it was easier together" is not a reason to make a family wait for a
+refactor.
 
 ---
 
@@ -119,20 +148,29 @@ This is question one because it sets the cost of every other decision in the
 brief. A schema bump with zero live drafts is free. A schema bump with fifty is
 fifty families dropped into a blank 121-question form.
 
-Report, separately and honestly:
+**ANSWERED 2026-09-10.** Kept in full, because the answer is a method the next
+session should reuse rather than rederive.
 
-- **What you CAN observe.** Drafts live in `localStorage` under
-  `neurosage_intake_draft_v2`, which is **per-browser, per-device**. There is no
-  server-side copy and no analytics on it that this repo knows about.
-- **What you CANNOT observe, and say so plainly.** A local count is a count of
-  one machine. If the real number is unknowable from here, the answer is "the
-  live count is unknowable from this environment", not an estimate dressed as
-  one. Then say what WOULD establish it — GHL partial-submission records, a
-  server-side beacon, asking Jake how many parents were mid-intake this week —
-  and let Jake decide whether it is worth finding out before proceeding.
-- **The TTL bounds the exposure**: 3 days (`DRAFT_TTL_MS`). Any draft older than
-  that is already discarded on load, so the population at risk is parents who
-  started within 72 hours of the deploy. Report that as the actual blast radius.
+- **The true count is unknowable from a dev environment.** Drafts live in
+  `localStorage` under `neurosage_intake_draft_v2` — per-browser, per-device. A
+  local count is a count of one machine. Do not dress an estimate up as a number.
+- **But it IS knowable, and the signal already exists.** `postProgress()`
+  (`:3222`) POSTs to `INTAKE_PROGRESS_WEBHOOK_URL` (`:1816`, configured and
+  live) on `intake_started` (`:2186`) and `intake_progress` (`:2683`). Each
+  payload already carries `email`, `phone`, `questions_answered`,
+  `percent_complete`, `section_reached`, `sections_total` and
+  `intake_started_at`.
+- **So the query is:** parents with an `intake_started` or `intake_progress`
+  event in the last 72 hours and no corresponding submission. Christia can run
+  that against GHL with no new instrumentation.
+- **Two honesty caveats on that data.** `intake_progress` only fires when a
+  parent advances past `deepestSectionPinged` (`:2680-2683`), so it is a
+  high-water mark and not a heartbeat — it undercounts progress but never misses
+  the existence of a draft. And the fetch is `.catch(() => {})` fire-and-forget,
+  so a failed ping is silent: GHL is a **lower bound** on starts.
+- **Blast radius, verified live:** `DRAFT_TTL_MS` is 3 days, so only parents who
+  started within 72 hours of a deploy are exposed. Scale: `SECTIONS.length` is
+  **13**, `TOTAL_QUESTIONS` is **121**.
 
 ### 2 · The draft blob itself
 
@@ -168,41 +206,70 @@ Report, separately and honestly:
 > "Resume your intake" CTA silently stops appearing. `check-constants` guards
 > that pair — confirm it does by break-testing it, not by reading it.
 
-### 3 · Does the draft actually survive the bounce?
+### 3 · Does the draft survive the bounce? — ANSWERED: answers yes, position NO
 
-The gate fires `alert()`, sets `state.currentSection = 0` and calls
-`showScreen('welcome')`. The claim that a parent's 121 answers survive that is
-**untested**, and it is the difference between an infuriating defect and a
-data-loss one.
+**The answers survive. The position is destroyed, and the destruction is
+sticky.** Reproduced empirically on 2026-09-10, and **still reproducible after
+`247ce64`** for a genuinely bad number. This remains open.
 
-Exercise it for real, in a browser, with a non-NANP number:
+The chain, each step verified in source and then in a browser:
 
-- Fill enough of the form that a draft exists, confirm the blob is written.
-- Trigger the gate (submit with an 11-digit number).
-- After the bounce, is the draft still in `localStorage`, with the same key and
-  the same answers? Does reloading the page restore them?
-- Does `state.currentSection = 0` get PERSISTED? If the bounce writes
-  `currentSection: 0` into the draft, then even a surviving draft returns the
-  parent to screen one on every future visit — the answers are intact but the
-  place in the form is gone. `saveToStorage` was changed specifically to carry
-  `currentSection` (see its comment), so this is a live possibility, not a
-  hypothetical.
+1. The gate runs `state.currentSection = 0; showScreen('welcome'); return;`.
+2. **`showScreen()` does not save** — it only toggles CSS classes and scrolls.
+   So at that instant the draft still holds the real section. Measured: blob
+   `currentSection` was still `11` immediately after the bounce. This is the
+   part that looks safe and is not.
+3. **The alert tells the parent to fix their phone.** That field is on the
+   welcome screen, inside `setupWelcome()`, and its `input` handler calls
+   `saveToStorage()` in **both** branches.
+4. `saveToStorage` (`:1985`) debounces 250ms and captures `{ ...state }` INSIDE
+   the timer callback, so it snapshots after the mutation and writes
+   `currentSection: 0`. Measured: **one keystroke in the phone field took the
+   blob from `11` to `0`.**
+5. On reload, `loadFromStorage` clamps with
+   `Math.min(savedSection, firstIncompleteSection())`, and `Math.min(0, …)` is
+   `0`.
+6. `assessmentReached` is true for anyone who reached the questions, so the
+   bootstrap runs `renderIntakeSection(); showScreen('intake')` → **section 1 of
+   13**, all 121 answers intact, no indication the place was thrown away.
 
-**If the draft does not survive, or the position is clobbered, stop and report
-before proposing any fix.** That changes the severity and possibly the ordering
-in the SEQUENCING section above.
+**The action the alert instructs is the action that destroys the position.**
+Doing nothing preserves it. That is why this reads as user error forever: the
+parent concludes the form is broken, and nothing in the logs says why.
 
-### 4 · Can the gate be fixed in isolation?
+Narrower path, also real: a debounced save already pending when the gate fires
+persists `currentSection: 0` with no parent action at all. 250ms window.
 
-Cost the two defects separately, per SEQUENCING above. Specifically:
+**Partial mitigation that exists:** a section jump selector (`goToSection`), so
+recovery is not 13 Continue clicks. But nothing tells the parent their place was
+reset.
 
-- What does a minimal gate fix touch? Just the condition at `:2931`, or does an
-  acceptable replacement need `toE164`, `DIAL_CODES`, or the country list?
-- Is there a correct gate that needs NO new data — e.g. a digit-count floor and
-  ceiling rather than a per-country rule? A `>= 7` floor is what `start.html`
-  uses and it needs nothing beyond the typed digits.
-- Report the smallest change that stops the bounce, and whether it is
-  independently correct or merely less wrong.
+**Relevant to any fix:** `:3022` removes the draft entirely on submit SUCCESS,
+deliberately and documented as PHI hygiene on a shared device. That is correct
+behaviour, not a bug — but it means a test that submits successfully will find no
+blob to inspect. Use a failing submit when you need the blob to survive.
+
+### 4 · Can the gate be fixed in isolation? — ANSWERED: yes. Shipped in `247ce64`
+
+The condition was a pure string operation on `state.phone`, so replacing it
+needed **no `DIAL_CODES`, no `toE164`, no country list, no new data**. `< 7` is
+`start.html`'s existing floor, so no new threshold was invented.
+
+**And the isolated fix removed the §3 harm for the affected population as a side
+effect**, because the position loss is strictly downstream of the bounce: the
+reset only executes when the gate fires, so fixing the condition stops it running
+at all for a valid international number. One condition, both halves gone, nothing
+shared touched.
+
+**Two findings for the LATER work, discovered while answering this:**
+
+- **Changing the bounce to stop resetting `currentSection` would be insufficient
+  on its own.** `intro-begin` (`:2331-2332`) sets `state.currentSection = 0` and
+  then calls `saveToStorage()`, so a parent who walks back through onboarding is
+  reset anyway. Re-entry needs to respect `assessmentReached`.
+- **`alert()` was left as the mechanism**, deliberately, as out of scope for a
+  bleeding fix. Whether it should be replaced by the form's own error surface is
+  still §9.
 
 ### 5 · What `state.phone` actually holds, at every stage
 
@@ -214,17 +281,30 @@ Trace and report the full lifecycle with line numbers:
   value;
 - rewritten by the input mask (`:2079`, `:2099`);
 - rewritten by the country-change stripper (`:2064-2067`);
-- read by the gate (`:2931`);
-- posted via `toE164` (`:3022`, `:3203`).
+- read by the gate (`:2958`);
+- posted via `toE164` (`:3054`, `:3235`).
 
 Report every write. A fix that normalises at one of these and not the others
 will look correct and fail intermittently.
 
 ### 6 · The submit payload(s)
 
-There appear to be **two** `toE164(state.phone)` call sites (`:3022` and
-`:3203`). Report what each posts, to which endpoint, and whether they are the
-same CRM contract. Two payloads is two chances to send a different shape.
+There are **two** `toE164(state.phone)` call sites, and they are NOT two
+attempts at the same CRM contract — an earlier draft of this brief guessed they
+might be, and that was wrong:
+
+- **`:3054`** — the submit payload.
+- **`:3235`** — inside `postProgress()`, the abandoned-draft progress ping to
+  `INTAKE_PROGRESS_WEBHOOK_URL` (`:1816`), fired on `intake_started` (`:2186`)
+  and `intake_progress` (`:2683`).
+
+**So the wrong phone has been reaching GHL from both, not one.** Every progress
+ping for a non-NANP parent has carried a non-E.164 number for as long as the
+diverged `toE164` has been in this file. Any fix has to cover both call sites;
+fixing only the submit path leaves the progress webhook wrong and nothing will
+tell you, because the ping is `.catch(() => {})` fire-and-forget.
+
+Report what each posts and confirm both are covered.
 
 ### 7 · Country vocabulary
 
