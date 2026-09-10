@@ -116,6 +116,54 @@ if (intakeTtlExpr && sharedTtlExpr) {
   }
 });
 
+// ---- 4. Every selectable country has a dial code, and vice versa ------------
+/* start.html renders 197 country options and posts the phone to GHL in E.164,
+   which means every one of those options needs a dial code. The two lists are
+   hand-maintained in the same file and nothing else connects them: add a
+   country to the select and forget the map, and that parent's number is posted
+   raw — no error, no console warning, and GHL accepts the garbage. Add a code
+   for a country the select does not offer and the map quietly rots.
+
+   Checked here rather than at runtime because runtime is too late: the failure
+   is invisible to the parent, invisible to us, and only shows up as an
+   unreachable lead days later. */
+const start = read('start.html');
+
+function arrayLiteral(label, re) {
+  const m = start.match(re);
+  if (!m) { bad(`could not find ${label} in start.html`, 'the declaration was renamed or moved'); return null; }
+  try { return JSON.parse(m[1]); }
+  catch (e) { bad(`${label} in start.html is not parseable`, e.message); return null; }
+}
+
+const priority = arrayLiteral('PRIORITY_COUNTRIES', /const PRIORITY_COUNTRIES = (\[[^;]*\]);/);
+const countries = arrayLiteral('COUNTRIES', /const COUNTRIES = (\[[^;]*\]);/);
+const dialMatch = start.match(/const DIAL_CODES = \{([\s\S]*?)\n\};/);
+
+if (!dialMatch) {
+  bad('could not find DIAL_CODES in start.html', 'the declaration was renamed or moved');
+} else if (priority && countries) {
+  // Parsed by regex rather than eval: this script must never execute page code.
+  const dial = {};
+  for (const m of dialMatch[1].matchAll(/"((?:[^"\\]|\\.)*)"\s*:\s*"(\+\d{1,4})"/g)) {
+    dial[m[1].replace(/\\"/g, '"')] = m[2];
+  }
+  const selectable = [...priority, ...countries];
+  const missing = selectable.filter(c => !dial[c]);
+  const orphaned = Object.keys(dial).filter(c => !selectable.includes(c));
+
+  if (Object.keys(dial).length === 0) {
+    bad('DIAL_CODES parsed to zero entries, this check is guarding nothing',
+        'the entry format changed and the regex above no longer matches');
+  } else if (missing.length || orphaned.length) {
+    bad('country list and DIAL_CODES disagree, some leads will post a non-E.164 phone',
+        [missing.length ? `no dial code: ${missing.join(', ')}` : '',
+         orphaned.length ? `not in the select: ${orphaned.join(', ')}` : ''].filter(Boolean).join(' | '));
+  } else {
+    ok('every selectable country has a dial code', `${selectable.length} countries`);
+  }
+}
+
 // ---- report ----------------------------------------------------------------
 checks.forEach(c => console.log(`${c.pass ? 'ok  ' : 'FAIL'}  ${c.what}${c.detail ? `  (${c.detail})` : ''}`));
 console.log('');

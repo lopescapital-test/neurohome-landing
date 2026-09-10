@@ -205,6 +205,19 @@
               <input class="start-input" type="text" id="last_name" name="last_name" placeholder="Reyes" autocomplete="family-name" required>
             </div>
           </div>
+          <!-- COUNTRY SITS ABOVE PHONE DELIBERATELY. The phone field derives its
+               dial code and its placeholder from this select, so asking for the
+               country second meant the formatter ran with country === '' and
+               applied US shaping to everyone, including the parent about to type
+               a UK number. Position only: every name, id, for and label pairing
+               is unchanged from when this block sat below the email/phone row,
+               and nothing reads these fields by position. -->
+          <div>
+            <label class="start-label" for="country">Country<span class="req" aria-hidden="true"> *</span></label>
+            <select class="start-select" id="country" name="country" required>
+              <option value="" selected disabled>Select your country</option>
+            </select>
+          </div>
           <div class="start-pair">
             <div>
               <label class="start-label" for="email">Email<span class="req" aria-hidden="true"> *</span></label>
@@ -214,12 +227,6 @@
               <label class="start-label" for="phone">Phone<span class="req" aria-hidden="true"> *</span></label>
               <input class="start-input" type="tel" id="phone" name="phone" placeholder="(555) 000-0000" autocomplete="tel" required>
             </div>
-          </div>
-          <div>
-            <label class="start-label" for="country">Country<span class="req" aria-hidden="true"> *</span></label>
-            <select class="start-select" id="country" name="country" required>
-              <option value="" selected disabled>Select your country</option>
-            </select>
           </div>
         </div>
       </div>
@@ -347,6 +354,65 @@ const REDIRECT_URL = 'thank-you.html';
 const PRIORITY_COUNTRIES = ["United States", "Canada"];
 const COUNTRIES = ["Afghanistan","Albania","Algeria","Andorra","Angola","Antigua and Barbuda","Argentina","Armenia","Australia","Austria","Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bhutan","Bolivia","Bosnia and Herzegovina","Botswana","Brazil","Brunei","Bulgaria","Burkina Faso","Burundi","Cabo Verde","Cambodia","Cameroon","Central African Republic","Chad","Chile","China","Colombia","Comoros","Congo (Democratic Republic)","Congo (Republic)","Costa Rica","Cote d'Ivoire","Croatia","Cuba","Cyprus","Czechia","Denmark","Djibouti","Dominica","Dominican Republic","Ecuador","Egypt","El Salvador","Equatorial Guinea","Eritrea","Estonia","Eswatini","Ethiopia","Fiji","Finland","France","Gabon","Gambia","Georgia","Germany","Ghana","Greece","Grenada","Guatemala","Guinea","Guinea-Bissau","Guyana","Haiti","Honduras","Hungary","Iceland","India","Indonesia","Iran","Iraq","Ireland","Israel","Italy","Jamaica","Japan","Jordan","Kazakhstan","Kenya","Kiribati","Kosovo","Kuwait","Kyrgyzstan","Laos","Latvia","Lebanon","Lesotho","Liberia","Libya","Liechtenstein","Lithuania","Luxembourg","Madagascar","Malawi","Malaysia","Maldives","Mali","Malta","Marshall Islands","Mauritania","Mauritius","Mexico","Micronesia","Moldova","Monaco","Mongolia","Montenegro","Morocco","Mozambique","Myanmar","Namibia","Nauru","Nepal","Netherlands","New Zealand","Nicaragua","Niger","Nigeria","North Korea","North Macedonia","Norway","Oman","Pakistan","Palau","Palestine","Panama","Papua New Guinea","Paraguay","Peru","Philippines","Poland","Portugal","Qatar","Romania","Russia","Rwanda","Saint Kitts and Nevis","Saint Lucia","Saint Vincent and the Grenadines","Samoa","San Marino","Sao Tome and Principe","Saudi Arabia","Senegal","Serbia","Seychelles","Sierra Leone","Singapore","Slovakia","Slovenia","Solomon Islands","Somalia","South Africa","South Korea","South Sudan","Spain","Sri Lanka","Sudan","Suriname","Sweden","Switzerland","Syria","Taiwan","Tajikistan","Tanzania","Thailand","Timor-Leste","Togo","Tonga","Trinidad and Tobago","Tunisia","Turkey","Turkmenistan","Tuvalu","Uganda","Ukraine","United Arab Emirates","United Kingdom","Uruguay","Uzbekistan","Vanuatu","Vatican City","Venezuela","Vietnam","Yemen","Zambia","Zimbabwe"];
 
+// ── DIAL CODES ───────────────────────────────────────────────────────────────
+// One entry for every option the select above renders — 197, asserted by
+// scripts/check-constants.js, which fails the build if a country here or there
+// has no partner. Keyed on the full display name because that is what the
+// option `value` is; there are no ISO-2 codes anywhere in this form.
+//
+// EVERY NANP COUNTRY IS "+1", NOT ITS AREA CODE. Jamaica is +1, not +1876;
+// Barbados is +1, not +1246. The 876 and 246 are area codes INSIDE the North
+// American plan, i.e. part of the national number the parent types. Mapping
+// Jamaica to "+1876" and prepending it to a typed "876 555 1234" produces
+// +18768765551234 — a plausible-looking, undialable number. This is the single
+// easiest mistake to make in this table and the hardest to spot afterwards.
+//
+// VATICAN CITY IS "+39", NOT ITS ASSIGNED "+379". The 379 allocation exists on
+// paper and carries no live numbers; Vatican lines are Italian ones (+39 06 …).
+// The assigned code is the wrong answer for the only thing this map is for,
+// which is producing a number someone can actually call.
+const DIAL_CODES = {
+  "United States":"+1", "Canada":"+1",
+  "Afghanistan":"+93", "Albania":"+355", "Algeria":"+213", "Andorra":"+376", "Angola":"+244",
+  "Antigua and Barbuda":"+1", "Argentina":"+54", "Armenia":"+374", "Australia":"+61", "Austria":"+43",
+  "Azerbaijan":"+994", "Bahamas":"+1", "Bahrain":"+973", "Bangladesh":"+880", "Barbados":"+1",
+  "Belarus":"+375", "Belgium":"+32", "Belize":"+501", "Benin":"+229", "Bhutan":"+975", "Bolivia":"+591",
+  "Bosnia and Herzegovina":"+387", "Botswana":"+267", "Brazil":"+55", "Brunei":"+673", "Bulgaria":"+359",
+  "Burkina Faso":"+226", "Burundi":"+257", "Cabo Verde":"+238", "Cambodia":"+855", "Cameroon":"+237",
+  "Central African Republic":"+236", "Chad":"+235", "Chile":"+56", "China":"+86", "Colombia":"+57",
+  "Comoros":"+269", "Congo (Democratic Republic)":"+243", "Congo (Republic)":"+242", "Costa Rica":"+506",
+  "Cote d'Ivoire":"+225", "Croatia":"+385", "Cuba":"+53", "Cyprus":"+357", "Czechia":"+420", "Denmark":"+45",
+  "Djibouti":"+253", "Dominica":"+1", "Dominican Republic":"+1", "Ecuador":"+593", "Egypt":"+20",
+  "El Salvador":"+503", "Equatorial Guinea":"+240", "Eritrea":"+291", "Estonia":"+372", "Eswatini":"+268",
+  "Ethiopia":"+251", "Fiji":"+679", "Finland":"+358", "France":"+33", "Gabon":"+241", "Gambia":"+220",
+  "Georgia":"+995", "Germany":"+49", "Ghana":"+233", "Greece":"+30", "Grenada":"+1", "Guatemala":"+502",
+  "Guinea":"+224", "Guinea-Bissau":"+245", "Guyana":"+592", "Haiti":"+509", "Honduras":"+504", "Hungary":"+36",
+  "Iceland":"+354", "India":"+91", "Indonesia":"+62", "Iran":"+98", "Iraq":"+964", "Ireland":"+353",
+  "Israel":"+972", "Italy":"+39", "Jamaica":"+1", "Japan":"+81", "Jordan":"+962", "Kazakhstan":"+7",
+  "Kenya":"+254", "Kiribati":"+686", "Kosovo":"+383", "Kuwait":"+965", "Kyrgyzstan":"+996", "Laos":"+856",
+  "Latvia":"+371", "Lebanon":"+961", "Lesotho":"+266", "Liberia":"+231", "Libya":"+218",
+  "Liechtenstein":"+423", "Lithuania":"+370", "Luxembourg":"+352", "Madagascar":"+261", "Malawi":"+265",
+  "Malaysia":"+60", "Maldives":"+960", "Mali":"+223", "Malta":"+356", "Marshall Islands":"+692",
+  "Mauritania":"+222", "Mauritius":"+230", "Mexico":"+52", "Micronesia":"+691", "Moldova":"+373",
+  "Monaco":"+377", "Mongolia":"+976", "Montenegro":"+382", "Morocco":"+212", "Mozambique":"+258",
+  "Myanmar":"+95", "Namibia":"+264", "Nauru":"+674", "Nepal":"+977", "Netherlands":"+31", "New Zealand":"+64",
+  "Nicaragua":"+505", "Niger":"+227", "Nigeria":"+234", "North Korea":"+850", "North Macedonia":"+389",
+  "Norway":"+47", "Oman":"+968", "Pakistan":"+92", "Palau":"+680", "Palestine":"+970", "Panama":"+507",
+  "Papua New Guinea":"+675", "Paraguay":"+595", "Peru":"+51", "Philippines":"+63", "Poland":"+48",
+  "Portugal":"+351", "Qatar":"+974", "Romania":"+40", "Russia":"+7", "Rwanda":"+250",
+  "Saint Kitts and Nevis":"+1", "Saint Lucia":"+1", "Saint Vincent and the Grenadines":"+1", "Samoa":"+685",
+  "San Marino":"+378", "Sao Tome and Principe":"+239", "Saudi Arabia":"+966", "Senegal":"+221",
+  "Serbia":"+381", "Seychelles":"+248", "Sierra Leone":"+232", "Singapore":"+65", "Slovakia":"+421",
+  "Slovenia":"+386", "Solomon Islands":"+677", "Somalia":"+252", "South Africa":"+27", "South Korea":"+82",
+  "South Sudan":"+211", "Spain":"+34", "Sri Lanka":"+94", "Sudan":"+249", "Suriname":"+597", "Sweden":"+46",
+  "Switzerland":"+41", "Syria":"+963", "Taiwan":"+886", "Tajikistan":"+992", "Tanzania":"+255",
+  "Thailand":"+66", "Timor-Leste":"+670", "Togo":"+228", "Tonga":"+676", "Trinidad and Tobago":"+1",
+  "Tunisia":"+216", "Turkey":"+90", "Turkmenistan":"+993", "Tuvalu":"+688", "Uganda":"+256", "Ukraine":"+380",
+  "United Arab Emirates":"+971", "United Kingdom":"+44", "Uruguay":"+598", "Uzbekistan":"+998",
+  "Vanuatu":"+678", "Vatican City":"+39", "Venezuela":"+58", "Vietnam":"+84", "Yemen":"+967", "Zambia":"+260",
+  "Zimbabwe":"+263"
+};
+
 const form = document.getElementById('lead-form');
 const errorBox = document.getElementById('form-error');
 const submitBtn = document.getElementById('submit-btn');
@@ -435,26 +501,131 @@ phoneEl.addEventListener('input', function (event) {
   input.setSelectionRange(newCursor, newCursor);
 });
 
-// Switching to a country outside the NANP leaves any US shaping behind.
+// ── COUNTRY CHANGED ─────────────────────────────────────────────────────────
+// Two jobs, and NEITHER of them rewrites what the parent typed beyond removing
+// shaping this form applied itself.
+//
+//   1. Leaving the NANP strips the US punctuation this form added. Unchanged.
+//   2. The placeholder re-derives, so the field advertises the dial code of the
+//      country now selected.
+//
+// THE DIAL CODE IS A PLACEHOLDER, NOT A PREFIX WRITTEN INTO THE FIELD, and that
+// is load-bearing rather than cosmetic. On success this form puts the VISIBLE
+// phone string into sessionStorage.nh_lead, intake.html reads it into
+// state.phone, and intake.html persists state into its own schema-v2 draft. A
+// dial code living in .value would therefore change the contents of a blob two
+// hops downstream that this change has no business touching. A placeholder
+// never enters .value, so nh_lead stays byte-identical.
+//
+// It also cannot be double-prefixed, cannot be deleted halfway by a backspace,
+// and cannot fight the caret — three failure modes a live prefix affix has and
+// a placeholder does not.
+function phonePlaceholderFor(country) {
+  // NANP keeps the shaped example it has always had: those parents are typing a
+  // 10-digit number into a mask, and "+1" tells them nothing they don't know.
+  if (NANP_COUNTRIES.indexOf(country) !== -1) return '(555) 000-0000';
+  var dial = DIAL_CODES[country];
+  return dial ? dial : '(555) 000-0000';
+}
+
 form.elements.country.addEventListener('change', function () {
   if (!shouldFormatPhone() && phoneEl.value.indexOf('(') !== -1) {
     phoneEl.value = phoneEl.value.replace(/[()\-\s]/g, '');
   }
+  phoneEl.placeholder = phonePlaceholderFor(form.elements.country.value);
 });
 
 /* Submit the phone in E.164 so the CRM stores one canonical shape and a lookup
    by phone matches reliably. The visible field keeps its formatting; only the
-   outbound value changes. +1 is only ever assumed for a clean 10-digit number
-   under a NANP country: anything already in + form, any other country, or any
-   other length is passed through as typed rather than guessed at. */
+   outbound value changes.
+
+   WHAT CHANGED, AND WHAT DID NOT. The NANP branch below is the shipped logic,
+   untouched — it already produced correct E.164 for the United States and
+   Canada and there was no reason to rewrite working code. What was broken was
+   every OTHER country: a parent in London typing "07700 900123" had that exact
+   string posted to GHL, where a bare 07700900123 and a bare 3374993162 are
+   indistinguishable, and A2P 10DLC will not accept either. The third branch is
+   the fix and it is an addition, not a replacement.
+
+   IDEMPOTENT BY CONSTRUCTION. Running this on its own output is a no-op in
+   every branch, which matters because the placeholder now advertises a dial
+   code and some parents will type it themselves. */
+
+/** The dial code for the selected country, or '' when nothing is selected. */
+function dialCodeFor(country) {
+  return DIAL_CODES[country] || '';
+}
+
+/* Countries whose national numbers KEEP their leading zero in international
+   format. This is a deliberate, narrow exception to the strip rule below.
+
+   The general rule — drop the trunk zero — is right almost everywhere: GB
+   07700 900123 is +44 7700 900123, and +4407700900123 is malformed. Italy is
+   the well-known exception: Italian landlines keep the 0, so a Rome number is
+   +39 06 6981 xxxx and stripping it produces a number that does not connect.
+   San Marino and Vatican City ride on the Italian numbering plan and inherit
+   the same behaviour.
+
+   Stated as a list of exceptions rather than folded into the loop, because the
+   next person to read the strip rule needs to see immediately that it is not
+   universal. Italian MOBILE numbers have no leading zero and are unaffected —
+   the rule here is "never strip", not "always keep". */
+const KEEP_LEADING_ZERO = ['Italy', 'San Marino', 'Vatican City'];
+
+function nationalDigits(raw, country) {
+  const d = (raw || '').replace(/\D/g, '');
+  if (KEEP_LEADING_ZERO.indexOf(country) !== -1) return d;
+  return d.replace(/^0+/, '');
+}
+
 function toE164(display) {
   const raw = (display || '').trim();
-  if (raw.charAt(0) === '+') return raw;
-  if (!shouldFormatPhone()) return raw;
-  const d = raw.replace(/\D/g, '');
-  if (d.length === 10) return '+1' + d;
-  if (d.length === 11 && d.charAt(0) === '1') return '+' + d;
-  return raw;
+  const country = form.elements.country.value;
+  const dial = dialCodeFor(country);
+
+  /* ── The parent typed a + themselves ────────────────────────────────────
+     The placeholder now shows "+44", so this is an input pattern the form
+     actively invites. The old code returned these untouched, which meant a
+     parent who typed the dial code AND kept their local leading zero produced
+     +4407700900123 — malformed, and accepted silently.
+
+     Strip the dial code, apply the leading-zero rule to what remains, reattach.
+     A value already in clean E.164 passes through unchanged, so this is safe to
+     run twice. A + form whose code does not match the selected country is left
+     as the parent wrote it, minus punctuation: they stated a country code
+     explicitly and that is a more specific signal than the dropdown. */
+  if (raw.charAt(0) === '+') {
+    const digits = raw.replace(/\D/g, '');
+    if (!digits) return raw;
+    if (dial) {
+      const dd = dial.slice(1);
+      if (digits.indexOf(dd) === 0) {
+        const rest = nationalDigits(digits.slice(dd.length), country);
+        if (rest) return dial + rest;
+      }
+    }
+    return '+' + digits;
+  }
+
+  /* ── NANP: the shipped path, byte-for-byte ──────────────────────────────
+     Kept ahead of the general branch so United States and Canada behave
+     exactly as they did before this change, including the 11-digit
+     leading-1 case that the general branch would mangle into +115551234567. */
+  if (shouldFormatPhone()) {
+    const d = raw.replace(/\D/g, '');
+    if (d.length === 10) return '+1' + d;
+    if (d.length === 11 && d.charAt(0) === '1') return '+' + d;
+    return raw;
+  }
+
+  /* ── Every other country ────────────────────────────────────────────────
+     No dial code means no country selected, and `required` on the select has
+     already stopped the submit — so returning raw here is a path the parent
+     cannot actually reach, not a silent guess. */
+  if (!dial) return raw;
+  const national = nationalDigits(raw, country);
+  if (!national) return raw;
+  return dial + national;
 }
 
 async function postLead(payload) {
