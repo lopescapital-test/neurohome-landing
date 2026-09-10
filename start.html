@@ -87,6 +87,44 @@
   }
   .start-select:invalid { color: #7C8695; }
 
+  /* ── DIAL-CODE AFFIX ──────────────────────────────────────────────────────
+     The selected country's dial code, shown inside the phone field so the
+     parent sees "+43" and types after it.
+
+     PRESENTATIONAL ONLY, AND THAT IS THE LOAD-BEARING PART. It is a <span>:
+     not an <input>, not focusable, absent from form.elements, and never written
+     into phone.value. On success this form copies the VISIBLE phone string into
+     sessionStorage.nh_lead, which intake.html reads into state.phone and
+     persists into its schema-v2 draft — so a dial code living in .value would
+     change a blob two hops downstream. The affix is painted over the field, not
+     stored in it.
+
+     THE INPUT KEEPS ITS OWN BORDER, FOCUS RING AND :user-invalid. The obvious
+     alternative — a bordered wrapper around a borderless input — was rejected
+     because both `:focus` (border-color + box-shadow) and `:user-invalid` are
+     declared on .start-input above, so that pattern would have had to relocate
+     the focus ring and the error state as well. This wrapper is purely a
+     positioning context and changes no geometry: measured before and after,
+     the input's width, height, top, left and the .start-pair grid columns are
+     all identical.
+
+     pointer-events:none MAKES THE INPUT THE HIT-TARGET, so clicking the affix
+     focuses the field with no JS handler at all. Verified with
+     elementFromPoint, which returns the input rather than the span.
+
+     padding-left on the input is set from JS, measured from the rendered affix,
+     because "+1" and "+998" are 17px and 40px wide at this size. */
+  .start-affix-wrap { position: relative; display: block; }
+  .start-affix {
+    position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+    pointer-events: none; white-space: nowrap;
+    font-family: 'Inter', sans-serif; font-size: 16px; line-height: 1;
+    /* Darker than the placeholder (#9AA3B2) because a dial code is information
+       rather than a hint; lighter than typed text because the parent did not
+       type it. */
+    color: var(--text-3);
+  }
+
   .start-consent { background: var(--bg-warm); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; }
   .start-check { display: flex; gap: 12px; align-items: flex-start; cursor: pointer; }
   .start-check input { width: 19px; height: 19px; margin: 1px 0 0; accent-color: var(--brand-deep); flex: none; cursor: pointer; }
@@ -225,7 +263,17 @@
             </div>
             <div>
               <label class="start-label" for="phone">Phone<span class="req" aria-hidden="true"> *</span></label>
-              <input class="start-input" type="tel" id="phone" name="phone" placeholder="(555) 000-0000" autocomplete="tel" required>
+              <!-- The wrapper is a positioning context for the dial-code affix and
+                   nothing else; it adds no geometry. The affix follows the input in
+                   source order so it paints above it, and carries aria-hidden
+                   because the dial code is already announced by the country select
+                   the parent just used — reading it again here would be noise. It
+                   has no name attribute and is not a form control, so it can never
+                   appear in form.elements or be submitted. -->
+              <span class="start-affix-wrap">
+                <input class="start-input" type="tel" id="phone" name="phone" placeholder="(555) 000-0000" autocomplete="tel" required>
+                <span class="start-affix" id="phone-affix" aria-hidden="true"></span>
+              </span>
             </div>
           </div>
         </div>
@@ -524,8 +572,53 @@ function phonePlaceholderFor(country) {
   // NANP keeps the shaped example it has always had: those parents are typing a
   // 10-digit number into a mask, and "+1" tells them nothing they don't know.
   if (NANP_COUNTRIES.indexOf(country) !== -1) return '(555) 000-0000';
-  var dial = DIAL_CODES[country];
-  return dial ? dial : '(555) 000-0000';
+  // EMPTY FOR EVERY OTHER COUNTRY, reversing what shipped in 7542f57. That commit
+  // put the bare dial code in the placeholder because nothing else could show it.
+  // The affix shows it now, so the old placeholder would render the field as
+  // "+43" next to "+43" — the same fact twice, which reads as a bug. An empty
+  // placeholder beside a visible affix is the clearest state available: nothing
+  // invented, nothing repeated.
+  return '';
+}
+
+/* ── THE AFFIX ──────────────────────────────────────────────────────────────
+   Sets the visible dial code and reserves room for it.
+
+   TEXT IS REPLACED, NEVER APPENDED, so switching country ten times cannot
+   accumulate ten dial codes. That is the whole of the anti-accumulation
+   guarantee and it is one assignment.
+
+   PADDING IS MEASURED, NOT ASSUMED. "+1" renders 17px wide and "+998" 40px at
+   this size and font, so a single hardcoded padding would either clip the wide
+   codes or leave a visible gutter on the narrow ones. Reading the rendered
+   width covers all 197 with no per-country data.
+
+   UNSELECTED COUNTRY SHOWS NOTHING. DIAL_CODES[''] is undefined, so the affix
+   is blank and the input keeps its normal 16px padding. Guessing a default here
+   would be asserting a country the parent has not chosen; `required` on the
+   select is what handles the empty case. */
+var phoneAffix = document.getElementById('phone-affix');
+var PHONE_PAD_BASE = 16;   // .start-input's own left padding
+var PHONE_PAD_GAP = 8;     // breathing room between the affix and the digits
+
+function syncPhoneAffix() {
+  var dial = DIAL_CODES[form.elements.country.value] || '';
+  phoneAffix.textContent = dial;
+  if (!dial) {
+    phoneEl.style.paddingLeft = '';
+    return;
+  }
+  phoneEl.style.paddingLeft =
+    (PHONE_PAD_BASE + phoneAffix.getBoundingClientRect().width + PHONE_PAD_GAP) + 'px';
+}
+
+/* The width above is measured from rendered text, so it is wrong if the webfont
+   has not arrived yet — Inter loads from Google Fonts and the fallback metrics
+   differ. Re-measuring once when fonts settle costs nothing and prevents a
+   first-paint padding that never corrects itself. Guarded because document.fonts
+   is absent in older browsers, where the fallback measurement still works. */
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(syncPhoneAffix).catch(function () {});
 }
 
 form.elements.country.addEventListener('change', function () {
@@ -533,6 +626,99 @@ form.elements.country.addEventListener('change', function () {
     phoneEl.value = phoneEl.value.replace(/[()\-\s]/g, '');
   }
   phoneEl.placeholder = phonePlaceholderFor(form.elements.country.value);
+  syncPhoneAffix();
+});
+
+// Country can be pre-selected on a back/forward restore, so the affix has to be
+// correct before the first change event rather than only after one.
+syncPhoneAffix();
+
+/* ── LENGTH CAP (non-NANP) ──────────────────────────────────────────────────
+   E.164 caps a whole number at 15 digits INCLUDING the country code, so the
+   national part may hold 15 minus however many digits the dial code has. That
+   is one expression over data already in DIAL_CODES rather than 197 maxima, and
+   it cannot drift from the map because it is derived from it.
+
+   Measured across the live map: 15 countries on 1-digit codes (cap 14), 45 on
+   2-digit (cap 13), 137 on 3-digit (cap 12). A flat 14 would let a +998 parent
+   build a 17-digit number; a flat 12 would truncate a legitimate +1 one.
+
+   A SEPARATE LISTENER RATHER THAN A BRANCH INSIDE THE NANP ONE. The mask above
+   is working, cursor-preserving code with a documented history, and the way to
+   keep it byte-identical is not to edit it. Each listener guards its own case
+   and returns immediately on the other's.
+
+   NANP needs nothing here: its mask already slices to 10 digits. */
+function nationalDigitCap(country) {
+  var dial = DIAL_CODES[country];
+  return dial ? 15 - (dial.length - 1) : 0;   // dial includes the leading '+'
+}
+
+phoneEl.addEventListener('input', function () {
+  if (shouldFormatPhone()) return;                       // the NANP mask owns this
+  if (phoneEl.value.trim().charAt(0) === '+') return;    // the parent's own code
+  var cap = nationalDigitCap(form.elements.country.value);
+  if (!cap) return;                                      // no country chosen yet
+  var value = phoneEl.value;
+  if (value.replace(/\D/g, '').length <= cap) return;    // only rewrite when over
+
+  // Truncate by DIGITS while keeping whatever separators the parent typed, so a
+  // paste of 23 digits loses the excess rather than the shape. Walking the
+  // string beats rebuilding from digits, which would also strip their spacing on
+  // every keystroke past the cap.
+  var out = '', seen = 0;
+  for (var i = 0; i < value.length; i++) {
+    if (/\d/.test(value[i])) {
+      if (seen >= cap) break;
+      seen++;
+    }
+    out += value[i];
+  }
+  var cursor = phoneEl.selectionStart;
+  phoneEl.value = out;
+  // Typing at the end is the normal case and lands correctly; clamping also
+  // stops an edit in the middle from throwing the caret to position 0.
+  if (cursor !== null) {
+    var next = Math.min(cursor, out.length);
+    phoneEl.setSelectionRange(next, next);
+  }
+});
+
+/* ── LEGIBILITY GROUPING (non-NANP), ON BLUR ────────────────────────────────
+   Spaces every three digits. Spaces only — never dashes or parentheses, which
+   read as structure — and three from the left deliberately matches no national
+   format, so it asserts nothing about how the number is really divided. It is
+   there to make fourteen digits countable, nothing more.
+
+   ON BLUR, AND THAT IS WHY THERE IS NO CURSOR CODE HERE. Grouping while the
+   parent types would need the same digit-counting caret restoration the NANP
+   mask has, and this repo's most-punished defect is a second copy of a rule.
+   The alternative — extracting a shared helper — means editing working code.
+   Running on blur dissolves the choice: there is no caret in the field.
+
+   SKIPPED FOR A +-LED VALUE, the same gate shouldFormatPhone() applies. Those
+   digits include a country code, and chunking from the left would group across
+   the boundary between the code and the number. One gate, not two.
+
+   toE164 strips every non-digit, so the spaces added here never reach GHL. */
+function groupPhoneDigits(digits) {
+  var parts = [];
+  for (var i = 0; i < digits.length; i += 3) parts.push(digits.slice(i, i + 3));
+  // A trailing single digit reads as a typo rather than a group, so it folds
+  // into the one before it: "770 090 012 3" becomes "770 090 0123".
+  if (parts.length > 1 && parts[parts.length - 1].length === 1) {
+    parts[parts.length - 2] += parts.pop();
+  }
+  return parts.join(' ');
+}
+
+phoneEl.addEventListener('blur', function () {
+  if (shouldFormatPhone()) return;                       // NANP is already shaped
+  var raw = phoneEl.value.trim();
+  if (!raw || raw.charAt(0) === '+') return;
+  var digits = raw.replace(/\D/g, '');
+  if (!digits) return;
+  phoneEl.value = groupPhoneDigits(digits);
 });
 
 /* Submit the phone in E.164 so the CRM stores one canonical shape and a lookup

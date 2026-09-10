@@ -164,6 +164,44 @@ if (!dialMatch) {
   }
 }
 
+// ---- 5. The dial-code affix stays presentational ---------------------------
+/* The affix shows the selected country's dial code inside the phone field. It
+   must never become a form control, because the moment it has a name and is a
+   listed element it joins form.elements, gets submitted, and the dial code
+   starts appearing in places that assume phone.value is dial-code-free —
+   nh_lead, and from there intake.html's state.phone and its schema-v2 draft.
+
+   WHAT THIS CAN AND CANNOT CHECK. It asserts the STRUCTURE: the affix is a
+   <span>, it carries aria-hidden, and it has no name attribute. Those three
+   together are what keep it out of form.elements, and all three are visible in
+   the source, so a static check is the right instrument.
+
+   It deliberately does NOT try to assert that phone.value never contains a '+'.
+   That is a runtime property, and grepping source text cannot establish it — a
+   check that appears to guard something it cannot reach is worse than no check,
+   because the next reader trusts it. That property is verified in the browser
+   against a real nh_lead round trip instead. */
+const affixMatch = start.match(/<span class="start-affix"[^>]*>/);
+
+if (!affixMatch) {
+  bad('could not find the dial-code affix in start.html',
+      'expected a <span class="start-affix"> — it was renamed, or turned into another element');
+} else {
+  const tag = affixMatch[0];
+  const problems = [];
+  if (/\sname\s*=/.test(tag)) problems.push('it has a name attribute, so it will be submitted');
+  if (!/aria-hidden\s*=\s*"true"/.test(tag)) problems.push('it is missing aria-hidden="true"');
+  // Belt and braces: catch the affix being changed into a listed element even
+  // if the class name survives.
+  if (/<span class="start-affix"/.test(tag) === false) problems.push('it is no longer a <span>');
+
+  if (problems.length) {
+    bad('the dial-code affix is no longer presentational', problems.join(' | '));
+  } else {
+    ok('the dial-code affix is presentational', 'span, aria-hidden, no name');
+  }
+}
+
 // ---- report ----------------------------------------------------------------
 checks.forEach(c => console.log(`${c.pass ? 'ok  ' : 'FAIL'}  ${c.what}${c.detail ? `  (${c.detail})` : ''}`));
 console.log('');
