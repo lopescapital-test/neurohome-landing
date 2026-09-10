@@ -2928,8 +2928,40 @@ function classify() {
     alert('Please go back and enter a valid email before submitting.');
     state.currentSection = 0; showScreen('welcome'); return;
   }
-  if ((state.phone || '').replace(/\D/g, '').length !== 10) {
-    alert('Please go back and enter a 10-digit phone number before submitting.');
+  // A FLOOR, NOT A NANP LENGTH. This was `!== 10`, which no valid number outside
+  // the North American plan can satisfy: a UK mobile is 11 digits, so a British
+  // parent could answer all 121 questions and be refused at submit by a rule they
+  // had no way to meet. 195 of the 197 countries in the picker are non-NANP.
+  //
+  // WHY THIS ONE LINE IS THE WHOLE FIX, INCLUDING THE PART BELOW IT. The line
+  // after this one sets state.currentSection = 0, and that reset is where the
+  // real damage was. It does not save by itself — showScreen() only toggles CSS —
+  // but the alert then tells the parent to go and edit their phone, the phone
+  // field lives on the welcome screen, and its input handler calls
+  // saveToStorage() on every keystroke. saveToStorage snapshots {...state} inside
+  // its debounce, so the first character they type persists currentSection: 0.
+  // loadFromStorage clamps with Math.min(saved, firstIncomplete), and Math.min(0, …)
+  // is 0, so every later reload drops them at section 1 of 13 with all 121
+  // answers intact and no indication their place was thrown away. The action the
+  // alert instructed was the action that destroyed their position; doing nothing
+  // would have preserved it.
+  //
+  // Because that reset is downstream of this condition, fixing the condition
+  // stops it executing at all for the families it was hitting. The reset itself
+  // is left standing deliberately: it is still reachable by a genuinely bad
+  // number, and rewriting the bounce mechanic is a larger change with its own
+  // recon (docs/briefs/intake-phone.md). This commit is the bleeding fix.
+  //
+  // 7 IS start.html's FLOOR, NOT A NEW THRESHOLD. Same rule and same number as
+  // the sibling form's submit check, so the two do not drift into disagreeing
+  // about what counts as a phone number.
+  if ((state.phone || '').replace(/\D/g, '').length < 7) {
+    // Verbatim from start.html, at the same checkpoint. One string to maintain
+    // rather than two near-identical ones, which is the lesson of the phone
+    // functions this file already duplicates. It also no longer says "go back":
+    // the parent is about to BE sent back, and the copy should not assert a
+    // mechanic this fix deliberately leaves unexamined.
+    alert('Please enter a phone number we can actually reach you on.');
     state.currentSection = 0; showScreen('welcome'); return;
   }
   if (submitPhase === 'submitting') return;
