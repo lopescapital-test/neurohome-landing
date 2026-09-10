@@ -4,6 +4,14 @@ scripts/
 .claude/
 .githooks/
 
+# Engineering briefs. Same reasoning as the entries above, and it is the reason
+# this line was added in the same commit as the directory it excludes: without
+# it, docs/briefs/intake-phone.md would have been live at
+# neurohome.app/docs/briefs/intake-phone.md — a document that describes an open
+# defect, names the file and line it lives at, and explains what it does to a
+# parent mid-form. None of that belongs on the public site.
+docs/
+
 # robots.txt already carried "Disallow: /compare/", but that only asks crawlers
 # not to index it; the page stayed readable to anyone holding the URL. Excluding
 # it here is what actually enforces that intent. Nothing links to it and it is not
