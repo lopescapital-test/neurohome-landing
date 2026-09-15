@@ -1208,13 +1208,21 @@ html:not(.js) #method .mth-closer .mth-back-btn { display: none; }
 /* Social row in the footer Contact column. .footer-col is a flex column with a
    10px gap, so these live in their own flex row and the column sees one item.
    The extra margin-top is what makes it read as its own element: at the bare 10px
-   gap it scanned as a fifth contact line. Official platform marks are solid
-   glyphs, so unlike the site's other 24x24 icons these fill instead of stroke;
-   colour still rides currentColor, so rest and hover reuse the same two tokens
-   .footer-link already uses (--text-3 and --text) rather than introducing any. */
+   gap it scanned as a contact line. Official platform marks are solid glyphs, so
+   unlike the site's other 24x24 icons these fill instead of stroke.
+
+   Each mark carries its own brand colour, so currentColor is set per platform and
+   the old --text-3 / --text pair no longer applies here. Hover moves opacity, not
+   colour: darkening a brand colour on hover misreads it, and brightening needs a
+   second shade of all four. Rest sits at 0.85 and hover goes to full, so the cue
+   is a lift rather than a dim, which would read as disabled. */
 .footer-social { display: flex; align-items: center; gap: 16px; margin-top: 10px; }
-.footer-social-link { display: inline-flex; align-items: center; justify-content: center; color: var(--text-3); transition: color 0.2s; }
-.footer-social-link:hover { color: var(--text); }
+.footer-social-link { display: inline-flex; align-items: center; justify-content: center; opacity: 0.85; transition: opacity 0.2s; }
+.footer-social-link:hover { opacity: 1; }
+.footer-social-ig { color: #E4405F; }
+.footer-social-fb { color: #1877F2; }
+.footer-social-tt { color: #000000; }
+.footer-social-yt { color: #FF0000; }
 .footer-social-link svg { display: block; width: 20px; height: 20px; fill: currentColor; }
 .footer-bottom { border-top: 1px solid var(--border); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
 .footer-copy { font-size: 12px; color: var(--text-3); }
