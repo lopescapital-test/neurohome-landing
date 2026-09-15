@@ -1205,6 +1205,17 @@ html:not(.js) #method .mth-closer .mth-back-btn { display: none; }
 .footer-link:hover { color: var(--text); }
 .footer-link-static { cursor: default; }
 .footer-link-static:hover { color: var(--text-3); }
+/* Social row in the footer Contact column. .footer-col is a flex column with a
+   10px gap, so these live in their own flex row and the column sees one item.
+   The extra margin-top is what makes it read as its own element: at the bare 10px
+   gap it scanned as a fifth contact line. Official platform marks are solid
+   glyphs, so unlike the site's other 24x24 icons these fill instead of stroke;
+   colour still rides currentColor, so rest and hover reuse the same two tokens
+   .footer-link already uses (--text-3 and --text) rather than introducing any. */
+.footer-social { display: flex; align-items: center; gap: 16px; margin-top: 10px; }
+.footer-social-link { display: inline-flex; align-items: center; justify-content: center; color: var(--text-3); transition: color 0.2s; }
+.footer-social-link:hover { color: var(--text); }
+.footer-social-link svg { display: block; width: 20px; height: 20px; fill: currentColor; }
 .footer-bottom { border-top: 1px solid var(--border); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
 .footer-copy { font-size: 12px; color: var(--text-3); }
 .footer-meta { font-size: 12px; color: var(--text-3); }
