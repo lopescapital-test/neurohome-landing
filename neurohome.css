@@ -312,12 +312,21 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--brand-deep); ou
 
 .hero-badge { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 500; color: var(--text); background: rgba(255,255,255,0.7); padding: 8px 18px 8px 14px; border-radius: var(--radius-pill); border: 1px solid var(--border); margin-bottom: 32px; backdrop-filter: blur(8px); }
 .hero-badge .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--brand); animation: pulse 2s ease infinite; }
+/* Pinned to the photo's top-right instead of sitting above the headline, so the
+   credit line and the stat box read as one horizontal band. Inset matches the
+   sibling .hero-stats card's own padding (18px/24px), which is the only inset
+   convention this column has; .hero-photo-wrap itself carries no padding. It
+   comfortably clears the wrap's 28px corner radius. The wrap is already
+   position:relative and already clips with overflow:hidden, so nothing else
+   changes. z-index lifts it over .hero-photo-wrap::after, the bottom-edge
+   gradient, which is transparent up here but paints after children. */
+.hero-photo-wrap .hero-badge { position: absolute; top: 18px; right: 24px; margin-bottom: 0; z-index: 2; }
 @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.85); } }
 .hero-title { font-family: 'Outfit', sans-serif; font-size: clamp(36px,4.8vw,68px); font-weight: 800; line-height: 1.02; letter-spacing: -2px; color: var(--text); margin-bottom: 24px; }
 .hero-title em { font-style: normal; color: var(--brand); background: none; -webkit-text-fill-color: var(--brand); }
 .hero-sub { font-size: clamp(17px,1.8vw,20px); font-weight: 400; color: var(--text-2); max-width: 600px; line-height: 1.65; margin-bottom: 44px; }
 .hero-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
-.hero-proof { display: block; margin-top: 52px; padding-top: 32px; border-top: 1px solid var(--border); font-size: 14px; color: var(--text-3); line-height: 1.55; max-width: 640px; }
+.hero-proof { display: block; margin-top: 32px; padding-top: 32px; border-top: 1px solid var(--border); font-size: 14px; color: var(--text-3); line-height: 1.55; max-width: 640px; }
 .hero-proof strong { color: var(--text); font-weight: 600; }
 
 /* Sub-page hero (smaller, simpler) */
@@ -1225,6 +1234,16 @@ html:not(.js) #method .mth-closer .mth-back-btn { display: none; }
   .stats-inner .stat { display: flex; align-items: center; gap: 12px; text-align: left; }
   .hero-grid { grid-template-columns: 1fr; gap: 36px; }
   .hero-photo-wrap { aspect-ratio: 16 / 11; max-height: 480px; }
+  /* The columns stack here, so there is no credit-line/stat-box alignment left
+     to serve, and the 16/11 crop is less than half the height of the square
+     desktop one. A top-right pill therefore lands in the middle of the frame:
+     measured against the source image it covers 48.7% skin-tone pixels, i.e.
+     the faces. Pinned to the bottom instead, that falls to 12.4% and contrast
+     stays at 11.3:1. Same 18/24 inset, same corner clearance, and it matches
+     .method-badge, the page's other chip-on-an-image. NOT a revert to in-flow:
+     the pill now lives inside .hero-photo-wrap, and CSS cannot move it back to
+     the text column from there. See the run report before changing this. */
+  .hero-photo-wrap .hero-badge { top: auto; bottom: 18px; }
   .hero-dots { display: none; }
   .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
   .footer-col-brand { grid-column: 1 / -1; max-width: 100%; }
