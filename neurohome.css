@@ -107,7 +107,15 @@ body {
 .nav-cta:hover { background: var(--grad-cta-hover); color: #fff; transform: translateY(-1px); box-shadow: 0 12px 34px rgba(12,18,38,0.36); }
 .nav-mobile-toggle { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
 .nav-mobile-toggle span { display: block; width: 22px; height: 2px; background: var(--text); margin: 5px 0; border-radius: 2px; transition: all 0.3s; }
-.nav-links.mobile-open { display: flex; flex-direction: column; position: fixed; top: 72px; left: 0; right: 0; bottom: 0; background: var(--bg); padding: 32px 24px; gap: 24px; z-index: 999; border-top: 1px solid var(--border); }
+/* This panel is a child of .nav, and .nav's backdrop-filter makes it the containing
+   block for fixed-position descendants. So bottom:0 resolved against the 72px bar
+   instead of the viewport: available height was 72 - 72 - 0 = 0, and box-sizing:
+   border-box floored the box at padding plus border (65px) while every link
+   overflowed onto the page with no background behind it. Broken since the first
+   commit. Viewport units ignore the containing block, so the height is stated
+   outright rather than inferred from top/bottom. dvh comes second so it wins where
+   supported and vh covers the rest. The 72px here tracks .nav's height above. */
+.nav-links.mobile-open { display: flex; flex-direction: column; position: fixed; top: 72px; left: 0; right: 0; bottom: auto; height: calc(100vh - 72px); height: calc(100dvh - 72px); overflow-y: auto; background: var(--bg); padding: 32px 24px; gap: 24px; z-index: 999; border-top: 1px solid var(--border); }
 .nav-links.mobile-open .nav-link { font-size: 18px; }
 .nav-links.mobile-open .nav-cta { text-align: center; padding: 14px 28px; font-size: 16px; }
 
