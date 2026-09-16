@@ -86,6 +86,18 @@
     background-repeat: no-repeat; background-position: right 15px center; background-size: 16px;
   }
   .start-select:invalid { color: #7C8695; }
+  /* Same grey, reached by class instead of by :invalid. The rule above only
+     ever matches a REQUIRED select, because a select with no `required` and a
+     value of "" is still valid, so an optional select would render its
+     placeholder in full --text and read as a real answer. #child_sit_tolerance
+     is the optional one; the class is kept in sync with value === "" in the
+     script below. */
+  #child_sit_tolerance.is-placeholder { color: #7C8695; }
+  /* .start-consent-full is margin:0, which is right inside the consent box
+     where the flex gap does the spacing, and wrong here where this <p> is
+     helper text sitting directly on the select. Matches the 8px that
+     .start-label already puts under the label above it. */
+  #child-sit-help { margin-bottom: 8px; }
 
   /* ── DIAL-CODE AFFIX ──────────────────────────────────────────────────────
      The selected country's dial code, shown inside the phone field so the
@@ -284,18 +296,95 @@
 
       <div>
         <div class="start-group-title">About your child</div>
-        <div class="start-pair">
-          <div>
-            <label class="start-label" for="child_first_name">Child's first name<span class="req" aria-hidden="true"> *</span></label>
-            <input class="start-input" type="text" id="child_first_name" name="child_first_name" placeholder="Noah" autocomplete="off" required>
+        <!-- .start-rows wrapper added when the two optional fields below joined
+             this group. It is the same container "About you" already uses, and
+             it is what supplies the 20px gap between the name/age pair and the
+             fields under it; without it they butt straight together. The pair
+             itself is unchanged apart from its indent. -->
+        <div class="start-rows">
+          <div class="start-pair">
+            <div>
+              <label class="start-label" for="child_first_name">Child's first name<span class="req" aria-hidden="true"> *</span></label>
+              <input class="start-input" type="text" id="child_first_name" name="child_first_name" placeholder="Noah" autocomplete="off" required>
+            </div>
+            <div>
+              <label class="start-label" for="child_age">Child's age<span class="req" aria-hidden="true"> *</span></label>
+              <select class="start-select" id="child_age" name="child_age" required>
+                <option value="" selected disabled>Select an option</option>
+                <option value="0-2">0-2</option>
+                <option value="3-18">3-18</option>
+                <option value="19+">19+</option>
+              </select>
+            </div>
           </div>
+
+          <!-- OPTIONAL, AND UNVALIDATED ON PURPOSE. No `required`, no asterisk,
+               and every combination this produces, including all seven boxes
+               clear, is a complete answer. A parent who does not know what to
+               tick here must still be able to submit.
+
+               Checkboxes rather than radios because a child can carry more than
+               one of these at once, which is the reason the field exists at all.
+               The exclusivity between the diagnoses and Unsure/N/A is therefore
+               a behaviour, enforced in JS below, not something this markup can
+               state on its own.
+
+               A <div class="start-label">, not a <label>: this names the group,
+               and a real <label for=...> would have to point at one checkbox,
+               so clicking the group heading would toggle ASD. role="group" plus
+               aria-labelledby gives assistive tech the grouping instead. -->
           <div>
-            <label class="start-label" for="child_age">Child's age<span class="req" aria-hidden="true"> *</span></label>
-            <select class="start-select" id="child_age" name="child_age" required>
-              <option value="" selected disabled>Select an option</option>
-              <option value="0-2">0-2</option>
-              <option value="3-18">3-18</option>
-              <option value="19+">19+</option>
+            <div class="start-label" id="child-dx-label">Neurodevelopmental presentation</div>
+            <div class="start-consent" role="group" aria-labelledby="child-dx-label" aria-describedby="child-dx-help">
+              <p class="start-consent-full" id="child-dx-help">Select all that apply. Optional.</p>
+              <label class="start-check">
+                <input type="checkbox" name="child_dx" value="asd">
+                <span>ASD</span>
+              </label>
+              <label class="start-check">
+                <input type="checkbox" name="child_dx" value="pans">
+                <span>PANS / PANDAS</span>
+              </label>
+              <label class="start-check">
+                <input type="checkbox" name="child_dx" value="cp">
+                <span>CP (cerebral palsy)</span>
+              </label>
+              <label class="start-check">
+                <input type="checkbox" name="child_dx" value="adhd">
+                <span>ADHD</span>
+              </label>
+              <label class="start-check">
+                <input type="checkbox" name="child_dx" value="dyslexia">
+                <span>Dyslexia</span>
+              </label>
+              <label class="start-check">
+                <input type="checkbox" name="child_dx" value="unsure">
+                <span>Unsure</span>
+              </label>
+              <label class="start-check">
+                <input type="checkbox" name="child_dx" value="na">
+                <span>N/A</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Also optional, so no `required` and no asterisk.
+               `selected` but NOT `disabled`, which is the one place this select
+               deliberately departs from the Child's age select above. Age is
+               required, so a disabled placeholder there is unreachable anyway
+               and costs nothing. Here blank is a real answer, and `disabled`
+               would make it a one-way door: pick 30 min by accident and there
+               is no way back. -->
+          <div>
+            <label class="start-label" for="child_sit_tolerance">How long can your child sit for therapy?</label>
+            <p class="start-consent-full" id="child-sit-help">Shows, games, and other distractions are fine. Optional.</p>
+            <select class="start-select" id="child_sit_tolerance" name="child_sit_tolerance" aria-describedby="child-sit-help">
+              <option value="" selected>Select an option</option>
+              <option value="15">15 min or less</option>
+              <option value="30">30 min</option>
+              <option value="45">45 min</option>
+              <option value="60">60 min</option>
+              <option value="60+">More than 60 min</option>
             </select>
           </div>
         </div>
@@ -505,6 +594,66 @@ function setPending(isPending) {
 function value(name) {
   return form.elements[name].value.trim();
 }
+
+/* ── NEURODEVELOPMENTAL PRESENTATION ──────────────────────────────────────────
+   Seven checkboxes sharing one name. "Unsure" and "N/A" are answers about the
+   whole question rather than about the child, so they cannot stand alongside a
+   specific diagnosis, and the rule runs both ways:
+
+     tick Unsure or N/A  -> clears everything else, including the other one
+     tick a diagnosis    -> clears Unsure and N/A, leaves other diagnoses alone
+
+   Unchecking never clears anything: only the box just turned ON gets to evict
+   its contradictions, so a parent can always undo a click and land somewhere
+   sensible. Every resulting state is submittable, all seven clear included.
+
+   NOT read through value(). form.elements.child_dx is a RadioNodeList once more
+   than one control shares the name, and .value on one of those reports the first
+   CHECKED control, which for a checkbox group is not the answer to any question
+   worth asking. querySelectorAll and an explicit filter instead. */
+const DX_EXCLUSIVE = ['unsure', 'na'];
+const dxBoxes = Array.from(form.querySelectorAll('input[name="child_dx"]'));
+
+dxBoxes.forEach(function (box) {
+  box.addEventListener('change', function () {
+    if (!box.checked) return;
+    const isExclusive = DX_EXCLUSIVE.indexOf(box.value) !== -1;
+    dxBoxes.forEach(function (other) {
+      if (other === box) return;
+      // An exclusive box evicts everything; a diagnosis evicts only the
+      // exclusive pair.
+      if (isExclusive || DX_EXCLUSIVE.indexOf(other.value) !== -1) other.checked = false;
+    });
+  });
+});
+
+/* Joined in the order the options are rendered, never in click order, so the
+   same set of ticks always produces the same string and the CRM can be filtered
+   on it. Empty string when nothing is ticked. */
+function selectedDx() {
+  return dxBoxes.filter(function (box) { return box.checked; })
+                .map(function (box) { return box.value; })
+                .join(',');
+}
+
+/* Placeholder grey for the one optional select. .start-select:invalid handles
+   every required select on the page, but an optional select whose value is ""
+   is perfectly valid, so that rule can never fire here and the placeholder
+   would otherwise render in full --text and read as a chosen answer.
+   .is-placeholder stands in for the selector the CSS cannot express.
+
+   Called once at load as well as on change: browsers restore a previously
+   chosen value on back/forward and on some soft reloads, and a restored value
+   must not come back wearing placeholder grey. Purely presentational, and it
+   touches no value, so nothing here can reach the payload. */
+const sitSelect = document.getElementById('child_sit_tolerance');
+
+function syncSitPlaceholder() {
+  sitSelect.classList.toggle('is-placeholder', sitSelect.value === '');
+}
+
+sitSelect.addEventListener('change', syncSitPlaceholder);
+syncSitPlaceholder();
 
 // Phone formatting. Same NANP shape and cursor-preserving approach as
 // intake.html, so a number typed here looks like one typed there.
@@ -856,6 +1005,15 @@ form.addEventListener('submit', function (event) {
     child_first_name: value('child_first_name'),
     child_age: value('child_age'),
     country: value('country'),
+    // Both optional, and both sent on every submit even when the parent left
+    // them alone, so the CRM field is empty rather than absent. A key that comes
+    // and goes between records cannot be filtered on.
+    //
+    // child_sit_tolerance reads "" both when the parent never opened the select
+    // and when they chose the placeholder back again. Those are the same answer
+    // and are meant to be indistinguishable here.
+    child_dx: selectedDx(),
+    child_sit_tolerance: value('child_sit_tolerance'),
     consent_sms_transactional: form.elements.consent_sms_transactional.checked,
     consent_sms_marketing: form.elements.consent_sms_marketing.checked,
     consent_text_version: CONSENT_TEXT_VERSION,
