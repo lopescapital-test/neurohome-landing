@@ -1231,12 +1231,15 @@ html:not(.js) #method .mth-closer .mth-back-btn { display: none; }
 /* =====================================================
    Responsive
    ===================================================== */
-/* The nav collapses earlier than the rest of the responsive block. Seven items
-   plus the CTA stop fitting the 72px bar below ~1080px: links wrap to two lines
-   while the bar height is fixed. The other 22 rules in the 900px block below are
-   unrelated layout collapses (hero, footer, grids, sticky CTA) and deliberately
-   keep their own threshold, so only the two nav rules move here. */
-@media (max-width: 1080px) {
+/* The nav collapses earlier than the rest of the responsive block. With seven
+   links plus the CTA, the row stops fitting the fixed 72px bar below 1126px:
+   the CTA shrinks, its label wraps to two lines and the row grows to 63px inside
+   a bar locked at 72px. Measured on this build, broken at 1125px and clean at
+   1126px. 1170px keeps the same 44px of headroom over the measured limit that
+   1140px gave when the limit was read as 1096px. The other 22 rules in the 900px
+   block below are unrelated layout collapses (hero, footer, grids, sticky CTA)
+   and deliberately keep their own threshold, so only the two nav rules live here. */
+@media (max-width: 1170px) {
   .nav-links { display: none; }
   .nav-mobile-toggle { display: block; }
 }
