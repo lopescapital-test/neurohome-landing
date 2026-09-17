@@ -94,10 +94,54 @@
      script below. */
   #child_sit_tolerance.is-placeholder { color: #7C8695; }
   /* .start-consent-full is margin:0, which is right inside the consent box
-     where the flex gap does the spacing, and wrong here where this <p> is
-     helper text sitting directly on the select. Matches the 8px that
-     .start-label already puts under the label above it. */
-  #child-sit-help { margin-bottom: 8px; }
+     where the flex gap does the spacing, and wrong here where these are helper
+     lines sitting directly on a control. Matches the 8px that .start-label
+     already puts under the label above them. */
+  /* min-height reserves two lines for BOTH helpers so the two controls in this
+     row start at the same y. The copy lengths differ: at half-card width the sit
+     line wraps to two and the dx line to one, which left one dropdown sitting
+     18.8px below the other and stopped the row matching the name/age row above.
+     3em is exactly two lines here (12.5px font, 1.5 line-height) and is written
+     in em so it tracks the font rather than a pixel that would rot. A helper
+     that ever runs to three lines would reintroduce the offset. */
+  #child-sit-help, #child-dx-help { margin-bottom: 8px; min-height: 3em; }
+
+  /* ── COLLAPSED MULTI-SELECT (child_dx) ─────────────────────────────────────
+     The trigger is a <button> wearing .start-select, so border, radius, height,
+     padding, font, background and chevron all come from the same rule the real
+     selects use and the two controls in this row cannot drift apart. Only the
+     three things a button cannot take from that rule are set here: user-agent
+     styles centre button text, and the joined label needs to ellipsis rather
+     than wrap, which would otherwise grow the control past its 54px and break
+     the row. */
+  /* LOAD-BEARING. A 1fr track is minmax(auto, 1fr), and that `auto` floor is the
+     item's min-content width. The trigger is white-space:nowrap, so its
+     min-content is the whole joined label, and with five diagnoses ticked this
+     column billowed to 503px and squeezed the sit-tolerance column to 131px,
+     wrapping its label onto three lines. The ellipsis never engaged because the
+     track simply granted whatever width was asked for. min-width:0 on the grid
+     ITEM (not on .start-dx, whose content would still propagate up) replaces
+     that floor with zero, so the column holds its half and the overflow
+     resolves as the ellipsis it was always meant to be. Scoped to this column
+     so the name/age pair is not touched. */
+  .start-dx-col { min-width: 0; }
+  .start-dx { position: relative; }
+  .start-dx-trigger { text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #child_dx_trigger.is-placeholder { color: #7C8695; }
+  /* left/right:0 rather than a width: the panel is pinned to the trigger's own
+     edges, so it is exactly as wide as its column at every viewport and can
+     never introduce a horizontal scrollbar. position:absolute keeps it out of
+     flow, so opening it overlays what follows instead of pushing the page. */
+  .start-dx-panel {
+    position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 20;
+    display: flex; flex-direction: column; gap: 14px;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 16px 18px; box-shadow: var(--shadow-md);
+  }
+  /* The [hidden] attribute is display:none in the user-agent sheet, which any
+     class setting display:flex outranks. Without this line the panel would
+     render open on load and never close. */
+  .start-dx-panel[hidden] { display: none; }
 
   /* ── DIAL-CODE AFFIX ──────────────────────────────────────────────────────
      The selected country's dial code, shown inside the phone field so the
@@ -318,74 +362,97 @@
             </div>
           </div>
 
-          <!-- OPTIONAL, AND UNVALIDATED ON PURPOSE. No `required`, no asterisk,
-               and every combination this produces, including all seven boxes
-               clear, is a complete answer. A parent who does not know what to
-               tick here must still be able to submit.
+          <!-- BOTH OPTIONAL, AND UNVALIDATED ON PURPOSE. No `required`, no
+               asterisk, and every state either control can reach, including
+               untouched, is a complete answer. A parent who does not know what
+               to put here must still be able to submit.
 
-               Checkboxes rather than radios because a child can carry more than
-               one of these at once, which is the reason the field exists at all.
-               The exclusivity between the diagnoses and Unsure/N/A is therefore
-               a behaviour, enforced in JS below, not something this markup can
-               state on its own.
+               Paired into one row exactly like the name/age pair above, using
+               the same .start-pair. The stacking below the breakpoint is that
+               class's own media query; nothing here adds a breakpoint. -->
+          <div class="start-pair">
 
-               A <div class="start-label">, not a <label>: this names the group,
-               and a real <label for=...> would have to point at one checkbox,
-               so clicking the group heading would toggle ASD. role="group" plus
-               aria-labelledby gives assistive tech the grouping instead. -->
-          <div>
-            <div class="start-label" id="child-dx-label">Neurodevelopmental presentation</div>
-            <div class="start-consent" role="group" aria-labelledby="child-dx-label" aria-describedby="child-dx-help">
+            <!-- CHILD_DX: A COLLAPSED MULTI-SELECT, NOT A NEW CONTROL.
+                 The seven checkboxes are unchanged in name, value, order and
+                 .start-check markup. They have only moved inside a panel that
+                 stays hidden until the trigger opens it, and `hidden` is
+                 display:none, which keeps them in the form and in
+                 form.elements throughout. What the payload reads is therefore
+                 identical to what it read when they were a flat list, and the
+                 exclusivity handler and selectedDx() are untouched.
+
+                 The trigger is a real <button type="button">: Tab reaches it
+                 and Enter/Space activate it with no code of ours, and because
+                 it sits outside the panel it holds its place in the tab order
+                 whether the panel is open or shut. type="button" because any
+                 button inside a form defaults to type="submit".
+
+                 A <div class="start-label">, not a <label>: this names the
+                 group, and a real <label for=...> would have to point at one
+                 checkbox, so clicking the heading would toggle ASD. -->
+            <div class="start-dx-col">
+              <div class="start-label" id="child-dx-label">Neurodevelopmental presentation</div>
               <p class="start-consent-full" id="child-dx-help">Select all that apply. Optional.</p>
-              <label class="start-check">
-                <input type="checkbox" name="child_dx" value="asd">
-                <span>ASD</span>
-              </label>
-              <label class="start-check">
-                <input type="checkbox" name="child_dx" value="pans">
-                <span>PANS / PANDAS</span>
-              </label>
-              <label class="start-check">
-                <input type="checkbox" name="child_dx" value="cp">
-                <span>CP (cerebral palsy)</span>
-              </label>
-              <label class="start-check">
-                <input type="checkbox" name="child_dx" value="adhd">
-                <span>ADHD</span>
-              </label>
-              <label class="start-check">
-                <input type="checkbox" name="child_dx" value="dyslexia">
-                <span>Dyslexia</span>
-              </label>
-              <label class="start-check">
-                <input type="checkbox" name="child_dx" value="unsure">
-                <span>Unsure</span>
-              </label>
-              <label class="start-check">
-                <input type="checkbox" name="child_dx" value="na">
-                <span>N/A</span>
-              </label>
+              <div class="start-dx">
+                <!-- No aria-haspopup. It was "listbox", which promises option
+                     children; these are checkboxes in a group, and a screen
+                     reader told to expect a listbox and handed a group is worse
+                     off than one told nothing. aria-expanded plus aria-controls
+                     is the plain disclosure pattern, and that is what this is. -->
+                <button class="start-select start-dx-trigger is-placeholder" type="button" id="child_dx_trigger"
+                        aria-expanded="false" aria-controls="child-dx-panel"
+                        aria-labelledby="child-dx-label child_dx_trigger" aria-describedby="child-dx-help">Select an option</button>
+                <div class="start-dx-panel" id="child-dx-panel" role="group" aria-labelledby="child-dx-label" hidden>
+                  <label class="start-check">
+                    <input type="checkbox" name="child_dx" value="asd">
+                    <span>ASD</span>
+                  </label>
+                  <label class="start-check">
+                    <input type="checkbox" name="child_dx" value="pans">
+                    <span>PANS / PANDAS</span>
+                  </label>
+                  <label class="start-check">
+                    <input type="checkbox" name="child_dx" value="cp">
+                    <span>CP (cerebral palsy)</span>
+                  </label>
+                  <label class="start-check">
+                    <input type="checkbox" name="child_dx" value="adhd">
+                    <span>ADHD</span>
+                  </label>
+                  <label class="start-check">
+                    <input type="checkbox" name="child_dx" value="dyslexia">
+                    <span>Dyslexia</span>
+                  </label>
+                  <label class="start-check">
+                    <input type="checkbox" name="child_dx" value="unsure">
+                    <span>Unsure</span>
+                  </label>
+                  <label class="start-check">
+                    <input type="checkbox" name="child_dx" value="na">
+                    <span>N/A</span>
+                  </label>
+                </div>
+              </div>
             </div>
-          </div>
 
-          <!-- Also optional, so no `required` and no asterisk.
-               `selected` but NOT `disabled`, which is the one place this select
-               deliberately departs from the Child's age select above. Age is
-               required, so a disabled placeholder there is unreachable anyway
-               and costs nothing. Here blank is a real answer, and `disabled`
-               would make it a one-way door: pick 30 min by accident and there
-               is no way back. -->
-          <div>
-            <label class="start-label" for="child_sit_tolerance">How long can your child sit for therapy?</label>
-            <p class="start-consent-full" id="child-sit-help">Shows, games, and other distractions are fine. Optional.</p>
-            <select class="start-select" id="child_sit_tolerance" name="child_sit_tolerance" aria-describedby="child-sit-help">
-              <option value="" selected>Select an option</option>
-              <option value="15">15 min or less</option>
-              <option value="30">30 min</option>
-              <option value="45">45 min</option>
-              <option value="60">60 min</option>
-              <option value="60+">More than 60 min</option>
-            </select>
+            <!-- `selected` but NOT `disabled`, which is the one place this
+                 select deliberately departs from the Child's age select above.
+                 Age is required, so a disabled placeholder there is unreachable
+                 anyway and costs nothing. Here blank is a real answer, and
+                 `disabled` would make it a one-way door: pick 30 min by
+                 accident and there is no way back. -->
+            <div>
+              <label class="start-label" for="child_sit_tolerance">How long can your child sit for therapy?</label>
+              <p class="start-consent-full" id="child-sit-help">Shows, games, and other distractions are fine. Optional.</p>
+              <select class="start-select" id="child_sit_tolerance" name="child_sit_tolerance" aria-describedby="child-sit-help">
+                <option value="" selected>Select an option</option>
+                <option value="15">15 min or less</option>
+                <option value="30">30 min</option>
+                <option value="45">45 min</option>
+                <option value="60">60 min</option>
+                <option value="60+">More than 60 min</option>
+              </select>
+            </div>
           </div>
         </div>
       </div>
@@ -654,6 +721,82 @@ function syncSitPlaceholder() {
 
 sitSelect.addEventListener('change', syncSitPlaceholder);
 syncSitPlaceholder();
+
+/* ── COLLAPSED MULTI-SELECT: TRIGGER, PANEL, LABEL ────────────────────────────
+   Presentation only. Nothing below reads or writes a checkbox's checked state,
+   so DX_EXCLUSIVE, its per-box handler and selectedDx() above are untouched and
+   none of this can reach the payload. It opens and closes the box the same
+   seven controls now live in, and keeps the trigger's text in step with them. */
+const dxTrigger = document.getElementById('child_dx_trigger');
+const dxPanel = document.getElementById('child-dx-panel');
+
+function setDxOpen(open) {
+  dxPanel.hidden = !open;
+  dxTrigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+}
+
+/* LABELS, not values: the trigger is the line a parent reads, so it shows
+   "PANS / PANDAS" where the payload carries "pans". Built from dxBoxes, which
+   is render order, so the trigger and selectedDx() can never disagree about
+   sequence even though they emit different strings. */
+function syncDxTrigger() {
+  const labels = dxBoxes.filter(function (box) { return box.checked; })
+                        .map(function (box) { return box.closest('.start-check').querySelector('span').textContent; });
+  dxTrigger.textContent = labels.length ? labels.join(', ') : 'Select an option';
+  dxTrigger.classList.toggle('is-placeholder', labels.length === 0);
+}
+
+dxTrigger.addEventListener('click', function () {
+  setDxOpen(dxPanel.hidden);
+});
+
+/* Bound on the PANEL, not on each box, so it runs during bubbling. The
+   exclusivity listener is bound on the box itself and has therefore already
+   settled which boxes are checked by the time this reads them. That ordering is
+   what lets the trigger stay correct without editing that handler. Ticking
+   never closes the panel: this is a multi-select. */
+dxPanel.addEventListener('change', syncDxTrigger);
+
+/* pointerdown rather than click, because a press that starts on a label inside
+   the panel and releases outside it still produces a click whose target is the
+   document, which would close the panel under the parent mid-tick. */
+document.addEventListener('pointerdown', function (event) {
+  if (dxPanel.hidden) return;
+  if (dxTrigger.contains(event.target) || dxPanel.contains(event.target)) return;
+  setDxOpen(false);
+});
+
+document.addEventListener('keydown', function (event) {
+  if (event.key !== 'Escape' || dxPanel.hidden) return;
+  setDxOpen(false);
+  // Focus goes back to the trigger, not wherever it was: the element the parent
+  // was on may have just been hidden, and a hidden element cannot hold focus.
+  dxTrigger.focus();
+});
+
+/* Tabbing out of the control closes it. focusout on the wrapper catches focus
+   leaving any descendant, and relatedTarget is where focus is heading: inside
+   the trigger or the panel means movement WITHIN the control, not out of it, so
+   those are left alone and ticking through the list never closes anything.
+
+   A null relatedTarget is the browser saying it cannot name a destination, which
+   happens when focus goes to browser chrome or a non-focusable element is
+   clicked. This leaves the panel open in that case rather than guessing; the
+   pointerdown handler above already owns every click-outside path, so the one
+   scenario left uncovered is tabbing into the browser's own UI.
+
+   DELIBERATELY NO focus() HERE, unlike Escape. Escape is a cancel and owes the
+   parent the trigger back. Tabbing out is forward motion, and pulling focus
+   back would trap them in the control and make Tab useless. */
+dxTrigger.closest('.start-dx').addEventListener('focusout', function (event) {
+  if (dxPanel.hidden) return;
+  const to = event.relatedTarget;
+  if (!to) return;
+  if (dxTrigger.contains(to) || dxPanel.contains(to)) return;
+  setDxOpen(false);
+});
+
+syncDxTrigger();
 
 // Phone formatting. Same NANP shape and cursor-preserving approach as
 // intake.html, so a number typed here looks like one typed there.
